@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>线性代数笔记</title>
+    <link href="/2024/08/19/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%94%E8%AE%B0/"/>
+    <url>/2024/08/19/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%94%E8%AE%B0/</url>
+    
+    <content type="html"><![CDATA[<p>这是我之前用 word+Axmath 写的一篇关于线性代数的简单的复习笔记</p><p>由于 md 文件里不能展现 word 里的那么多奇奇怪怪的公式，于是这里提供 PDF 的下载链接</p><p><a href="/file/note.pdf" target="_blank">线代笔记</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>数学</category>
+      
+      <category>线性代数</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>线性代数</tag>
+      
+      <tag>数学</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>CS61B 笔记</title>
     <link href="/2024/07/19/CS61B_Notes/"/>
     <url>/2024/07/19/CS61B_Notes/</url>
