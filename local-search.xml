@@ -4,35 +4,6 @@
   
   
   <entry>
-    <title>线性代数笔记</title>
-    <link href="/2024/08/19/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%94%E8%AE%B0/"/>
-    <url>/2024/08/19/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%94%E8%AE%B0/</url>
-    
-    <content type="html"><![CDATA[<p>这是我之前用 word+Axmath 写的一篇关于线性代数的简单的复习笔记</p><p>由于 md 文件里不能展现 word 里的那么多奇奇怪怪的公式，于是这里提供 PDF 的下载链接</p><p><a href="/file/note.pdf" target="_blank">线代笔记</a></p>]]></content>
-    
-    
-    <categories>
-      
-      <category>数学</category>
-      
-      <category>线性代数</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>线性代数</tag>
-      
-      <tag>数学</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>CS61B 笔记</title>
     <link href="/2024/07/19/CS61B_Notes/"/>
     <url>/2024/07/19/CS61B_Notes/</url>
@@ -54,6 +25,64 @@
       <tag>Data Structure</tag>
       
       <tag>Java</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>数学分析讲座讲义</title>
+    <link href="/2024/06/23/%E6%95%B0%E5%AD%A6%E5%88%86%E6%9E%90%E8%AE%B2%E5%BA%A7%E8%AE%B2%E4%B9%89/"/>
+    <url>/2024/06/23/%E6%95%B0%E5%AD%A6%E5%88%86%E6%9E%90%E8%AE%B2%E5%BA%A7%E8%AE%B2%E4%B9%89/</url>
+    
+    <content type="html"><![CDATA[<p>这里是之前我做数学分析课程期中期末复习讲座时候撰写的讲义，内容涵盖了多元函数微积分和级数</p><p>你问我为什么没有一元函数微积分？因为我还没讲，下学期讲了就有了，到时候会更新</p><p><a href="/file/ma1.pdf" target="_blank">数学分析(2)期中讲座</a><br><a href="/file/ma2.pdf" target="_blank">数学分析(2)期末讲座</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>数学</category>
+      
+      <category>数学分析</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>数学</tag>
+      
+      <tag>数学分析</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>线性代数笔记</title>
+    <link href="/2024/03/19/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%94%E8%AE%B0/"/>
+    <url>/2024/03/19/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%94%E8%AE%B0/</url>
+    
+    <content type="html"><![CDATA[<p>这是我之前用 word+Axmath 写的一篇关于线性代数的简单的复习笔记</p><p>由于 md 文件里不能展现 word 里的那么多奇奇怪怪的公式，于是这里提供 PDF 的下载链接</p><p><a href="/file/note.pdf" target="_blank">线代笔记</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>数学</category>
+      
+      <category>线性代数</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>数学</tag>
+      
+      <tag>线性代数</tag>
       
     </tags>
     
