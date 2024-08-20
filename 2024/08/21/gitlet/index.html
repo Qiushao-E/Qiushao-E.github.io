@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://example.com/img/gitlet/ag2.png">
 <meta property="og:image" content="http://example.com/img/gitlet/category">
 <meta property="article:published_time" content="2024-08-20T16:22:06.000Z">
-<meta property="article:modified_time" content="2024-08-20T16:27:57.380Z">
+<meta property="article:modified_time" content="2024-08-20T16:32:27.135Z">
 <meta property="article:author" content="思源南路世一劈">
 <meta property="article:tag" content="Data Structure">
 <meta property="article:tag" content="git">
@@ -438,7 +438,7 @@
 </ul>
 <p>一下子就只有三类了，明了了许多对不对</p>
 <p>推荐用时：6h，但是 debug 无上限(我自己就几个小 bug，比如忘记写！，忘记 add，却 debug 了五六个小时)</p>
-<h4 id="恭喜！1600-分到手！"><a href="#恭喜！1600-分到手！" class="headerlink" title="恭喜！1600 分到手！"></a>恭喜！1600 分到手！</h4><h3 id="选做部分命令思路"><a href="#选做部分命令思路" class="headerlink" title="选做部分命令思路"></a>选做部分命令思路</h3><p>总体不难，因为有大量代码复用，注意规划好类与文件夹分区即可</p>
+<h4 id="恭喜！1600-分到手！"><a href="#恭喜！1600-分到手！" class="headerlink" title="恭喜！1600 分到手！"></a>恭喜！1600 分到手！</h4><h2 id="选做部分命令思路"><a href="#选做部分命令思路" class="headerlink" title="选做部分命令思路"></a>选做部分命令思路</h2><p>总体不难，因为有大量代码复用，注意规划好类与文件夹分区即可</p>
 <p>总体思路：每个 remote 是一个对象，里面包含了 remote 的名字和远程仓库路径。编写一个改变当前 CWD 的辅助函数用于操作 fetch，push 与 pull。似曾相识的地方就代码复用，必要时小改之前的命令用于抽出辅助函数复用。</p>
 <p>具体命令思路：</p>
 <h4 id="add-remote-rm-remote"><a href="#add-remote-rm-remote" class="headerlink" title="add-remote &amp;&amp; rm-remote"></a>add-remote &amp;&amp; rm-remote</h4><p>类比 branch 那边，虽然 remote 是一个大的复杂的概念，但是这俩命令不难呀，按自己的思路写好就行，我的思路：</p>
