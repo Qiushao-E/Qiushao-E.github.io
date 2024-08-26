@@ -4,7 +4,36 @@
   
   
   <entry>
-    <title>gitlet之我见</title>
+    <title>wsl2配置clash代理记录</title>
+    <link href="/2024/08/26/wslClash/"/>
+    <url>/2024/08/26/wslClash/</url>
+    
+    <content type="html"><![CDATA[<h1 id="WSL2-配置网络-Clash-代理记录"><a href="#WSL2-配置网络-Clash-代理记录" class="headerlink" title="WSL2 配置网络 Clash 代理记录"></a>WSL2 配置网络 Clash 代理记录</h1><p>刚安装好 wsl 的时候，进入命令行会显示如下信息：</p><p>wsl: 检测到 localhost 代理配置，但未镜像到 WSL。NAT 模式下的 WSL 不支持 localhost 代理。</p><p>镜像代理是今年新出的功能，如果使用 NAT 模式配置的话也行，只是会比较麻烦</p><p>一开始我在网络上搜寻了各种各样的 blog 来学习配置，包括但不局限于：</p><ul><li>.wslconfig<ul><li>开启 mirror 模式</li><li>关闭 DNS 隧道模式</li><li>强制使用主机代理</li></ul></li><li>用脚本修改代理端口<ul><li>修改~&#x2F;.bashrc 使得 http_proxy 强行修改为主机 IP 的端口</li></ul></li><li>修改 Clash For Windows 设置<ul><li>安装 Service Mode</li><li>打开 LAN</li><li>打开 TAN 模式</li></ul></li></ul><p>然而一个也不行，红温了</p><p>后来发现，这些 blog 或多或少<strong>具有时效性</strong>。因为 wsl 自身也在快速迭代更新，所以其实很多过去的经验并不适用</p><p>经过三四个小时的折腾，我和兄弟发现解决方案竟然是如此简单：</p><ul><li>修改版本为 Ubuntu-22.04</li><li>配置 wslconfig，打开镜像模式</li></ul><p>大功告成！结局：</p><p><img src="/img/0826/1.png" alt="我真傻，真的"></p><p>教训：搜集经验帖以及 blog 学习的时候一定要注意<strong>时效性</strong>，不要拿着过失的经验来往现在身上套！</p><p><img src="/img/0826/2.gif" alt="彻底红温"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Linux</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>wsl</tag>
+      
+      <tag>linux</tag>
+      
+      <tag>clash</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Gitlet之我见</title>
     <link href="/2024/08/21/gitlet/"/>
     <url>/2024/08/21/gitlet/</url>
     
@@ -12,6 +41,8 @@
     
     
     <categories>
+      
+      <category>Courses</category>
       
       <category>CS61B</category>
       
@@ -41,6 +72,8 @@
     
     
     <categories>
+      
+      <category>Courses</category>
       
       <category>CS61B</category>
       
