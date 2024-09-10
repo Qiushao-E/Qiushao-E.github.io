@@ -26,17 +26,17 @@
 <meta property="og:site_name" content="Home">
 <meta property="og:description" content="介绍了CS61C中的C语言部分">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc1.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc4.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc5.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc2.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc3.png">
+<meta property="og:image" content="http://example.com/img/61C/c1.png">
+<meta property="og:image" content="http://example.com/img/61C/c4.png">
+<meta property="og:image" content="http://example.com/img/61C/c5.png">
+<meta property="og:image" content="http://example.com/img/61C/c2.png">
+<meta property="og:image" content="http://example.com/img/61C/c3.png">
 <meta property="article:published_time" content="2024-09-03T02:17:00.000Z">
-<meta property="article:modified_time" content="2024-09-10T05:27:51.916Z">
+<meta property="article:modified_time" content="2024-09-10T05:39:01.624Z">
 <meta property="article:author" content="思源南路世一劈">
 <meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/%5Cimg%5C61C%5Cc1.png">
+<meta name="twitter:image" content="http://example.com/img/61C/c1.png">
   
   
   
@@ -333,16 +333,16 @@
 <li>事实上，C++里的布尔类型是一个已经定义好的枚举类型</li>
 </ul>
 <h4 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h4><p>可直接对数据的二进制位进行操作</p>
-<p><img src="/%5Cimg%5C61C%5Cc1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/c1.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="typedef"><a href="#typedef" class="headerlink" title="typedef"></a>typedef</h4><p>可用于设置类型的别名，常与struct搭配使用</p>
 <h3 id="指针与数组"><a href="#指针与数组" class="headerlink" title="指针与数组"></a>指针与数组</h3><h4 id="Pointer"><a href="#Pointer" class="headerlink" title="Pointer"></a>Pointer</h4><p>指针可以视作指向一块内存空间的变量，存储这块空间的地址</p>
 <p>定义指针变量使用*符号，若要定义任意指针，使用void *</p>
 <p>指针还包括<strong>函数指针</strong>，用来指向一个函数，可以实现python中的高阶函数</p>
-<p><img src="/%5Cimg%5C61C%5Cc4.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/%5Cimg%5C61C%5Cc5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/c4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/c5.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="Array"><a href="#Array" class="headerlink" title="Array"></a>Array</h4><p>数组本质上就是一块连续的内存空间，因此与指针有异曲同工之妙</p>
 <p>例如：char *即字符串，a[b]本质上即 *(a+b)</p>
-<h3 id="内存管理-Memory-Manaegment"><a href="#内存管理-Memory-Manaegment" class="headerlink" title="内存管理(Memory Manaegment)"></a>内存管理(Memory Manaegment)</h3><h4 id="内存位置"><a href="#内存位置" class="headerlink" title="内存位置"></a>内存位置</h4><p><img src="/%5Cimg%5C61C%5Cc2.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="内存管理-Memory-Manaegment"><a href="#内存管理-Memory-Manaegment" class="headerlink" title="内存管理(Memory Manaegment)"></a>内存管理(Memory Manaegment)</h3><h4 id="内存位置"><a href="#内存位置" class="headerlink" title="内存位置"></a>内存位置</h4><p><img src="/img/61C/c2.png" srcset="/img/loading.gif" lazyload></p>
 <h5 id="栈-Stack"><a href="#栈-Stack" class="headerlink" title="栈(Stack)"></a>栈(Stack)</h5><ul>
 <li>负责存储本地变量，函数参数</li>
 <li>逐渐伸向较小的地址</li>
@@ -362,7 +362,7 @@
 <h4 id="处理内存的一些函数"><a href="#处理内存的一些函数" class="headerlink" title="处理内存的一些函数"></a>处理内存的一些函数</h4><h5 id="void-malloc-size-t-n"><a href="#void-malloc-size-t-n" class="headerlink" title="void *malloc(size_t n)"></a>void *malloc(size_t n)</h5><p>声明一块n bits的动态内存，但是内部未经过初始化</p>
 <h5 id="void-calloc-size-t-num-size-t-size"><a href="#void-calloc-size-t-num-size-t-size" class="headerlink" title="void *calloc(size_t num, size_t size)"></a>void *calloc(size_t num, size_t size)</h5><p>声明一块n*size bits的动态内存，并全部初始化为0</p>
 <h5 id="void-realloc-void-ptr-size-t-size"><a href="#void-realloc-void-ptr-size-t-size" class="headerlink" title="void *realloc(void *ptr, size_t size)"></a>void *realloc(void *ptr, size_t size)</h5><p>将ptr指向的地址重新声明为size bits的地址，并且没有初始化</p>
-<p><img src="/%5Cimg%5C61C%5Cc3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/c3.png" srcset="/img/loading.gif" lazyload></p>
 <h5 id="void-free-void-ptr"><a href="#void-free-void-ptr" class="headerlink" title="void free(void *ptr)"></a>void free(void *ptr)</h5><p>释放ptr指针指向的内存</p>
 <hr>
 <p>在C语言中，内存管理是非常重要的概念，不同于CS61B中的Java语言会自动帮你收集废弃的内存，C语言中每一块动态分配的内存都需要自己<strong>显式地释放掉</strong>。否则便有可能造成内存泄露等一系列后果</p>
