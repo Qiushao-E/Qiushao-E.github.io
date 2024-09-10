@@ -26,19 +26,19 @@
 <meta property="og:site_name" content="Home">
 <meta property="og:description" content="RISC-V简介，体会汇编之美(逃)">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr1.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr2.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr3.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr4.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr5.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr6.png">
-<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr7.png">
+<meta property="og:image" content="http://example.com/img/61C/r1.png">
+<meta property="og:image" content="http://example.com/img/61C/r2.png">
+<meta property="og:image" content="http://example.com/img/61C/r3.png">
+<meta property="og:image" content="http://example.com/img/61C/r4.png">
+<meta property="og:image" content="http://example.com/img/61C/r5.png">
+<meta property="og:image" content="http://example.com/img/61C/r6.png">
+<meta property="og:image" content="http://example.com/img/61C/r7.png">
 <meta property="article:published_time" content="2024-09-10T05:30:00.000Z">
-<meta property="article:modified_time" content="2024-09-10T05:35:29.110Z">
+<meta property="article:modified_time" content="2024-09-10T05:44:36.895Z">
 <meta property="article:author" content="思源南路世一劈">
 <meta property="article:tag" content="RISC-V">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/%5Cimg%5C61C%5Cr1.png">
+<meta name="twitter:image" content="http://example.com/img/61C/r1.png">
   
   
   
@@ -324,7 +324,7 @@
 <p>一个很重要的参考：<a href="/file/risc-v.pdf" target="_blank">命令参考附录</a></p>
 <h3 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h3><p>我们知道高级编程语言是不能被计算机直接看懂的，计算机明白的是机器语言，即二进制码，而人类使用的编程语言，离机器语言中间还有个中间体——即汇编语言(Assembly Language)</p>
 <p>如下图所示，我们目前探索的计算机抽象层级即位于第二层次：</p>
-<p><img src="/%5Cimg%5C61C%5Cr1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r1.png" srcset="/img/loading.gif" lazyload></p>
 <p>汇编语言有很多种，在61C里我们使用的是经典版本——RISC-V，由于现在的电脑不能直接运行之，所以需要在Venus平台上运行，这是课程已经为我们提供好了的</p>
 <h3 id="RISC-V"><a href="#RISC-V" class="headerlink" title="RISC-V"></a>RISC-V</h3><h4 id="寄存器-Register"><a href="#寄存器-Register" class="headerlink" title="寄存器(Register)"></a>寄存器(Register)</h4><ul>
 <li>仅次于CPU的存储单元！</li>
@@ -333,7 +333,7 @@
 <li>一共32个，编号从x0-x31</li>
 </ul>
 <p>这是我们的RISC-V语言直接操纵的对象！</p>
-<p><img src="/%5Cimg%5C61C%5Cr2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r2.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="基本特点与命令格式"><a href="#基本特点与命令格式" class="headerlink" title="基本特点与命令格式"></a>基本特点与命令格式</h4><ul>
 <li><p>不同于高级语言，RISC-V没有所谓的数据类型</p>
 </li>
@@ -342,7 +342,7 @@
 <li><p>命令格式也十分统一，如下图所示，实际情况中也只有很少不同：</p>
 </li>
 </ul>
-<p><img src="/%5Cimg%5C61C%5Cr3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r3.png" srcset="/img/loading.gif" lazyload></p>
 <ul>
 <li>命令总体包括数学运算，逻辑控制，内存控制等部分，详情可参考<a href="/file/risc-v.pdf" target="_blank">命令参考附录</a></li>
 </ul>
@@ -363,7 +363,7 @@
 <li>一个特殊的寄存器：sp(x2)，用来指示栈下端的地址位置</li>
 </ul>
 <p>那么如何来保存&#x2F;读取寄存器内容呢——使用sp,sw,lw三件套，调节栈指针的同时，进行数据的存取</p>
-<p><img src="/%5Cimg%5C61C%5Cr4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r4.png" srcset="/img/loading.gif" lazyload></p>
 <p>从Coller的视角看：调用函数前后，这些<strong>寄存器的值不变</strong></p>
 <h5 id="Caller-saved-Registers"><a href="#Caller-saved-Registers" class="headerlink" title="Caller-saved Registers"></a>Caller-saved Registers</h5><ul>
 <li>ra：负责存储地址，在jumping时生效</li>
@@ -371,7 +371,7 @@
 <li>t0-t6：暂时使用的寄存器，可理解为临时变量</li>
 </ul>
 <p>理解上同理，只是由调用者保存，参考下图：</p>
-<p><img src="/%5Cimg%5C61C%5Cr5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r5.png" srcset="/img/loading.gif" lazyload></p>
 <h5 id="一般的储存原则"><a href="#一般的储存原则" class="headerlink" title="一般的储存原则"></a>一般的储存原则</h5><ul>
 <li>ra必存</li>
 <li>callee类型的，只要用了就存</li>
@@ -380,8 +380,8 @@
 </ul>
 <h4 id="指令类型"><a href="#指令类型" class="headerlink" title="指令类型"></a>指令类型</h4><p>一共六种：R，I，S，U，B，J，简记一下即可，附录里都有</p>
 <p>不同类型的指令对应的二进制码构成不同，执行的指令类型也不同(这似乎是UCB考试喜欢考的？)</p>
-<p><img src="/%5Cimg%5C61C%5Cr6.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/%5Cimg%5C61C%5Cr7.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/61C/r7.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
