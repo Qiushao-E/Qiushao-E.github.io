@@ -19,27 +19,28 @@
   <meta name="author" content="思源南路世一劈">
   <meta name="keywords" content="">
   
-    <meta name="description" content="我真傻，真的">
+    <meta name="description" content="介绍了CS61C中的C语言部分">
 <meta property="og:type" content="article">
-<meta property="og:title" content="wsl2配置clash代理记录">
-<meta property="og:url" content="http://example.com/2024/08/26/wslClash/index.html">
+<meta property="og:title" content="C语言入门">
+<meta property="og:url" content="http://example.com/2024/09/03/61C-C/index.html">
 <meta property="og:site_name" content="Home">
-<meta property="og:description" content="我真傻，真的">
+<meta property="og:description" content="介绍了CS61C中的C语言部分">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/img/0826/1.png">
-<meta property="og:image" content="http://example.com/img/0826/2.gif">
-<meta property="article:published_time" content="2024-08-26T14:37:35.000Z">
-<meta property="article:modified_time" content="2024-08-26T14:58:43.381Z">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc1.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc4.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc5.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc2.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cc3.png">
+<meta property="article:published_time" content="2024-09-03T02:17:00.000Z">
+<meta property="article:modified_time" content="2024-09-10T05:27:51.916Z">
 <meta property="article:author" content="思源南路世一劈">
-<meta property="article:tag" content="wsl">
-<meta property="article:tag" content="linux">
-<meta property="article:tag" content="clash">
+<meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/img/0826/1.png">
+<meta name="twitter:image" content="http://example.com/%5Cimg%5C61C%5Cc1.png">
   
   
   
-  <title>wsl2配置clash代理记录 - Home</title>
+  <title>C语言入门 - Home</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -241,7 +242,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="wsl2配置clash代理记录"></span>
+            <span id="subtitle" data-typed-text="C语言入门"></span>
           
         </div>
 
@@ -252,8 +253,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-08-26 22:37" pubdate>
-          2024年8月26日 晚上
+        <time datetime="2024-09-03 10:17" pubdate>
+          2024年9月3日 上午
         </time>
       </span>
     
@@ -264,7 +265,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          312 字
+          597 字
         
       </span>
     
@@ -275,7 +276,7 @@
         
         
         
-          3 分钟
+          5 分钟
         
       </span>
     
@@ -312,44 +313,60 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">wsl2配置clash代理记录</h1>
+            <h1 id="seo-header">C语言入门</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="WSL2-配置网络-Clash-代理记录"><a href="#WSL2-配置网络-Clash-代理记录" class="headerlink" title="WSL2 配置网络 Clash 代理记录"></a>WSL2 配置网络 Clash 代理记录</h1><p>刚安装好 wsl 的时候，进入命令行会显示如下信息：</p>
-<p>wsl: 检测到 localhost 代理配置，但未镜像到 WSL。NAT 模式下的 WSL 不支持 localhost 代理。</p>
-<p>镜像代理是今年新出的功能，如果使用 NAT 模式配置的话也行，只是会比较麻烦</p>
-<p>一开始我在网络上搜寻了各种各样的 blog 来学习配置，包括但不局限于：</p>
-<ul>
-<li>.wslconfig<ul>
-<li>开启 mirror 模式</li>
-<li>关闭 DNS 隧道模式</li>
-<li>强制使用主机代理</li>
+                <h1 id="CS61C-C语言入门"><a href="#CS61C-C语言入门" class="headerlink" title="CS61C-C语言入门"></a>CS61C-C语言入门</h1><p>C语言基础语法上比较简单，我这里只记录一些我自己不会的地方。重点是后面的C语言内存管理与处理上</p>
+<h3 id="C基础语法"><a href="#C基础语法" class="headerlink" title="C基础语法"></a>C基础语法</h3><h4 id="引入头文件的两种方式"><a href="#引入头文件的两种方式" class="headerlink" title="引入头文件的两种方式"></a>引入头文件的两种方式</h4><ul>
+<li>使用&lt;&gt;：即在机器的C语言库里寻找相关库文件</li>
+<li>使用””：引入工作目录里的头文件</li>
+</ul>
+<h4 id="关于bool"><a href="#关于bool" class="headerlink" title="关于bool"></a>关于bool</h4><ul>
+<li>C语言中没有bool这个变量类型</li>
+<li>只有表示true&#x2F;false的相关概念——<ul>
+<li>0和NULL表示false</li>
+<li>其他全部表示true</li>
 </ul>
 </li>
-<li>用脚本修改代理端口<ul>
-<li>修改~&#x2F;.bashrc 使得 http_proxy 强行修改为主机 IP 的端口</li>
+<li>事实上，C++里的布尔类型是一个已经定义好的枚举类型</li>
 </ul>
-</li>
-<li>修改 Clash For Windows 设置<ul>
-<li>安装 Service Mode</li>
-<li>打开 LAN</li>
-<li>打开 TAN 模式</li>
+<h4 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h4><p>可直接对数据的二进制位进行操作</p>
+<p><img src="/%5Cimg%5C61C%5Cc1.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="typedef"><a href="#typedef" class="headerlink" title="typedef"></a>typedef</h4><p>可用于设置类型的别名，常与struct搭配使用</p>
+<h3 id="指针与数组"><a href="#指针与数组" class="headerlink" title="指针与数组"></a>指针与数组</h3><h4 id="Pointer"><a href="#Pointer" class="headerlink" title="Pointer"></a>Pointer</h4><p>指针可以视作指向一块内存空间的变量，存储这块空间的地址</p>
+<p>定义指针变量使用*符号，若要定义任意指针，使用void *</p>
+<p>指针还包括<strong>函数指针</strong>，用来指向一个函数，可以实现python中的高阶函数</p>
+<p><img src="/%5Cimg%5C61C%5Cc4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/%5Cimg%5C61C%5Cc5.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="Array"><a href="#Array" class="headerlink" title="Array"></a>Array</h4><p>数组本质上就是一块连续的内存空间，因此与指针有异曲同工之妙</p>
+<p>例如：char *即字符串，a[b]本质上即 *(a+b)</p>
+<h3 id="内存管理-Memory-Manaegment"><a href="#内存管理-Memory-Manaegment" class="headerlink" title="内存管理(Memory Manaegment)"></a>内存管理(Memory Manaegment)</h3><h4 id="内存位置"><a href="#内存位置" class="headerlink" title="内存位置"></a>内存位置</h4><p><img src="/%5Cimg%5C61C%5Cc2.png" srcset="/img/loading.gif" lazyload></p>
+<h5 id="栈-Stack"><a href="#栈-Stack" class="headerlink" title="栈(Stack)"></a>栈(Stack)</h5><ul>
+<li>负责存储本地变量，函数参数</li>
+<li>逐渐伸向较小的地址</li>
 </ul>
-</li>
+<h5 id="堆-Heap"><a href="#堆-Heap" class="headerlink" title="堆(Heap)"></a>堆(Heap)</h5><ul>
+<li>负责存储动态分配的内存，如malloc，new等</li>
+<li>逐渐伸向较大的地址</li>
 </ul>
-<p>然而一个也不行，红温了</p>
-<p>后来发现，这些 blog 或多或少<strong>具有时效性</strong>。因为 wsl 自身也在快速迭代更新，所以其实很多过去的经验并不适用</p>
-<p>经过三四个小时的折腾，我和兄弟发现解决方案竟然是如此简单：</p>
-<ul>
-<li>修改版本为 Ubuntu-22.04</li>
-<li>配置 wslconfig，打开镜像模式</li>
+<h5 id="数据段-Data"><a href="#数据段-Data" class="headerlink" title="数据段(Data)"></a>数据段(Data)</h5><ul>
+<li>负责存储全局变量，字符串字面量</li>
+<li>不改变大小</li>
 </ul>
-<p>大功告成！结局：</p>
-<p><img src="/img/0826/1.png" srcset="/img/loading.gif" lazyload alt="我真傻，真的"></p>
-<p>教训：搜集经验帖以及 blog 学习的时候一定要注意<strong>时效性</strong>，不要拿着过失的经验来往现在身上套！</p>
-<p><img src="/img/0826/2.gif" srcset="/img/loading.gif" lazyload alt="彻底红温"></p>
+<h5 id="Text-Code"><a href="#Text-Code" class="headerlink" title="Text(Code)"></a>Text(Code)</h5><ul>
+<li>Program executable</li>
+<li>不改变大小</li>
+</ul>
+<h4 id="处理内存的一些函数"><a href="#处理内存的一些函数" class="headerlink" title="处理内存的一些函数"></a>处理内存的一些函数</h4><h5 id="void-malloc-size-t-n"><a href="#void-malloc-size-t-n" class="headerlink" title="void *malloc(size_t n)"></a>void *malloc(size_t n)</h5><p>声明一块n bits的动态内存，但是内部未经过初始化</p>
+<h5 id="void-calloc-size-t-num-size-t-size"><a href="#void-calloc-size-t-num-size-t-size" class="headerlink" title="void *calloc(size_t num, size_t size)"></a>void *calloc(size_t num, size_t size)</h5><p>声明一块n*size bits的动态内存，并全部初始化为0</p>
+<h5 id="void-realloc-void-ptr-size-t-size"><a href="#void-realloc-void-ptr-size-t-size" class="headerlink" title="void *realloc(void *ptr, size_t size)"></a>void *realloc(void *ptr, size_t size)</h5><p>将ptr指向的地址重新声明为size bits的地址，并且没有初始化</p>
+<p><img src="/%5Cimg%5C61C%5Cc3.png" srcset="/img/loading.gif" lazyload></p>
+<h5 id="void-free-void-ptr"><a href="#void-free-void-ptr" class="headerlink" title="void free(void *ptr)"></a>void free(void *ptr)</h5><p>释放ptr指针指向的内存</p>
+<hr>
+<p>在C语言中，内存管理是非常重要的概念，不同于CS61B中的Java语言会自动帮你收集废弃的内存，C语言中每一块动态分配的内存都需要自己<strong>显式地释放掉</strong>。否则便有可能造成内存泄露等一系列后果</p>
+<p>这一部分的Lab还教了gdb和valgrind的使用，简单贴个表在这里：</p>
 
                 
               </div>
@@ -368,8 +385,15 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
   
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/CS61C/" class="category-chain-item">CS61C</a>
+  
+  
+
   
 
       </span>
@@ -383,11 +407,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/wsl/" class="print-no-link">#wsl</a>
-      
-        <a href="/tags/linux/" class="print-no-link">#linux</a>
-      
-        <a href="/tags/clash/" class="print-no-link">#clash</a>
+        <a href="/tags/C/" class="print-no-link">#C</a>
       
     </div>
   
@@ -399,8 +419,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>wsl2配置clash代理记录</div>
-      <div>http://example.com/2024/08/26/wslClash/</div>
+      <div>C语言入门</div>
+      <div>http://example.com/2024/09/03/61C-C/</div>
     </div>
     <div class="license-meta">
       
@@ -412,7 +432,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年8月26日</div>
+          <div>2024年9月3日</div>
         </div>
       
       
@@ -444,9 +464,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/09/03/61C-C/" title="C语言入门">
+                      <a href="/2024/09/05/Num-Rep/" title="数字的表示">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">C语言入门</span>
+                        <span class="hidden-mobile">数字的表示</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -454,8 +474,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/08/21/gitlet/" title="Gitlet之我见">
-                        <span class="hidden-mobile">Gitlet之我见</span>
+                      <a href="/2024/08/26/wslClash/" title="wsl2配置clash代理记录">
+                        <span class="hidden-mobile">wsl2配置clash代理记录</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

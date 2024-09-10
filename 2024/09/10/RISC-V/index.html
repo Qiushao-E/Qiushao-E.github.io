@@ -19,27 +19,30 @@
   <meta name="author" content="思源南路世一劈">
   <meta name="keywords" content="">
   
-    <meta name="description" content="我真傻，真的">
+    <meta name="description" content="CS61C-RISC-V这一部分主要讲了RISC-V指令，包括引入，格式(尤其是Calling Convention)，原理以及几种不同的指令类型 一个很重要的参考：命令参考附录 Intro我们知道高级编程语言是不能被计算机直接看懂的，计算机明白的是机器语言，即二进制码，而人类使用的编程语言，离机器语言中间还有个中间体——即汇编语言(Assembly Language) 如下图所示，我们目前探索的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="wsl2配置clash代理记录">
-<meta property="og:url" content="http://example.com/2024/08/26/wslClash/index.html">
+<meta property="og:title" content="RISC-V">
+<meta property="og:url" content="http://example.com/2024/09/10/RISC-V/index.html">
 <meta property="og:site_name" content="Home">
-<meta property="og:description" content="我真傻，真的">
+<meta property="og:description" content="CS61C-RISC-V这一部分主要讲了RISC-V指令，包括引入，格式(尤其是Calling Convention)，原理以及几种不同的指令类型 一个很重要的参考：命令参考附录 Intro我们知道高级编程语言是不能被计算机直接看懂的，计算机明白的是机器语言，即二进制码，而人类使用的编程语言，离机器语言中间还有个中间体——即汇编语言(Assembly Language) 如下图所示，我们目前探索的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/img/0826/1.png">
-<meta property="og:image" content="http://example.com/img/0826/2.gif">
-<meta property="article:published_time" content="2024-08-26T14:37:35.000Z">
-<meta property="article:modified_time" content="2024-08-26T14:58:43.381Z">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr1.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr2.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr3.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr4.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr5.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr6.png">
+<meta property="og:image" content="http://example.com/%5Cimg%5C61C%5Cr7.png">
+<meta property="article:published_time" content="2024-09-10T05:30:00.000Z">
+<meta property="article:modified_time" content="2024-09-10T05:31:53.233Z">
 <meta property="article:author" content="思源南路世一劈">
-<meta property="article:tag" content="wsl">
-<meta property="article:tag" content="linux">
-<meta property="article:tag" content="clash">
+<meta property="article:tag" content="RISC-V">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/img/0826/1.png">
+<meta name="twitter:image" content="http://example.com/%5Cimg%5C61C%5Cr1.png">
   
   
   
-  <title>wsl2配置clash代理记录 - Home</title>
+  <title>RISC-V - Home</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -241,7 +244,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="wsl2配置clash代理记录"></span>
+            <span id="subtitle" data-typed-text="RISC-V"></span>
           
         </div>
 
@@ -252,8 +255,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-08-26 22:37" pubdate>
-          2024年8月26日 晚上
+        <time datetime="2024-09-10 13:30" pubdate>
+          2024年9月10日 下午
         </time>
       </span>
     
@@ -264,7 +267,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          312 字
+          832 字
         
       </span>
     
@@ -275,7 +278,7 @@
         
         
         
-          3 分钟
+          7 分钟
         
       </span>
     
@@ -312,44 +315,73 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">wsl2配置clash代理记录</h1>
+            <h1 id="seo-header">RISC-V</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="WSL2-配置网络-Clash-代理记录"><a href="#WSL2-配置网络-Clash-代理记录" class="headerlink" title="WSL2 配置网络 Clash 代理记录"></a>WSL2 配置网络 Clash 代理记录</h1><p>刚安装好 wsl 的时候，进入命令行会显示如下信息：</p>
-<p>wsl: 检测到 localhost 代理配置，但未镜像到 WSL。NAT 模式下的 WSL 不支持 localhost 代理。</p>
-<p>镜像代理是今年新出的功能，如果使用 NAT 模式配置的话也行，只是会比较麻烦</p>
-<p>一开始我在网络上搜寻了各种各样的 blog 来学习配置，包括但不局限于：</p>
+                <h1 id="CS61C-RISC-V"><a href="#CS61C-RISC-V" class="headerlink" title="CS61C-RISC-V"></a>CS61C-RISC-V</h1><p>这一部分主要讲了RISC-V指令，包括引入，格式(尤其是Calling Convention)，原理以及几种不同的指令类型</p>
+<p>一个很重要的参考：<a href="/file/risc-v.pdf" target="_blank">命令参考附录</a></p>
+<h3 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h3><p>我们知道高级编程语言是不能被计算机直接看懂的，计算机明白的是机器语言，即二进制码，而人类使用的编程语言，离机器语言中间还有个中间体——即汇编语言(Assembly Language)</p>
+<p>如下图所示，我们目前探索的计算机抽象层级即位于第二层次：</p>
+<p><img src="/%5Cimg%5C61C%5Cr1.png" srcset="/img/loading.gif" lazyload></p>
+<p>汇编语言有很多种，在61C里我们使用的是经典版本——RISC-V，由于现在的电脑不能直接运行之，所以需要在Venus平台上运行，这是课程已经为我们提供好了的</p>
+<h3 id="RISC-V"><a href="#RISC-V" class="headerlink" title="RISC-V"></a>RISC-V</h3><h4 id="寄存器-Register"><a href="#寄存器-Register" class="headerlink" title="寄存器(Register)"></a>寄存器(Register)</h4><ul>
+<li>仅次于CPU的存储单元！</li>
+<li>非常快！</li>
+<li>每个寄存器存储32或64bits的数据</li>
+<li>一共32个，编号从x0-x31</li>
+</ul>
+<p>这是我们的RISC-V语言直接操纵的对象！</p>
+<p><img src="/%5Cimg%5C61C%5Cr2.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="基本特点与命令格式"><a href="#基本特点与命令格式" class="headerlink" title="基本特点与命令格式"></a>基本特点与命令格式</h4><ul>
+<li><p>不同于高级语言，RISC-V没有所谓的数据类型</p>
+</li>
+<li><p>一切操作都是针对寄存器(里的数据)！！！</p>
+</li>
+<li><p>命令格式也十分统一，如下图所示，实际情况中也只有很少不同：</p>
+</li>
+</ul>
+<p><img src="/%5Cimg%5C61C%5Cr3.png" srcset="/img/loading.gif" lazyload></p>
 <ul>
-<li>.wslconfig<ul>
-<li>开启 mirror 模式</li>
-<li>关闭 DNS 隧道模式</li>
-<li>强制使用主机代理</li>
+<li>命令总体包括数学运算，逻辑控制，内存控制等部分，详情可参考<a href="/file/risc-v.pdf" target="_blank">命令参考附录</a></li>
 </ul>
-</li>
-<li>用脚本修改代理端口<ul>
-<li>修改~&#x2F;.bashrc 使得 http_proxy 强行修改为主机 IP 的端口</li>
+<h4 id="Calling-Convention"><a href="#Calling-Convention" class="headerlink" title="Calling Convention"></a>Calling Convention</h4><p>最重要的一集(雾)</p>
+<p>显然，如果在所有的RISC-V汇编程序里都使用x0-x31这样的寄存器命名，无疑和C语言里变量命名全部abcdefg一样难以理解。</p>
+<p>由此，我们引申出汇编语言里的”Coding Style”，也即Calling Convention，通过一些约定俗成的规定来规范与优化我们的代码格式</p>
+<h5 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h5><ul>
+<li>Callee：被Call的函数</li>
+<li>Caller：去Call别的函数的函数</li>
 </ul>
-</li>
-<li>修改 Clash For Windows 设置<ul>
-<li>安装 Service Mode</li>
-<li>打开 LAN</li>
-<li>打开 TAN 模式</li>
-</ul>
-</li>
-</ul>
-<p>然而一个也不行，红温了</p>
-<p>后来发现，这些 blog 或多或少<strong>具有时效性</strong>。因为 wsl 自身也在快速迭代更新，所以其实很多过去的经验并不适用</p>
-<p>经过三四个小时的折腾，我和兄弟发现解决方案竟然是如此简单：</p>
+<p>一个函数既可以是caller也可以是callee，这一点我尤其建议在Lab 4里的练习里加深体会，因为那里的练习使用了递归函数，更加形象的说明了这个特点</p>
+<p><strong>来者不善！</strong></p>
+<p><strong>你才是来者！</strong></p>
+<h5 id="Callee-saved-Registers"><a href="#Callee-saved-Registers" class="headerlink" title="Callee-saved Registers"></a>Callee-saved Registers</h5><p>指在一个函数被调用前后内容保持不变的寄存器</p>
+<p>从名字上来理解，即“需要由被调用者主动保存的寄存器”</p>
 <ul>
-<li>修改版本为 Ubuntu-22.04</li>
-<li>配置 wslconfig，打开镜像模式</li>
+<li>包括s0-s11</li>
+<li>一个特殊的寄存器：sp(x2)，用来指示栈下端的地址位置</li>
 </ul>
-<p>大功告成！结局：</p>
-<p><img src="/img/0826/1.png" srcset="/img/loading.gif" lazyload alt="我真傻，真的"></p>
-<p>教训：搜集经验帖以及 blog 学习的时候一定要注意<strong>时效性</strong>，不要拿着过失的经验来往现在身上套！</p>
-<p><img src="/img/0826/2.gif" srcset="/img/loading.gif" lazyload alt="彻底红温"></p>
+<p>那么如何来保存&#x2F;读取寄存器内容呢——使用sp,sw,lw三件套，调节栈指针的同时，进行数据的存取</p>
+<p><img src="/%5Cimg%5C61C%5Cr4.png" srcset="/img/loading.gif" lazyload></p>
+<p>从Coller的视角看：调用函数前后，这些<strong>寄存器的值不变</strong></p>
+<h5 id="Caller-saved-Registers"><a href="#Caller-saved-Registers" class="headerlink" title="Caller-saved Registers"></a>Caller-saved Registers</h5><ul>
+<li>ra：负责存储地址，在jumping时生效</li>
+<li>a0-a7：给函数传参</li>
+<li>t0-t6：暂时使用的寄存器，可理解为临时变量</li>
+</ul>
+<p>理解上同理，只是由调用者保存，参考下图：</p>
+<p><img src="/%5Cimg%5C61C%5Cr5.png" srcset="/img/loading.gif" lazyload></p>
+<h5 id="一般的储存原则"><a href="#一般的储存原则" class="headerlink" title="一般的储存原则"></a>一般的储存原则</h5><ul>
+<li>ra必存</li>
+<li>callee类型的，只要用了就存</li>
+<li>caller类型的，只有前后都用了才存</li>
+<li>有存必有取，否则会造成地址紊乱</li>
+</ul>
+<h4 id="指令类型"><a href="#指令类型" class="headerlink" title="指令类型"></a>指令类型</h4><p>一共六种：R，I，S，U，B，J，简记一下即可，附录里都有</p>
+<p>不同类型的指令对应的二进制码构成不同，执行的指令类型也不同(这似乎是UCB考试喜欢考的？)</p>
+<p><img src="/%5Cimg%5C61C%5Cr6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/%5Cimg%5C61C%5Cr7.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
@@ -368,8 +400,15 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
   
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/CS61C/" class="category-chain-item">CS61C</a>
+  
+  
+
   
 
       </span>
@@ -383,11 +422,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/wsl/" class="print-no-link">#wsl</a>
-      
-        <a href="/tags/linux/" class="print-no-link">#linux</a>
-      
-        <a href="/tags/clash/" class="print-no-link">#clash</a>
+        <a href="/tags/RISC-V/" class="print-no-link">#RISC-V</a>
       
     </div>
   
@@ -399,8 +434,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>wsl2配置clash代理记录</div>
-      <div>http://example.com/2024/08/26/wslClash/</div>
+      <div>RISC-V</div>
+      <div>http://example.com/2024/09/10/RISC-V/</div>
     </div>
     <div class="license-meta">
       
@@ -412,7 +447,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年8月26日</div>
+          <div>2024年9月10日</div>
         </div>
       
       
@@ -444,18 +479,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/09/03/61C-C/" title="C语言入门">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">C语言入门</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/08/21/gitlet/" title="Gitlet之我见">
-                        <span class="hidden-mobile">Gitlet之我见</span>
+                      <a href="/2024/09/05/Num-Rep/" title="数字的表示">
+                        <span class="hidden-mobile">数字的表示</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
