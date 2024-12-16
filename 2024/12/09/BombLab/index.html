@@ -1,0 +1,935 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="CSAPP 之 Bomb Lab 记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BombLab">
+<meta property="og:url" content="http://example.com/2024/12/09/BombLab/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="CSAPP 之 Bomb Lab 记录">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-12-09T08:34:58.000Z">
+<meta property="article:modified_time" content="2024-12-16T05:40:54.766Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="CSAPP">
+<meta property="article:tag" content="Assembly">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>BombLab - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="BombLab"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-12-09 16:34" pubdate>
+          2024年12月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">BombLab</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>CSAPP 之 Bomb Lab 解题记录，真的是太有趣辣</p>
+<h2 id="寄存器速查"><a href="#寄存器速查" class="headerlink" title="寄存器速查"></a>寄存器速查</h2><table>
+<thead>
+<tr>
+<th>寄存器名称</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%rax</td>
+<td>返回值</td>
+</tr>
+<tr>
+<td>%rdi, %rsi, %rdx, %rcx, %r8, %r9</td>
+<td>参数，按照顺序排列</td>
+</tr>
+<tr>
+<td>%rsp</td>
+<td>栈指针</td>
+</tr>
+<tr>
+<td>%rbx, %rbp, %r12-%r15</td>
+<td>callee saved</td>
+</tr>
+<tr>
+<td>%10, %r11</td>
+<td>caller saved</td>
+</tr>
+</tbody></table>
+<h2 id="Bomblab"><a href="#Bomblab" class="headerlink" title="Bomblab"></a>Bomblab</h2><h3 id="GDB-的使用"><a href="#GDB-的使用" class="headerlink" title="GDB 的使用"></a>GDB 的使用</h3><h4 id="gdb-常用指令"><a href="#gdb-常用指令" class="headerlink" title="gdb 常用指令"></a>gdb 常用指令</h4><table>
+<thead>
+<tr>
+<th align="center">指令</th>
+<th align="center">全称</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">r</td>
+<td align="center">run</td>
+<td align="center">开始执行程序，直到下一个断点或程序结束</td>
+</tr>
+<tr>
+<td align="center">q</td>
+<td align="center">quit</td>
+<td align="center">退出 GDB 调试器</td>
+</tr>
+<tr>
+<td align="center">ni</td>
+<td align="center">nexti</td>
+<td align="center">执行下一条指令，但不进入函数内部</td>
+</tr>
+<tr>
+<td align="center">si</td>
+<td align="center">stepi</td>
+<td align="center">执行当前指令，如果是函数调用则进入函数</td>
+</tr>
+<tr>
+<td align="center">b</td>
+<td align="center">break</td>
+<td align="center">在指定位置设置断点</td>
+</tr>
+<tr>
+<td align="center">c</td>
+<td align="center">cont</td>
+<td align="center">从当前位置继续执行程序，直到下一个断点或程序结束</td>
+</tr>
+<tr>
+<td align="center">p</td>
+<td align="center">print</td>
+<td align="center">打印变量的值</td>
+</tr>
+<tr>
+<td align="center">x</td>
+<td align="center"></td>
+<td align="center">打印内存中的值</td>
+</tr>
+<tr>
+<td align="center">j</td>
+<td align="center">jump</td>
+<td align="center">跳转到程序指定位置</td>
+</tr>
+<tr>
+<td align="center">disas</td>
+<td align="center"></td>
+<td align="center">反汇编当前函数或指定的代码区域</td>
+</tr>
+<tr>
+<td align="center">layout asm</td>
+<td align="center"></td>
+<td align="center">显示汇编代码视图</td>
+</tr>
+<tr>
+<td align="center">layout regs</td>
+<td align="center"></td>
+<td align="center">显示当前的寄存器状态和它们的值</td>
+</tr>
+</tbody></table>
+<p>备注：退出视图模式使用 Ctrl+X，然后按 A</p>
+<h4 id="关于-p-和-x，更详细的解释"><a href="#关于-p-和-x，更详细的解释" class="headerlink" title="关于 p 和 x，更详细的解释"></a>关于 p 和 x，更详细的解释</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs bash">p <span class="hljs-variable">$rax</span>  <span class="hljs-comment"># 打印寄存器 rax 的值</span><br>p <span class="hljs-variable">$rsp</span>  <span class="hljs-comment"># 打印栈指针的值</span><br>p/x <span class="hljs-variable">$rsp</span>  <span class="hljs-comment"># 打印栈指针的值，以十六进制显示</span><br>p/d <span class="hljs-variable">$rsp</span>  <span class="hljs-comment"># 打印栈指针的值，以十进制显示</span><br><br>x/2x <span class="hljs-variable">$rsp</span>  <span class="hljs-comment"># 以十六进制格式查看栈指针 %rsp 指向的内存位置 M[%rsp] 开始的两个单位。</span><br>x/2d <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 以十进制格式查看栈指针 %rsp 指向的内存位置 M[%rsp] 开始的两个单位。</span><br>x/2c <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 以字符格式查看栈指针 %rsp 指向的内存位置 M[%rsp] 开始的两个单位。</span><br>x/s <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 把栈指针指向的内存位置 M[%rsp] 当作 C 风格字符串来查看。</span><br><br>x/b <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 检查栈指针指向的内存位置 M[%rsp] 开始的 1 字节。</span><br>x/h <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 检查栈指针指向的内存位置 M[%rsp] 开始的 2 字节（半字）。</span><br>x/w <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 检查栈指针指向的内存位置 M[%rsp] 开始的 4 字节（字）。</span><br>x/g <span class="hljs-variable">$rsp</span> <span class="hljs-comment"># 检查栈指针指向的内存位置 M[%rsp] 开始的 8 字节（双字）。</span><br><br>info registers  <span class="hljs-comment"># 打印所有寄存器的值</span><br>info breakpoints  <span class="hljs-comment"># 打印所有断点的信息</span><br><br>delete breakpoints 1  <span class="hljs-comment"># 删除第一个断点，可以简写为 d 1</span><br><br></code></pre></td></tr></table></figure>
+
+<h4 id="gdbinit-文件妙用"><a href="#gdbinit-文件妙用" class="headerlink" title=".gdbinit 文件妙用"></a>.gdbinit 文件妙用</h4><p>这是一个可以在每次 gdb 启动时默认加载指令的文件，我们用它来安全化炸弹</p>
+<p>使用如下命令创建.gdbinit 文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 创建当前目录下的 .gdbinit 文件</span><br><span class="hljs-built_in">touch</span> .gdbinit<br><span class="hljs-comment"># 创建 .config/gdb 文件夹</span><br><span class="hljs-built_in">mkdir</span> -p ~/.config/gdb<br><span class="hljs-comment"># 允许 gdb 预加载根目录下所有的文件</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;set auto-load safe-path /&quot;</span> &gt; ~/.config/gdb/gdbinit<br></code></pre></td></tr></table></figure>
+
+<p>在工作目录下的.gdbinit 里便可以输入我们的初始化指令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 设置文件输入，也可以不用</span><br><span class="hljs-built_in">set</span> args sol.txt<br><br><span class="hljs-comment">#防止炸弹爆炸，安全化炸弹</span><br>b explode_bomb<br><br><span class="hljs-comment"># 为各个 phase 函数设置断点</span><br>b phase_1<br>b phase_2<br>b phase_3<br>b phase_4<br>b phase_5<br>b phase_6<br><br><span class="hljs-comment"># 为校验函数设置断点</span><br>b phase_defused<br><span class="hljs-comment"># 为此断点编程</span><br><span class="hljs-built_in">command</span><br><span class="hljs-comment"># 直接跳到返回语句处，跳过校验流程</span><br>jump *(phase_defused + 0x3F)<br>end<br><span class="hljs-comment">#以上是下来练习时用的，考试时注释掉</span><br><br>layout asm<br><br>r<br></code></pre></td></tr></table></figure>
+
+<p>本来还可以直接 jump 掉 send_msg 速通，但是这个 bug 今年貌似被修复了，所以不再使用</p>
+<h3 id="汇编代码解读-and-解题"><a href="#汇编代码解读-and-解题" class="headerlink" title="汇编代码解读 and 解题"></a>汇编代码解读 and 解题</h3><h4 id="获得汇编代码"><a href="#获得汇编代码" class="headerlink" title="获得汇编代码"></a>获得汇编代码</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d bomb &gt; asm<br></code></pre></td></tr></table></figure>
+
+<p>在汇编代码中找到 main 所在，即可找到各个 phase 代码</p>
+<h4 id="Phase-1"><a href="#Phase-1" class="headerlink" title="Phase 1"></a>Phase 1</h4><p>找到对应的汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00000000004016b4 &lt;phase_1&gt;:<br>  4016b4:	f3 0f 1e fa          	endbr64<br>  4016b8:	48 83 ec 08          	sub    $0x8,%rsp<br>  4016bc:	48 8d 35 8d 1a 00 00 	lea    0x1a8d(%rip),%rsi        # 403150 &lt;_IO_stdin_used+0x150&gt;<br>  4016c3:	e8 4e 05 00 00       	call   401c16 &lt;strings_not_equal&gt;<br>  4016c8:	85 c0                	test   %eax,%eax<br>  4016ca:	75 05                	jne    4016d1 &lt;phase_1+0x1d&gt;<br>  4016cc:	48 83 c4 08          	add    $0x8,%rsp<br>  4016d0:	c3                   	ret<br>  4016d1:	e8 2d 0e 00 00       	call   402503 &lt;explode_bomb&gt;<br>  4016d6:	eb f4                	jmp    4016cc &lt;phase_1+0x18&gt;<br></code></pre></td></tr></table></figure>
+
+<p>第一行代码是防止 ROP 攻击的，不用管</p>
+<p>注意到第四行调用了字符串是否相等的函数，考虑校验方式为对比输入的字符串是否与预存的字符串相等</p>
+<p>打开 gdb，注意这时候已经初始化完毕，可以先在文件中随便输入一些东西，然后前进到调用函数的前一句，查看%rsi 内存的东西即可（注意%rsi 是第二个参数，第一个参数在%rdi 里即为我们输入的东西）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">x/s <span class="hljs-variable">$rsi</span><br></code></pre></td></tr></table></figure>
+
+<p>得到的即为答案，放到文件里即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">I turned the moon into something I like to call a Death Star.<br></code></pre></td></tr></table></figure>
+
+<h4 id="Phase-2"><a href="#Phase-2" class="headerlink" title="Phase 2"></a>Phase 2</h4><p>找到对应的汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00000000004016d8 &lt;phase_2&gt;:<br>  4016d8:	f3 0f 1e fa          	endbr64<br>  4016dc:	41 55                	push   %r13<br>  4016de:	41 54                	push   %r12<br>  4016e0:	55                   	push   %rbp<br>  4016e1:	53                   	push   %rbx<br>  4016e2:	48 83 ec 28          	sub    $0x28,%rsp<br>  4016e6:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax<br>  4016ed:	00 00<br>  4016ef:	48 89 44 24 18       	mov    %rax,0x18(%rsp)<br>  4016f4:	31 c0                	xor    %eax,%eax<br>  4016f6:	48 89 e3             	mov    %rsp,%rbx<br>  4016f9:	48 89 de             	mov    %rbx,%rsi<br>  4016fc:	e8 44 0e 00 00       	call   402545 &lt;read_six_numbers&gt;<br>  401701:	4c 8d 6c 24 0c       	lea    0xc(%rsp),%r13<br>  401706:	bd 00 00 00 00       	mov    $0x0,%ebp<br>  40170b:	eb 0d                	jmp    40171a &lt;phase_2+0x42&gt;<br>  40170d:	41 03 2c 24          	add    (%r12),%ebp<br>  401711:	48 83 c3 04          	add    $0x4,%rbx<br>  401715:	4c 39 eb             	cmp    %r13,%rbx<br>  401718:	74 11                	je     40172b &lt;phase_2+0x53&gt;<br>  40171a:	49 89 dc             	mov    %rbx,%r12<br>  40171d:	8b 43 0c             	mov    0xc(%rbx),%eax<br>  401720:	39 03                	cmp    %eax,(%rbx)<br>  401722:	74 e9                	je     40170d &lt;phase_2+0x35&gt;<br>  401724:	e8 da 0d 00 00       	call   402503 &lt;explode_bomb&gt;<br>  401729:	eb e2                	jmp    40170d &lt;phase_2+0x35&gt;<br>  40172b:	85 ed                	test   %ebp,%ebp<br>  40172d:	74 1b                	je     40174a &lt;phase_2+0x72&gt;<br>  40172f:	48 8b 44 24 18       	mov    0x18(%rsp),%rax<br>  401734:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax<br>  40173b:	00 00<br>  40173d:	75 12                	jne    401751 &lt;phase_2+0x79&gt;<br>  40173f:	48 83 c4 28          	add    $0x28,%rsp<br>  401743:	5b                   	pop    %rbx<br>  401744:	5d                   	pop    %rbp<br>  401745:	41 5c                	pop    %r12<br>  401747:	41 5d                	pop    %r13<br>  401749:	c3                   	ret<br>  40174a:	e8 b4 0d 00 00       	call   402503 &lt;explode_bomb&gt;<br>  40174f:	eb de                	jmp    40172f &lt;phase_2+0x57&gt;<br>  401751:	e8 6a fb ff ff       	call   4012c0 &lt;__stack_chk_fail@plt&gt;<br></code></pre></td></tr></table></figure>
+
+<p>略去栈保护，直接看核心部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs assembly">4016f6:	48 89 e3             	mov    %rsp,%rbx<br>4016f9:	48 89 de             	mov    %rbx,%rsi<br>4016fc:	e8 44 0e 00 00       	call   402545 &lt;read_six_numbers&gt;<br>401701:	4c 8d 6c 24 0c       	lea    0xc(%rsp),%r13<br>401706:	bd 00 00 00 00       	mov    $0x0,%ebp<br>40170b:	eb 0d                	jmp    40171a &lt;phase_2+0x42&gt;<br>40170d:	41 03 2c 24          	add    (%r12),%ebp<br>401711:	48 83 c3 04          	add    $0x4,%rbx<br>401715:	4c 39 eb             	cmp    %r13,%rbx<br>401718:	74 11                	je     40172b &lt;phase_2+0x53&gt;<br>40171a:	49 89 dc             	mov    %rbx,%r12<br>40171d:	8b 43 0c             	mov    0xc(%rbx),%eax<br>401720:	39 03                	cmp    %eax,(%rbx)<br>401722:	74 e9                	je     40170d &lt;phase_2+0x35&gt;<br></code></pre></td></tr></table></figure>
+
+<p>注意到每次循环后加的是 0x4，但循环体内部比较的数字是它自己和地址加上 0xc 后的数字。所以这里的比较方式实际上是每个数字和它<strong>往后的第三个数字</strong>比，即第一个和第四个，第二个和第五个，第三个和第六个，具体内容如代码所示：</p>
+<ul>
+<li>每对数字必须相等</li>
+<li>数字总和不能是 0</li>
+</ul>
+<p>直接输入一套</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">1 1 1 1 1 1<br></code></pre></td></tr></table></figure>
+
+<p>即可</p>
+<blockquote>
+<p>还有一种 phase 2，内容是递归数列，每一项根据前一项递归而来，且第一项一般为 1，注意一下这种情况</p>
+</blockquote>
+<h4 id="Phase-3"><a href="#Phase-3" class="headerlink" title="Phase 3"></a>Phase 3</h4><p>这一部分的内容是跳表，我们找到对应代码，并找到跳表前的核心段落</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs assembly">40176e:	48 8d 4c 24 0f       	lea    0xf(%rsp),%rcx<br>401773:	48 8d 54 24 10       	lea    0x10(%rsp),%rdx<br>401778:	4c 8d 44 24 14       	lea    0x14(%rsp),%r8<br>40177d:	48 8d 35 32 1a 00 00 	lea    0x1a32(%rip),%rsi        # 4031b6 &lt;_IO_stdin_used+0x1b6&gt;<br>401784:	e8 17 fc ff ff       	call   4013a0 &lt;__isoc99_sscanf@plt&gt;<br>401789:	83 f8 02             	cmp    $0x2,%eax<br>40178c:	7e 20                	jle    4017ae &lt;phase_3+0x58&gt;<br>40178e:	83 7c 24 10 07       	cmpl   $0x7,0x10(%rsp)<br>401793:	0f 87 0d 01 00 00    	ja     4018a6 &lt;phase_3+0x150&gt;<br>401799:	8b 44 24 10          	mov    0x10(%rsp),%eax<br>40179d:	48 8d 15 1c 1a 00 00 	lea    0x1a1c(%rip),%rdx        # 4031c0 &lt;_IO_stdin_used+0x1c0&gt;<br>4017a4:	48 63 04 82          	movslq (%rdx,%rax,4),%rax<br>4017a8:	48 01 d0             	add    %rdx,%rax<br>4017ab:	3e ff e0             	notrack jmp *%rax<br></code></pre></td></tr></table></figure>
+
+<p>注意到这里调用了 sscanf，观察上方传参可以发现参数顺序为%rdx, %rcx, %r8</p>
+<p>再用 gdb 读取%rsi 的内容获取格式 <code>%d %c %d</code> ，其实也可以从传参时内存大小来判断（%rdx %r8 都占用 4 个字节，但%rcx 占用 1 个）</p>
+<p>然后便是构造条表并跳转，这里要求第一个数字必须小于 7，然后根据第一个数字的大小来跳转到不同的分支</p>
+<p>如果单看代码分析不出来跳表的话，可以直接启动 gdb，检查跳转前寄存器的值即可</p>
+<p>这里仅记录第一个数字为 0 的情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs assembly">4017b5:	b8 61 00 00 00       	mov    $0x61,%eax<br>4017ba:	81 7c 24 14 48 02 00 	cmpl   $0x248,0x14(%rsp)<br>4017c1:	00<br>4017c2:	0f 84 e8 00 00 00    	je     4018b0 &lt;phase_3+0x15a&gt;<br><br>......<br><br>4018b0:	38 44 24 0f          	cmp    %al,0xf(%rsp)<br>4018b4:	75 15                	jne    4018cb &lt;phase_3+0x175&gt;<br>4018b6:	48 8b 44 24 18       	mov    0x18(%rsp),%rax<br>4018bb:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax<br>4018c2:	00 00<br>4018c4:	75 0c                	jne    4018d2 &lt;phase_3+0x17c&gt;<br>4018c6:	48 83 c4 28          	add    $0x28,%rsp<br>4018ca:	c3                   	ret<br></code></pre></td></tr></table></figure>
+
+<p>于是第三个数字为 0x248，即 584，第二个字符为 0x61，即 a</p>
+<p>故一组可行解为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">0 a 584<br></code></pre></td></tr></table></figure>
+
+<h4 id="Phase-4"><a href="#Phase-4" class="headerlink" title="Phase 4"></a>Phase 4</h4><p>这一段是函数的递归调用，贴出核心代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs assembly">401919:	48 8d 54 24 04       	lea    0x4(%rsp),%rdx<br> 40191e:	48 8d 35 97 18 00 00 	lea    0x1897(%rip),%rsi        # 4031bc &lt;_IO_stdin_used+0x1bc&gt;<br> 401925:	e8 76 fa ff ff       	call   4013a0 &lt;__isoc99_sscanf@plt&gt;<br> 40192a:	83 f8 01             	cmp    $0x1,%eax<br> 40192d:	75 07                	jne    401936 &lt;phase_4+0x35&gt;<br> 40192f:	83 7c 24 04 00       	cmpl   $0x0,0x4(%rsp)<br> 401934:	7f 05                	jg     40193b &lt;phase_4+0x3a&gt;<br> 401936:	e8 c8 0b 00 00       	call   402503 &lt;explode_bomb&gt;<br> 40193b:	8b 7c 24 04          	mov    0x4(%rsp),%edi<br> 40193f:	e8 93 ff ff ff       	call   4018d7 &lt;func4&gt;<br> 401944:	3d f7 90 0c 00       	cmp    $0xc90f7,%eax<br> 401949:	75 15                	jne    401960 &lt;phase_4+0x5f&gt;<br><br></code></pre></td></tr></table></figure>
+
+<p>其实就是先读数，然后用这个参数调用 func4，比较返回值和 0xc90f7 的大小</p>
+<p>那观察 func4 即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00000000004018d7 &lt;func4&gt;:<br>  4018d7:	f3 0f 1e fa          	endbr64<br>  4018db:	b8 01 00 00 00       	mov    $0x1,%eax<br>  4018e0:	85 ff                	test   %edi,%edi<br>  4018e2:	7e 1c                	jle    401900 &lt;func4+0x29&gt;<br>  4018e4:	48 83 ec 08          	sub    $0x8,%rsp<br>  4018e8:	83 ef 01             	sub    $0x1,%edi<br>  4018eb:	e8 e7 ff ff ff       	call   4018d7 &lt;func4&gt;<br>  4018f0:	89 c2                	mov    %eax,%edx<br>  4018f2:	8d 04 c5 00 00 00 00 	lea    0x0(,%rax,8),%eax<br>  4018f9:	29 d0                	sub    %edx,%eax<br>  4018fb:	48 83 c4 08          	add    $0x8,%rsp<br>  4018ff:	c3                   	ret<br>  401900:	c3                   	ret<br></code></pre></td></tr></table></figure>
+
+<p>原来是通过递归计算</p>
+<p>$$<br>7^n<br>$$</p>
+<p>注意到</p>
+<p>$$<br>7^7&#x3D;0xc90f7<br>$$</p>
+<p>即可，答案为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">7<br></code></pre></td></tr></table></figure>
+
+<h4 id="Phase-5"><a href="#Phase-5" class="headerlink" title="Phase 5"></a>Phase 5</h4><p>最后两关逐渐变难，先贴上代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs assembly">000000000040196c &lt;phase_5&gt;:<br>  40196c:	f3 0f 1e fa          	endbr64<br>  401970:	48 83 ec 18          	sub    $0x18,%rsp<br>  401974:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax<br>  40197b:	00 00<br>  40197d:	48 89 44 24 08       	mov    %rax,0x8(%rsp)<br>  401982:	31 c0                	xor    %eax,%eax<br>  401984:	48 8d 4c 24 04       	lea    0x4(%rsp),%rcx<br>  401989:	48 89 e2             	mov    %rsp,%rdx<br>  40198c:	48 8d 35 bd 1b 00 00 	lea    0x1bbd(%rip),%rsi        # 403550 &lt;array.0+0x370&gt;<br>  401993:	e8 08 fa ff ff       	call   4013a0 &lt;__isoc99_sscanf@plt&gt;<br>  401998:	83 f8 01             	cmp    $0x1,%eax<br>  40199b:	7e 5a                	jle    4019f7 &lt;phase_5+0x8b&gt;<br>  40199d:	8b 04 24             	mov    (%rsp),%eax<br>  4019a0:	83 e0 0f             	and    $0xf,%eax<br>  4019a3:	89 04 24             	mov    %eax,(%rsp)<br>  4019a6:	83 f8 0f             	cmp    $0xf,%eax<br>  4019a9:	74 32                	je     4019dd &lt;phase_5+0x71&gt;<br>  4019ab:	b9 00 00 00 00       	mov    $0x0,%ecx<br>  4019b0:	ba 00 00 00 00       	mov    $0x0,%edx<br>  4019b5:	48 8d 35 24 18 00 00 	lea    0x1824(%rip),%rsi        # 4031e0 &lt;array.0&gt;<br>  4019bc:	83 c2 01             	add    $0x1,%edx<br>  4019bf:	48 98                	cltq<br>  4019c1:	8b 04 86             	mov    (%rsi,%rax,4),%eax<br>  4019c4:	01 c1                	add    %eax,%ecx<br>  4019c6:	83 f8 0f             	cmp    $0xf,%eax<br>  4019c9:	75 f1                	jne    4019bc &lt;phase_5+0x50&gt;<br>  4019cb:	c7 04 24 0f 00 00 00 	movl   $0xf,(%rsp)<br>  4019d2:	83 fa 0a             	cmp    $0xa,%edx<br>  4019d5:	75 06                	jne    4019dd &lt;phase_5+0x71&gt;<br>  4019d7:	39 4c 24 04          	cmp    %ecx,0x4(%rsp)<br>  4019db:	74 05                	je     4019e2 &lt;phase_5+0x76&gt;<br>  4019dd:	e8 21 0b 00 00       	call   402503 &lt;explode_bomb&gt;<br>  4019e2:	48 8b 44 24 08       	mov    0x8(%rsp),%rax<br>  4019e7:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax<br>  4019ee:	00 00<br>  4019f0:	75 0c                	jne    4019fe &lt;phase_5+0x92&gt;<br>  4019f2:	48 83 c4 18          	add    $0x18,%rsp<br>  4019f6:	c3                   	ret<br>  4019f7:	e8 07 0b 00 00       	call   402503 &lt;explode_bomb&gt;<br>  4019fc:	eb 9f                	jmp    40199d &lt;phase_5+0x31&gt;<br>  4019fe:	e8 bd f8 ff ff       	call   4012c0 &lt;__stack_chk_fail@plt&gt;<br></code></pre></td></tr></table></figure>
+
+<p>大体上是一个 while 循环，同时维护了%ecx, %edx 两个循环变量，要求是用输入值作为下标访问数组，同时每次循环用访问得到的值作为新的下标继续访问，直到得到 15，且这时候一共跳转了 10 次，输入的第二个数字即为访问过程中的累计求和</p>
+<p>关键是如何获得数组的内容，观察到代码里给出了数组首地址，那我们直接在 gdb 中访问即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">(gdb) x/16w 0x4031e0<br>0x4031e0 &lt;array.0&gt;:     10      2       14      7<br>0x4031f0 &lt;array.0+16&gt;:  8       12      15      11<br>0x403200 &lt;array.0+32&gt;:  0       4       1       13<br>0x403210 &lt;array.0+48&gt;:  3       9       6       5<br></code></pre></td></tr></table></figure>
+
+<p>过程略，答案为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">13 69<br></code></pre></td></tr></table></figure>
+
+<h4 id="Phase-6"><a href="#Phase-6" class="headerlink" title="Phase 6"></a>Phase 6</h4><p>这一部分是链表重排，也是最难的地方，关键是理解链表重排的函数以及解题的要求</p>
+<p>贴上 phase6 的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0000000000401a6e &lt;phase_6&gt;:<br>  401a6e:	f3 0f 1e fa          	endbr64<br>  401a72:	48 83 ec 08          	sub    $0x8,%rsp<br>  401a76:	ba 0a 00 00 00       	mov    $0xa,%edx<br>  401a7b:	be 00 00 00 00       	mov    $0x0,%esi<br>  401a80:	e8 eb f8 ff ff       	call   401370 &lt;strtol@plt&gt;<br>  401a85:	89 05 e5 3c 00 00    	mov    %eax,0x3ce5(%rip)        # 405770 &lt;node0&gt;<br>  401a8b:	48 8d 3d de 3c 00 00 	lea    0x3cde(%rip),%rdi        # 405770 &lt;node0&gt;<br>  401a92:	e8 6c ff ff ff       	call   401a03 &lt;fun6&gt;<br>  401a97:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401a9b:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401a9f:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401aa3:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401aa7:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401aab:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401aaf:	48 8b 40 08          	mov    0x8(%rax),%rax<br>  401ab3:	8b 0d b7 3c 00 00    	mov    0x3cb7(%rip),%ecx        # 405770 &lt;node0&gt;<br>  401ab9:	39 08                	cmp    %ecx,(%rax)<br>  401abb:	75 05                	jne    401ac2 &lt;phase_6+0x54&gt;<br>  401abd:	48 83 c4 08          	add    $0x8,%rsp<br>  401ac1:	c3                   	ret<br>  401ac2:	e8 3c 0a 00 00       	call   402503 &lt;explode_bomb&gt;<br>  401ac7:	eb f4                	jmp    401abd &lt;phase_6+0x4f&gt;<br></code></pre></td></tr></table></figure>
+
+<p>大概就是将输入值送进 node0，然后进行链表重排，重排后返回的值为链表最大值的地址，要求从这里开始往后访问七次能回到 node0</p>
+<p>明白到这里就发现其实是不难的，关键是知道链表内容，然后把 node0 设置成链表里第 8 小的数字就行了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">(gdb) x/36w 0x405770<br>0x405770 &lt;node0&gt;:       0       0       4216704 0<br>0x405780 &lt;node1&gt;:       104     1       4216720 0<br>0x405790 &lt;node2&gt;:       624     2       4216736 0<br>0x4057a0 &lt;node3&gt;:       812     3       4216752 0<br>0x4057b0 &lt;node4&gt;:       81      4       4216768 0<br>0x4057c0 &lt;node5&gt;:       201     5       4216784 0<br>0x4057d0 &lt;node6&gt;:       859     6       4216800 0<br>0x4057e0 &lt;node7&gt;:       108     7       4216816 0<br>0x4057f0 &lt;node8&gt;:       751     8       4215392 0<br>(gdb) x/4w 0x405260<br>0x405260 &lt;node9&gt;:       975     9       0       0<br></code></pre></td></tr></table></figure>
+
+<p>那么答案即为 104-108 里的随便一个数，为了吉利我选择 108</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">108<br></code></pre></td></tr></table></figure>
+
+<p>这里有一个小建议，如果被链表函数绕晕了，那我们可以先随便输入一个数，用 gdb 运行到 func6 刚返回那里，然后去找到这时候链表的内容即可（前提是你还是能大致看出来是在排序）</p>
+<h4 id="Secret-Phase"><a href="#Secret-Phase" class="headerlink" title="Secret Phase"></a>Secret Phase</h4><p>由于 Lab 2 已经过了 ddl，我一开始跳过了和服务器通讯的那部分，所以这里的 secret phase 我现在已经无法访问，但是我可以写出来具体方法</p>
+<h5 id="进入-secret-phase"><a href="#进入-secret-phase" class="headerlink" title="进入 secret phase"></a>进入 secret phase</h5><p>通常是在 phase_defused 里暗藏玄机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs assembly">000000000040267f &lt;phase_defused&gt;:<br>  40267f:	f3 0f 1e fa          	endbr64<br>  402683:	48 83 ec 78          	sub    $0x78,%rsp<br>  402687:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax<br>  40268e:	00 00<br>  402690:	48 89 44 24 68       	mov    %rax,0x68(%rsp)<br>  402695:	31 c0                	xor    %eax,%eax<br>  402697:	bf 01 00 00 00       	mov    $0x1,%edi<br>  40269c:	e8 06 f8 ff ff       	call   401ea7 &lt;send_msg&gt;<br>  4026a1:	83 3d e8 31 00 00 06 	cmpl   $0x6,0x31e8(%rip)        # 405890 &lt;num_input_strings&gt;<br>  4026a8:	74 15                	je     4026bf &lt;phase_defused+0x40&gt;<br>  4026aa:	48 8b 44 24 68       	mov    0x68(%rsp),%rax<br>  4026af:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax<br>  4026b6:	00 00<br>  4026b8:	75 7f                	jne    402739 &lt;phase_defused+0xba&gt;<br>  4026ba:	48 83 c4 78          	add    $0x78,%rsp<br>  4026be:	c3                   	ret<br>  4026bf:	48 8d 4c 24 10       	lea    0x10(%rsp),%rcx<br>  4026c4:	48 8d 54 24 0c       	lea    0xc(%rsp),%rdx<br>  4026c9:	48 8d 35 ca 0e 00 00 	lea    0xeca(%rip),%rsi        # 40359a &lt;array.0+0x3ba&gt;<br>  4026d0:	48 8d 3d b9 32 00 00 	lea    0x32b9(%rip),%rdi        # 405990 &lt;input_strings+0xf0&gt;<br>  4026d7:	b8 00 00 00 00       	mov    $0x0,%eax<br>  4026dc:	e8 bf ec ff ff       	call   4013a0 &lt;__isoc99_sscanf@plt&gt;<br>  4026e1:	83 f8 02             	cmp    $0x2,%eax<br>  4026e4:	74 1a                	je     402700 &lt;phase_defused+0x81&gt;<br>  4026e6:	48 8d 3d f3 0b 00 00 	lea    0xbf3(%rip),%rdi        # 4032e0 &lt;array.0+0x100&gt;<br>  4026ed:	e8 8e eb ff ff       	call   401280 &lt;puts@plt&gt;<br>  4026f2:	48 8d 3d 17 0c 00 00 	lea    0xc17(%rip),%rdi        # 403310 &lt;array.0+0x130&gt;<br>  4026f9:	e8 82 eb ff ff       	call   401280 &lt;puts@plt&gt;<br>  4026fe:	eb aa                	jmp    4026aa &lt;phase_defused+0x2b&gt;<br>  402700:	48 8d 7c 24 10       	lea    0x10(%rsp),%rdi<br>  402705:	48 8d 35 94 0e 00 00 	lea    0xe94(%rip),%rsi        # 4035a0 &lt;array.0+0x3c0&gt;<br>  40270c:	e8 05 f5 ff ff       	call   401c16 &lt;strings_not_equal&gt;<br>  402711:	85 c0                	test   %eax,%eax<br>  402713:	75 d1                	jne    4026e6 &lt;phase_defused+0x67&gt;<br>  402715:	48 8d 3d 64 0b 00 00 	lea    0xb64(%rip),%rdi        # 403280 &lt;array.0+0xa0&gt;<br>  40271c:	e8 5f eb ff ff       	call   401280 &lt;puts@plt&gt;<br>  402721:	48 8d 3d 80 0b 00 00 	lea    0xb80(%rip),%rdi        # 4032a8 &lt;array.0+0xc8&gt;<br>  402728:	e8 53 eb ff ff       	call   401280 &lt;puts@plt&gt;<br>  40272d:	b8 00 00 00 00       	mov    $0x0,%eax<br>  402732:	e8 d3 f3 ff ff       	call   401b0a &lt;secret_phase&gt;<br>  402737:	eb ad                	jmp    4026e6 &lt;phase_defused+0x67&gt;<br>  402739:	e8 82 eb ff ff       	call   4012c0 &lt;__stack_chk_fail@plt&gt;<br></code></pre></td></tr></table></figure>
+
+<p>答案就藏在 0x4035a0！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">(gdb) x/s 0x4035a0<br>0x4035a0:       <span class="hljs-string">&quot;austinpowers&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>在哪里输入呢，注意到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">lea    0x32b9(%rip),%rdi        # 405990 &lt;input_strings+0xf0&gt;<br></code></pre></td></tr></table></figure>
+
+<p>而这是 phase_4 的输入地址，于是我们只需要在 phase4 后面添加上述字符串即可</p>
+<p>对于 secret_phase 本身，是一个二叉树访问的递归函数问题，关键和 phase6 一样，一方面要看懂函数，另一方面要能在内存中找到二叉树的存储位置并访问之</p>
+<p>这样我们的 sol.txt 即为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">I turned the moon into something I like to call a Death Star.<br>1 2 3 1 2 3<br>0 a 584<br>7 austinpowers<br>13 69<br>108<br>(secret phase的答案我忘了)<br></code></pre></td></tr></table></figure>
+
+<p>完结！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/ICS/" class="category-chain-item">ICS</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CSAPP/" class="print-no-link">#CSAPP</a>
+      
+        <a href="/tags/Assembly/" class="print-no-link">#Assembly</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>BombLab</div>
+      <div>http://example.com/2024/12/09/BombLab/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年12月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/12/09/AttackLab/" title="AttackLab">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">AttackLab</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/10/RISC-V/" title="RISC-V">
+                        <span class="hidden-mobile">RISC-V</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
