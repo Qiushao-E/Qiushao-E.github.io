@@ -19,18 +19,20 @@
   <meta name="author" content="思源南路世一劈">
   <meta name="keywords" content="">
   
-    <meta name="description" content="页表映射chcore 内核启动的最后一步是完成页表的地址映射工作。在前文中，我们于 tool.S（被 init_c.c 调用）中启用了 MMU 以及相关配置，但具体的页表映射工作尚未提及，本节内容即为对 chcore 页表映射内容的源码解析 参考源码文件：mmu.c ，与 init_c.c 同目录 复习：页表结构页表基址寄存器在 AArch64 架构的 EL1 异常级别存在两个页表基址寄存器：tt">
+    <meta name="description" content="chcore 页表映射的源码解析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="页表映射">
 <meta property="og:url" content="http://example.com/2024/12/23/ptm/index.html">
 <meta property="og:site_name" content="Home">
-<meta property="og:description" content="页表映射chcore 内核启动的最后一步是完成页表的地址映射工作。在前文中，我们于 tool.S（被 init_c.c 调用）中启用了 MMU 以及相关配置，但具体的页表映射工作尚未提及，本节内容即为对 chcore 页表映射内容的源码解析 参考源码文件：mmu.c ，与 init_c.c 同目录 复习：页表结构页表基址寄存器在 AArch64 架构的 EL1 异常级别存在两个页表基址寄存器：tt">
+<meta property="og:description" content="chcore 页表映射的源码解析">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/chcore/lab1_2.png">
 <meta property="og:image" content="http://example.com/img/chcore/lab1_3.png">
 <meta property="article:published_time" content="2024-12-23T04:33:23.000Z">
-<meta property="article:modified_time" content="2024-12-23T04:40:35.210Z">
+<meta property="article:modified_time" content="2024-12-23T05:10:56.720Z">
 <meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="chcore">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/img/chcore/lab1_2.png">
   
@@ -354,7 +356,7 @@
 <li>USB 控制器等</li>
 </ul>
 <p>总体的内存结构即如下图所示：</p>
-<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-number">0</span>x00000000 <span class="hljs-punctuation">+</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">+</span> &lt;<span class="hljs-punctuation">-</span> PHYSMEM_START<br>           <span class="hljs-string">|                 |</span><br>           <span class="hljs-string">|    普通内存区域   |</span><br>           <span class="hljs-string">|                 |</span><br><span class="hljs-number">0</span>x3F000000 <span class="hljs-punctuation">+</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">+</span> &lt;<span class="hljs-punctuation">-</span> PERIPHERAL_BASE<br>           <span class="hljs-string">|                 |</span><br>           <span class="hljs-string">|    外设映射区域   |</span><br>           <span class="hljs-string">|                 |</span><br><span class="hljs-number">0</span>x40000000 <span class="hljs-punctuation">+</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">+</span> &lt;<span class="hljs-punctuation">-</span> PHYSMEM_END<br></code></pre></td></tr></table></figure>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-number">0</span>x00000000 <span class="hljs-punctuation">+</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">+</span> &lt;<span class="hljs-punctuation">-</span> PHYSMEM_START<br>           <span class="hljs-string">|                 |</span><br>           <span class="hljs-string">|   普通内存区域   |</span><br>           <span class="hljs-string">|                 |</span><br><span class="hljs-number">0</span>x3F000000 <span class="hljs-punctuation">+</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">+</span> &lt;<span class="hljs-punctuation">-</span> PERIPHERAL_BASE<br>           <span class="hljs-string">|                 |</span><br>           <span class="hljs-string">|   外设映射区域   |</span><br>           <span class="hljs-string">|                 |</span><br><span class="hljs-number">0</span>x40000000 <span class="hljs-punctuation">+</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">-</span><span class="hljs-punctuation">+</span> &lt;<span class="hljs-punctuation">-</span> PHYSMEM_END<br></code></pre></td></tr></table></figure>
 
 <h3 id="页表项数组定义"><a href="#页表项数组定义" class="headerlink" title="页表项数组定义"></a>页表项数组定义</h3><p>如下方代码所示：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* The number of entries in one page table page */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PTP_ENTRIES 512</span><br><span class="hljs-comment">/* The size of one page table page */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PTP_SIZE 4096</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ALIGN(n) __attribute__((__aligned__(n)))</span><br>u64 boot_ttbr0_l0[PTP_ENTRIES] ALIGN(PTP_SIZE);<br>u64 boot_ttbr0_l1[PTP_ENTRIES] ALIGN(PTP_SIZE);<br>u64 boot_ttbr0_l2[PTP_ENTRIES] ALIGN(PTP_SIZE);<br>u64 boot_ttbr0_l3[PTP_ENTRIES] ALIGN(PTP_SIZE);<br><br>u64 boot_ttbr1_l0[PTP_ENTRIES] ALIGN(PTP_SIZE);<br>u64 boot_ttbr1_l1[PTP_ENTRIES] ALIGN(PTP_SIZE);<br>u64 boot_ttbr1_l2[PTP_ENTRIES] ALIGN(PTP_SIZE);<br>u64 boot_ttbr1_l3[PTP_ENTRIES] ALIGN(PTP_SIZE);<br></code></pre></td></tr></table></figure>
@@ -410,10 +412,15 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c">u64 vaddr = PHYSMEM_START;<br><br><span class="hljs-comment">/* TTBR0_EL1 0-1G */</span><br>boot_ttbr0_l0[GET_L0_INDEX(vaddr)] = ((u64)boot_ttbr0_l1) | IS_TABLE<br>                                     | IS_VALID | NG;<br>boot_ttbr0_l1[GET_L1_INDEX(vaddr)] = ((u64)boot_ttbr0_l2) | IS_TABLE<br>                                     | IS_VALID | NG;<br><br>boot_ttbr0_l2[GET_L2_INDEX(vaddr)] = ((u64)boot_ttbr0_l3) | IS_TABLE<br>                                     | IS_VALID | NG;<br></code></pre></td></tr></table></figure>
 
 <p>这里将 vaddr 设置为最开始的物理内存起始，然后进行了相应的链接关系配置</p>
-<pre class="mermaid">graph TD
-     boot_ttbr0_l0 --> boot_ttbr0_l1
-     boot_ttbr0_l1 --> boot_ttbr0_l2
-     boot_ttbr0_l2 --> boot_ttbr0_l3</pre>
+
+<pre>
+<code class="mermaid" >
+graph TD
+boot_ttbr0_l0-->boot_ttbr0_l1
+boot_ttbr0_l1-->boot_ttbr0_l2
+boot_ttbr0_l2-->boot_ttbr0_l3
+</code>
+</pre>
 
 <p>这里完成了初始化工作后，后面便开始了具体的配置</p>
 <ul>
@@ -450,6 +457,43 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Chcore/" class="category-chain-item">Chcore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Chcore/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="category-chain-item">源码解析</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/chcore/" class="print-no-link">#chcore</a>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+    </div>
   
 </div>
 
