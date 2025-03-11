@@ -1,0 +1,873 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="React 基础笔记第二部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Primary React (2)">
+<meta property="og:url" content="http://example.com/2025/03/05/ReactP2/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="React 基础笔记第二部分">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/react/list">
+<meta property="og:image" content="http://example.com/img/react/products">
+<meta property="article:published_time" content="2025-03-05T08:03:02.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:05:51.110Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/react/list">
+  
+  
+  
+  <title>Primary React (2) - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Primary React (2)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-05 16:03" pubdate>
+          2025年3月5日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Primary React (2)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Primary-React-2"><a href="#Primary-React-2" class="headerlink" title="Primary React (2)"></a>Primary React (2)</h1><p>本文是 mosh 的 React 基础课的第二部分笔记，包括设计组件样式和管理组件状态两部分</p>
+<h2 id="Styling-Components"><a href="#Styling-Components" class="headerlink" title="Styling Components"></a>Styling Components</h2><p>这部分内容包括 React 中和组件样式相关的知识</p>
+<h4 id="裸-CSS"><a href="#裸-CSS" class="headerlink" title="裸 CSS"></a>裸 CSS</h4><p>虽然通常不建议这种写法，因为有很多很好的现成的 CSS 库以供调用，但是如果有时候自己有一些微调 CSS 的需求就会用到裸 CSS 的写法</p>
+<p>下面我们看看在 React 中是如何实现的：</p>
+<p><img src="/img/react/list" srcset="/img/loading.gif" lazyload alt="list"></p>
+<p>通常我们会把相关的组件和 CSS 文件放在同一个文件夹下，这里注意一下这里的 index.ts 文件：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> <span class="hljs-title class_">ListGroup</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./ListGroup&quot;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这么做的目的是为了保持其他地方引入组件的时候可以不用更改代码</p>
+<p>因为若我引入的是一个文件夹，那么编译器会自动寻找这个文件夹下的 index.ts 文件进行导入</p>
+<p>然后我们就可以设计自己的 CSS 样式了：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.list-group</span> &#123;<br>  <span class="hljs-attribute">list-style</span>: none;<br>  <span class="hljs-attribute">padding</span>: <span class="hljs-number">0</span>;<br>  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-selector-class">.list-group-item</span> &#123;<br>  <span class="hljs-attribute">padding</span>: <span class="hljs-number">10px</span>;<br>  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-number">#ccc</span>;<br>  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">5px</span>;<br>&#125;<br><br><span class="hljs-selector-class">.active</span> &#123;<br>  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#0d6efd</span>;<br>  <span class="hljs-attribute">color</span>: <span class="hljs-number">#fff</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意不要忘了删掉在 main.tsx 里对 CSS 库的导入</p>
+<p>最后在组件里导入这里的 CSS 文件即可：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;./ListGroup.css&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="CSS-Module"><a href="#CSS-Module" class="headerlink" title="CSS Module"></a>CSS Module</h3><p>使用裸 CSS 的时候可能会出现命名重复的情况，这时候若强行导入可能会导致渲染时故障</p>
+<p>解决这个问题的方法是使用 CSS Moudle，这样在导入的时候相当于导入的就是普通的 js 对象了</p>
+<p>具体操作是更改文件后缀，并更换导入的方式：</p>
+<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs capnproto">文件名修改为：xxx.moudle.css<br>导入方式修改为：<span class="hljs-keyword">import</span> styles <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./ListGroup.module.css&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>使用的时候按照正常对类的方法去解构即可，注意这时候为了避免连字符-带来的歧义，我们通常对这种情况下的 CSS 文件使用驼峰命名：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> styles <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./ListGroup.module.css&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">ListGroupProps</span> &#123;<br>  <span class="hljs-attr">items</span>: <span class="hljs-built_in">string</span>[];<br>  <span class="hljs-attr">heading</span>: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-attr">onSelectItem</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">item</span>: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;<br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params">&#123; items, heading, onSelectItem &#125;: <span class="hljs-title class_">ListGroupProps</span></span>) &#123;<br>  <span class="hljs-keyword">const</span> [selectedIndex, setSelectedIndex] = <span class="hljs-title function_">useState</span>(-<span class="hljs-number">1</span>);<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getMessage</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> items.<span class="hljs-property">length</span> === <span class="hljs-number">0</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No items found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>&#123;heading&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;getMessage()&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&#123;styles.listGroup&#125;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item, index) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;index&#125;</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">className</span>=<span class="hljs-string">&#123;</span></span></span><br><span class="hljs-tag"><span class="language-xml">              <span class="hljs-attr">index</span> === <span class="hljs-string">selectedIndex</span></span></span><br><span class="hljs-tag"><span class="language-xml">                ? [<span class="hljs-attr">styles.listGroupItem</span>, <span class="hljs-attr">styles.active</span>]<span class="hljs-attr">.join</span>(&quot; &quot;)</span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">:</span> <span class="hljs-attr">styles.listGroupItem</span></span></span><br><span class="hljs-tag"><span class="language-xml">            &#125;</span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> &#123;</span><br><span class="language-xml">              setSelectedIndex(index);</span><br><span class="language-xml">              onSelectItem(item);</span><br><span class="language-xml">            &#125;&#125;</span><br><span class="language-xml">          &gt;</span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="CSS-in-JS"><a href="#CSS-in-JS" class="headerlink" title="CSS-in-JS"></a>CSS-in-JS</h3><p>有时候我们也想把 CSS 和组件自己的 tsx&#x2F;jsx 文件集成在一起，这样在增删查改的时候就会相当的方便</p>
+<p>对应的方法称之为 CSS-in-JS，我们需要安装两个相应的包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ npm i styled-components @types/styled-components --save<br></code></pre></td></tr></table></figure>
+
+<p>然后我们就可以把 CSS 属性封装成 React 对象：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">ReactNode</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> styled <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;styled-components&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title class_">StyledAlert</span> = styled.<span class="hljs-property">div</span><span class="hljs-string">`</span><br><span class="hljs-string">  background-color: #0d6efd;</span><br><span class="hljs-string">  color: #fff;</span><br><span class="hljs-string">`</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">AlertProps</span> &#123;<br>  <span class="hljs-attr">children</span>: <span class="hljs-title class_">ReactNode</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Alert</span> = (<span class="hljs-params">&#123; children &#125;: <span class="hljs-title class_">AlertProps</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">StyledAlert</span>&gt;</span>&#123;children&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">StyledAlert</span>&gt;</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Alert</span>;<br></code></pre></td></tr></table></figure>
+
+<p>注意这里的语法，使用的是反引号</p>
+<p>这样我们得到的 StyledAlert 本身就是一个 React 对象，我们按照和其他组件一致的方式去使用它即可</p>
+<p>想要设置组件状态管理等操作？同样方便，写一个 interface 传进去就行：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">ReactNode</span>, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> styled <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;styled-components&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">StyledAlertProps</span> &#123;<br>  <span class="hljs-attr">active</span>: <span class="hljs-built_in">boolean</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title class_">StyledAlert</span> = styled.<span class="hljs-property">div</span>&lt;<span class="hljs-title class_">StyledAlertProps</span>&gt;<span class="hljs-string">`</span><br><span class="hljs-string">  background-color: <span class="hljs-subst">$&#123;(props) =&gt; (props.active ? <span class="hljs-string">&quot;#0d6efd&quot;</span> : <span class="hljs-string">&quot;#f8f9fa&quot;</span>)&#125;</span>;</span><br><span class="hljs-string">  color: #f8f;</span><br><span class="hljs-string">  padding: 10px;</span><br><span class="hljs-string">  border-radius: 5px;</span><br><span class="hljs-string">  cursor: pointer;</span><br><span class="hljs-string">`</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">AlertProps</span> &#123;<br>  <span class="hljs-attr">children</span>: <span class="hljs-title class_">ReactNode</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Alert</span> = (<span class="hljs-params">&#123; children &#125;: <span class="hljs-title class_">AlertProps</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [active, setActive] = <span class="hljs-title function_">useState</span>(<span class="hljs-literal">false</span>);<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">StyledAlert</span> <span class="hljs-attr">active</span>=<span class="hljs-string">&#123;active&#125;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> setActive(!active)&#125;&gt;</span><br><span class="language-xml">      &#123;children&#125;</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">StyledAlert</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Alert</span>;<br></code></pre></td></tr></table></figure>
+
+<p>（这里的颜色是随便打的，估计很丑）</p>
+<h3 id="添加图标"><a href="#添加图标" class="headerlink" title="添加图标"></a>添加图标</h3><p>这部分介绍了一个常用的 React 图标组件库——react-icons，同样我们先安装一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ npm i react-icons@4.7.1 --save<br></code></pre></td></tr></table></figure>
+
+<p>事实上后面我们使用 UI 库做真正开发的时候也是这样的流程：</p>
+<ul>
+<li>先物色好要用的库，进行安装</li>
+<li>查文档，找到要用的组件以及名称</li>
+<li>在自己的组件中进行导入和使用，封装成为自己的组件</li>
+</ul>
+<p>现在假设我们需要添加一个小心心图标：</p>
+<p>上文档搜一下先，到一个还不错的，看看导入方式，然后引入：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FaRegHeart</span>, <span class="hljs-title class_">FaHeart</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-icons/fa&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Heart</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [liked, setLiked] = <span class="hljs-title function_">useState</span>(<span class="hljs-literal">false</span>);<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      &#123;liked ? (</span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">FaHeart</span> <span class="hljs-attr">color</span>=<span class="hljs-string">&quot;red&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> setLiked(!liked)&#125; /&gt;</span><br><span class="language-xml">      ) : (</span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">FaRegHeart</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> setLiked(!liked)&#125; /&gt;</span><br><span class="language-xml">      )&#125;</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Heart</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这样我们就做好了一个可以点赞的爱心！</p>
+<h2 id="Managing-Component-State"><a href="#Managing-Component-State" class="headerlink" title="Managing Component State"></a>Managing Component State</h2><p>我们在学习 React 基础概念的时候曾简略学习了 State Hook 的操作，这一节我们来详细学习这部分，了解如何细致地管理组件状态</p>
+<h3 id="理解-State-Hook-的原理"><a href="#理解-State-Hook-的原理" class="headerlink" title="理解 State Hook 的原理"></a>理解 State Hook 的原理</h3><ul>
+<li>React 更新组件的状态是异步的：它会一次性收集好所有的需要更新的地方，并完成组件的重新渲染</li>
+<li>State 是储存在组件之外的：它们并非是局部变量，相反，局部变量在每次组件渲染后就会被销毁</li>
+<li>Hooks 必须在组件顶层使用：如果在语句中或者循环内使用，就会造成渲染紊乱的问题</li>
+</ul>
+<h3 id="设计-State-Hook-的小技巧"><a href="#设计-State-Hook-的小技巧" class="headerlink" title="设计 State Hook 的小技巧"></a>设计 State Hook 的小技巧</h3><p>这部分主要和 coding style 相关，同时也是保持代码不会很快变成屎山的一些技巧</p>
+<ul>
+<li>避免冗余变量</li>
+</ul>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [firstName, setFirstName] = <span class="hljs-title function_">useState</span>(<span class="hljs-string">&quot; &quot;</span>);<br><span class="hljs-keyword">const</span> [lastName, setLastName] = <span class="hljs-title function_">useState</span>(<span class="hljs-string">&quot; &quot;</span>);<br><span class="hljs-keyword">const</span> fullName = firstName + <span class="hljs-string">&quot; &quot;</span> + lastName; <span class="hljs-comment">// 冗余变量</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>使用对象结构</li>
+</ul>
+<p>当几个状态属性同属于一个对象时，可以使用对象结构来简化代码</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [person, setPerson] = <span class="hljs-title function_">useState</span>(&#123;<br>  <span class="hljs-attr">firstName</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  <span class="hljs-attr">lastName</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  <span class="hljs-attr">age</span>: -<span class="hljs-number">1</span>,<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>避免深层次嵌套</li>
+</ul>
+<p>这一条是针对上一条的拓展，指对象结构不能嵌套太深，否则适得其反，难以更新！</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-comment">// 错误示例</span><br><span class="hljs-keyword">const</span> [person, setPerson] = <span class="hljs-title function_">useState</span>(&#123;<br>	<span class="hljs-attr">firstName</span>: <span class="hljs-string">&#x27; &#x27;</span>,<br>	<span class="hljs-attr">lastName</span>: <span class="hljs-string">&#x27; &#x27;</span>,<br>	<span class="hljs-attr">job</span>: &#123;<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27; &#x27;</span>,<br>        <span class="hljs-attr">address</span>: &#123;<br>            <span class="hljs-attr">street</span>: <span class="hljs-string">&#x27; &#x27;</span><br>            <span class="hljs-attr">city</span>: <span class="hljs-string">&#x27; &#x27;</span><br>        &#125;<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h3 id="Pure-Components"><a href="#Pure-Components" class="headerlink" title="Pure Components"></a>Pure Components</h3><h4 id="何为-pure"><a href="#何为-pure" class="headerlink" title="何为 pure"></a>何为 pure</h4><p>类比纯函数的概念：输入相同则输出相同</p>
+<p>那么我们的 pure components 效果是一样的：只要给进去的 props 不变，那么我们的组件呈现结果就也不能变</p>
+<p>这也是 React 倡导的开发原则，因为对于纯组件而言，只要 props 没变，我就不用重新渲染该组件，节约了资源</p>
+<h4 id="关于-strict-mode"><a href="#关于-strict-mode" class="headerlink" title="关于 strict mode"></a>关于 strict mode</h4><p>回忆我们在主文件里遇到的严格模式：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">StrictMode</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; createRoot &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-dom/client&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-title class_">App</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./App&quot;</span>;<br><span class="hljs-comment">// import &quot;bootstrap/dist/css/bootstrap.css&quot;;</span><br><br><span class="hljs-title function_">createRoot</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;root&quot;</span>)!).<span class="hljs-title function_">render</span>(<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">StrictMode</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">StrictMode</span>&gt;</span></span><br>);<br></code></pre></td></tr></table></figure>
+
+<p>这里的严格模式实际上是帮助开发者“Debug”用的，它会在渲染组件的时候重复两次，第一次用于排除代码本身的 bug，第二次则可以用于看看组件里有没有不 pure 的地方</p>
+<p>当然仅对于最终呈现的结果来说，严格模式开启与否不会有任何影响</p>
+<h3 id="更新-Object"><a href="#更新-Object" class="headerlink" title="更新 Object"></a>更新 Object</h3><p>我们在上面的 state hook 小技巧里提过可以将状态变量设置成对象：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [person, setPerson] = <span class="hljs-title function_">useState</span>(&#123;<br>  <span class="hljs-attr">firstName</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  <span class="hljs-attr">lastName</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  <span class="hljs-attr">age</span>: -<span class="hljs-number">1</span>,<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>在更新的时候也有小妙招，当对象的属性很多而我们又只想更改其中一两个的时候，可以使用扩展<del>芙</del>符语法糖：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> newPerson = &#123; ...person, <span class="hljs-attr">age</span>: <span class="hljs-number">30</span> &#125;;<br><span class="hljs-title function_">setPerson</span>(newPerson);<br></code></pre></td></tr></table></figure>
+
+<p>当然，更简略的做法是：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">setPerson</span>(&#123; ...person, <span class="hljs-attr">age</span>: <span class="hljs-number">30</span> &#125;);<br></code></pre></td></tr></table></figure>
+
+<p>对于上文提到的要避免嵌套对象，这是因为更新起来会很麻烦，我们假设对象如下：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [person, setPerson] = <span class="hljs-title function_">useState</span>(&#123;<br>  <span class="hljs-attr">firstName</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  <span class="hljs-attr">lastName</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  <span class="hljs-attr">job</span>: &#123;<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot; &quot;</span>,<br>    <span class="hljs-attr">address</span>: <span class="hljs-string">&quot; &quot;</span>,<br>  &#125;,<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>由于 JS 的扩展芙运算是浅拷贝（仅引用相同地址的对象），所以当我们想要更新 address 属性的时候，就必须给他一个新的 job 对象，操作方法如下：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">setPerson</span>(&#123;<br>  ...person,<br>  <span class="hljs-attr">job</span>: &#123;<br>    ...person.<span class="hljs-property">job</span>,<br>    <span class="hljs-attr">address</span>: <span class="hljs-string">&quot;Shanghai&quot;</span>,<br>  &#125;,<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="更新-Array"><a href="#更新-Array" class="headerlink" title="更新 Array"></a>更新 Array</h3><p>数组的更新同样要考虑到浅拷贝的因素，所以我们每次更新的时候都传进去一个新的 array，再在内部使用扩展芙</p>
+<p>假设我们数组如下：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [tag, setTag] = <span class="hljs-title function_">useState</span>([<span class="hljs-string">&quot;happy&quot;</span>, <span class="hljs-string">&quot;hotface&quot;</span>]);<br></code></pre></td></tr></table></figure>
+
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add</h4><p>添加操作是最简单的，直接操作就行了：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">setTag</span>([...tag, <span class="hljs-string">&quot;exciting&quot;</span>]);<br></code></pre></td></tr></table></figure>
+
+<h4 id="remove"><a href="#remove" class="headerlink" title="remove"></a>remove</h4><p>去除某元素可以使用数组自带的 filter 方法：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">setTag</span>(tag.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">t</span>) =&gt;</span> t !== <span class="hljs-string">&quot;hotface&quot;</span>));<br></code></pre></td></tr></table></figure>
+
+<h4 id="update"><a href="#update" class="headerlink" title="update"></a>update</h4><p>要把数组里的某些项换成新的，可以使用 map 方法：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">setTag</span>(tag.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">t</span>) =&gt;</span> (t === <span class="hljs-string">&quot;happy&quot;</span> ? <span class="hljs-string">&quot;sad&quot;</span> : t)));<br></code></pre></td></tr></table></figure>
+
+<h4 id="complex-case-array-of-objects"><a href="#complex-case-array-of-objects" class="headerlink" title="complex case: array of objects"></a>complex case: array of objects</h4><p>当被更新的数组里的元素是对象的时候，操作起来稍微复杂一点，但是核心思路不变：使用数组自带方法以及扩展芙</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [men, setMen] = <span class="hljs-title function_">useState</span>(<br>  &#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;kobe&quot;</span>, <span class="hljs-attr">age</span>: <span class="hljs-number">4</span> &#125;,<br>  &#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;41p&quot;</span>, <span class="hljs-attr">age</span>: <span class="hljs-number">20</span> &#125;<br>);<br></code></pre></td></tr></table></figure>
+
+<p>现在我要把 kobe 的名字改成牢大，可以这样做：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">setMen</span>(<br>  men.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">man</span>) =&gt;</span> (man.<span class="hljs-property">name</span> === <span class="hljs-string">&quot;kobe&quot;</span> ? &#123; ...man, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;牢大&quot;</span> &#125; : man))<br>);<br></code></pre></td></tr></table></figure>
+
+<h3 id="在组件之间传递状态"><a href="#在组件之间传递状态" class="headerlink" title="在组件之间传递状态"></a>在组件之间传递状态</h3><p>方法之前也提到过：想要在组件之间传递状态，可以将状态提升到父级组件，然后在父级组件统一管理</p>
+<p>假设我们要完成这样一个组件：上方的一栏显示物品总数，下方一栏显示具体的物品，同时还有一个按钮来完成如添加等操作。这时候我们就可以把子组件设计成之前说的“只需要完成上级任务”的模式，然后再在父级组件完成具体任务操作</p>
+<p>示例代码如下</p>
+<p><img src="/img/react/products" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Products</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./Products&quot;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Products</span>;<br><span class="hljs-comment">// index.ts</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">NavBarProps</span> &#123;<br>  <span class="hljs-attr">cartItemsCount</span>: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-attr">onAddItem</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">void</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">NavBar</span> = (<span class="hljs-params">&#123; cartItemsCount, onAddItem &#125;: <span class="hljs-title class_">NavBarProps</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>NavBar: &#123;cartItemsCount&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;onAddItem&#125;</span>&gt;</span>Add Item<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">NavBar</span>;<br><span class="hljs-comment">// NavBar.tsx</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">ListProps</span> &#123;<br>  <span class="hljs-attr">items</span>: <span class="hljs-built_in">string</span>[];<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">List</span> = (<span class="hljs-params">&#123; items &#125;: <span class="hljs-title class_">ListProps</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item, index) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;index&#125;</span>&gt;</span>&#123;item&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">List</span>;<br><span class="hljs-comment">// List.tsx</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-title class_">List</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./List&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-title class_">NavBar</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./NavBar&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Products</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [cartItems, setCartItems] = <span class="hljs-title function_">useState</span>([<span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-string">&quot;3&quot;</span>]);<br>  <span class="hljs-keyword">const</span> [item, setItem] = <span class="hljs-title function_">useState</span>(<span class="hljs-number">4</span>);<br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">onAddItem</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>    <span class="hljs-title function_">setItem</span>(item + <span class="hljs-number">1</span>);<br>    <span class="hljs-title function_">setCartItems</span>([...cartItems, item.<span class="hljs-title function_">toString</span>()]);<br>  &#125;;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">NavBar</span> <span class="hljs-attr">cartItemsCount</span>=<span class="hljs-string">&#123;cartItems.length&#125;</span> <span class="hljs-attr">onAddItem</span>=<span class="hljs-string">&#123;onAddItem&#125;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">List</span> <span class="hljs-attr">items</span>=<span class="hljs-string">&#123;cartItems&#125;</span> /&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Products</span>;<br><br><span class="hljs-comment">// Products.tsx</span><br></code></pre></td></tr></table></figure>
+
+<p>这样你就可以通过按按钮往列表里一直添加递增的数字了</p>
+<p>本部分笔记到此结束</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/Web/" class="category-chain-item">Web</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/Web/React/" class="category-chain-item">React</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/React/" class="print-no-link">#React</a>
+      
+        <a href="/tags/Web/" class="print-no-link">#Web</a>
+      
+        <a href="/tags/TypeScript/" class="print-no-link">#TypeScript</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Primary React (2)</div>
+      <div>http://example.com/2025/03/05/ReactP2/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/03/09/ReactP3/" title="Primary React (3)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Primary React (3)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/01/ReactP1/" title="Primary React (1)">
+                        <span class="hidden-mobile">Primary React (1)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

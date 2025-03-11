@@ -1,0 +1,884 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="React 基础笔记第一部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Primary React (1)">
+<meta property="og:url" content="http://example.com/2025/03/01/ReactP1/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="React 基础笔记第一部分">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/react/react1">
+<meta property="og:image" content="http://example.com/img/react/components">
+<meta property="og:image" content="http://example.com/img/react/event1">
+<meta property="og:image" content="http://example.com/img/react/event2">
+<meta property="og:image" content="http://example.com/img/react/state">
+<meta property="og:image" content="http://example.com/img/react/propsVsState">
+<meta property="article:published_time" content="2025-03-01T07:53:46.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:05:47.673Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/react/react1">
+  
+  
+  
+  <title>Primary React (1) - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Primary React (1)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-01 15:53" pubdate>
+          2025年3月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Primary React (1)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Primary-React-1"><a href="#Primary-React-1" class="headerlink" title="Primary React (1)"></a>Primary React (1)</h1><p>React 是我在去年十月份的时候学的，当时为参加一个相关的项目做准备，可惜后面项目黄了</p>
+<p>这学期 chp 的 web 课程需要我捡起 React 里的相关知识，所以作此笔记用于复习学习</p>
+<p>内容主要是 mosh 的 React 初级课程，中级课程当时只学了一半，后面学的时候会把剩余的加上</p>
+<p>本文是 React 基础笔记的第一部分，包含 React 总览与 React 的基础概念两部分</p>
+<h2 id="React-总览"><a href="#React-总览" class="headerlink" title="React 总览"></a>React 总览</h2><p>这部分内容包含对 React 总体知识的概括总结</p>
+<h3 id="何为-React"><a href="#何为-React" class="headerlink" title="何为 React"></a>何为 React</h3><p>React 是一个组件式的 JavaScript 库，用于开发 Web 应用程序</p>
+<p><a target="_blank" rel="noopener" href="https://zh-hans.react.dev/">React 文档</a></p>
+<h3 id="创建-React-框架-App"><a href="#创建-React-框架-App" class="headerlink" title="创建 React 框架 App"></a>创建 React 框架 App</h3><p>使用 vite 创建一个基于 React 的 app：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ npm create vite@4.1.0<br><br>&gt; npx<br>&gt; cva<br><br>✔ Project name: … react-app<br>✔ Select a framework: › React<br>✔ Select a variant: › TypeScript<br><br>Scaffolding project <span class="hljs-keyword">in</span> /Users/qiushao/react-app...<br><br>Done. Now run:<br><br>  <span class="hljs-built_in">cd</span> react-app<br>  npm install<br>  npm run dev<br></code></pre></td></tr></table></figure>
+
+<p>按照指示进行即可，我们这里选择的是 typescript 语言，比 js 多了类型检查</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ npm i<br>$ npm run dev<br></code></pre></td></tr></table></figure>
+
+<p>如此便可在本地端口看见我们的 React 应用框架</p>
+<h3 id="React-项目框架结构"><a href="#React-项目框架结构" class="headerlink" title="React 项目框架结构"></a>React 项目框架结构</h3><p>使用 cursor&#x2F;vs code 打开我们的 React 项目：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ cursor .<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/react/react1" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><code>node_modules</code>：所有的第三方库，可以在命令行中继续引入</li>
+<li><code>public</code>：放置网站公共资源的地方，例如图片，视频等等</li>
+<li><code>src</code>：源代码文件夹，我们写的所有代码都在这里面</li>
+<li><code>index.html</code>：用于呈现最终效果的 HTML 文件，里面包含了我们的 React 组件</li>
+<li><code>json配置文件</code>：包括我们的依赖项、开发依赖项、ts 配置项等等，一般不用管<ul>
+<li>注意：在安装别的依赖包如 antd 的时一般需要加上<code>--save</code>选项来保存在 json 中</li>
+<li>这样别人拿到项目源码后可以使用<code>npm install</code>命令直接安装我们的所有依赖</li>
+</ul>
+</li>
+</ul>
+<h3 id="创建第一个-React-组件"><a href="#创建第一个-React-组件" class="headerlink" title="创建第一个 React 组件"></a>创建第一个 React 组件</h3><p>React 是一个组件式的开发框架，旨在让我们在开发 Web 应用程序的时候，可以将前端的开发需求转换成一个个的组件来开发，最后再将组件组合起来即得到我们最终的界面</p>
+<p>回到 src 源代码文件夹，创建 Message.tsx 文件用于放置我们的第一个组件</p>
+<p>目前推荐的方式是使用函数式组件，即将组件开发成函数的形式，不同层级的函数组件中间使用接口来传递</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Message</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> name = <span class="hljs-string">&quot;World&quot;</span>;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello &#123;name&#125; !<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Message</span>;<br><span class="hljs-comment">// src/Message.tsx</span><br></code></pre></td></tr></table></figure>
+
+<p>这种语法叫做 jsx（java script XML），在编译部署的时候将会被编译成 javascript 语言，并最终呈现在浏览器上</p>
+<p>我们可以使用大括号 {} 来包含任何想要表示的语句，如变量，表达式，甚至可以是函数等</p>
+<p>同样的，我们的组件也可以用类似 HTML 的方式直接写在主组件 app 里：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Message</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./Message&quot;</span>;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">App</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Message</span> /&gt;</span></span>;<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">App</span>;<br><span class="hljs-comment">// src/App.tsx</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="React-的工作方式"><a href="#React-的工作方式" class="headerlink" title="React 的工作方式"></a>React 的工作方式</h3><p>我们的组件经过层层堆叠，最后会呈现出组件树的形式，而组件树又会被 React 本身翻译成一个虚拟 dom 树</p>
+<p>这里的虚拟 dom 树不同于浏览器的 dom，这里的 dom 仅仅是我们的组件的一个轻量级的表示，当组件的状态或者数据发生更改时，React 负责找寻哪些节点发生了更改，并最终在浏览器的实际 dom 中呈现出来</p>
+<p>实际上这部分内容由 React-dom 库来完成，可以在对应的 json 文件里找到</p>
+<p>另一个值得注意的点是，不同于 vue 这样的<strong>开发框架</strong>，我们的 React 只是一个<strong>库</strong>。如果说开发框架是一个工具集的话那么库本身就只是一个具体的工具</p>
+<p>不过 React 好就好在它有一系列配套的库以及其他工具如 router，query 等，共同构建了 React 的开发生态</p>
+<h2 id="React-基础概念"><a href="#React-基础概念" class="headerlink" title="React 基础概念"></a>React 基础概念</h2><p>本部分内容以创建一个实际的列表组件为例讲解 React 的基础概念，如创建组件，引入其他框架，条件渲染，处理 events 等</p>
+<h3 id="创建组件"><a href="#创建组件" class="headerlink" title="创建组件"></a>创建组件</h3><p>使用 HTML 默认的格式去创建应用程序外观可能不太美观，因此我们需要引入一些第三方库来美化我们的外观</p>
+<h4 id="引入第三方库"><a href="#引入第三方库" class="headerlink" title="引入第三方库"></a>引入第三方库</h4><p>以 CSS 库 bootstrap 为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ npm i bootstrap@5.2.3<br></code></pre></td></tr></table></figure>
+
+<p>这时候我们可以删除原有的 CSS 文件，并在 main.tsx 里引入我们的新的 CSS 样式：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">StrictMode</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; createRoot &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-dom/client&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-title class_">App</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./App&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;bootstrap/dist/css/bootstrap.css&quot;</span>;<br><br><span class="hljs-title function_">createRoot</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;root&quot;</span>)!).<span class="hljs-title function_">render</span>(<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">StrictMode</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">StrictMode</span>&gt;</span></span><br>);<br></code></pre></td></tr></table></figure>
+
+<h4 id="创建新的组件"><a href="#创建新的组件" class="headerlink" title="创建新的组件"></a>创建新的组件</h4><p>通常我们会在我们的项目 src 目录下再创建 components 目录来存放我们的组件：</p>
+<p><img src="/img/react/components" srcset="/img/loading.gif" lazyload></p>
+<p>这里有一个快捷件 rafce，可以快速写出一个组件的框架及导出，需要安装 ES7 插件</p>
+<p>新的组件如果要使用新的样式，我们可以通过添加具体的 CSS 类来说明，这里具体怎么写可以通过查阅 bootstrap 官方文档来说明</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>111<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>222<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>333<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>444<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这样我们得到的列表就会具有一定的样式了，而不再是单独的 HTML 原生样式</p>
+<h3 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h3><p>jsx 格式里一个函数返回的元素是会被编译成 JS 代码的，所以这里只能返回一个元素</p>
+<p>但是如果我想要返回多个元素的整体该怎么办呢？可以使用<code>Fragment</code>标签包围起来——或者更简单的，直接用空标签 <code>&lt;&gt;&lt;/&gt;</code></p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>111<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>222<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>333<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span>444<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="动态渲染"><a href="#动态渲染" class="headerlink" title="动态渲染"></a>动态渲染</h3><p>到目前为止我们的列表还是使用硬编码的，但是实际情况下我们的数据通常是从后端获得，这时候便需要对列表进行动态的渲染</p>
+<p>使用数组的 map 方法来实现这一点：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> items = [<span class="hljs-string">&quot;New York&quot;</span>, <span class="hljs-string">&quot;San Francisco&quot;</span>, <span class="hljs-string">&quot;Tokyo&quot;</span>, <span class="hljs-string">&quot;London&quot;</span>, <span class="hljs-string">&quot;Paris&quot;</span>];<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;item&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span></span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="条件渲染"><a href="#条件渲染" class="headerlink" title="条件渲染"></a>条件渲染</h3><p>有时候从后端拿到的数据不敢保证其是否为空，这时候便需要条件渲染，根据数据的情况来判断渲染的模式</p>
+<p>当然可以使用 if 语句，但是这样会使得代码变得冗长，我们可以使用 js&#x2F;ts 语言的一种特殊性质——&amp;&amp;运算符来实现</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> items = [<span class="hljs-string">&quot;New York&quot;</span>, <span class="hljs-string">&quot;San Francisco&quot;</span>, <span class="hljs-string">&quot;Tokyo&quot;</span>, <span class="hljs-string">&quot;London&quot;</span>, <span class="hljs-string">&quot;Paris&quot;</span>];<br>  items = [];<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;items.length === 0 &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No items found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;item&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span></span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<p>注意代码中间的花括号，花括号是一切动态&#x2F;条件渲染的必需，其内部可以是任何 js 表达式</p>
+<p>（到目前为止还没有体现出 ts 的特性）</p>
+<p>所以自然也可以使用函数的形式来优化代码（这里就没有必要了）</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> items = [<span class="hljs-string">&quot;New York&quot;</span>, <span class="hljs-string">&quot;San Francisco&quot;</span>, <span class="hljs-string">&quot;Tokyo&quot;</span>, <span class="hljs-string">&quot;London&quot;</span>, <span class="hljs-string">&quot;Paris&quot;</span>];<br>  <span class="hljs-comment">// items = [];</span><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getMessage</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> items.<span class="hljs-property">length</span> === <span class="hljs-number">0</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No items found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>  &#125;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;getMessage()&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;item&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span>&gt;</span></span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="处理事件"><a href="#处理事件" class="headerlink" title="处理事件"></a>处理事件</h3><p>点点鼠标，浏览器便会呈现出各种各样的内容，这种处理事件的操作又是如何实现的？</p>
+<p>以点击鼠标为例，每个 React 对象都有一个 onClick 的操作，用来处理被点击后的操作</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;li<br>  key=&#123;item&#125;<br>  className=<span class="hljs-string">&quot;list-group-item&quot;</span><br>  onClick=&#123;<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Clicked&quot;</span>)&#125;<br>&gt;<br>  &#123;item&#125;<br>&lt;/li&gt;<br></code></pre></td></tr></table></figure>
+
+<p>这里我们传入了一个箭头函数，作用是在控制台打印相关内容</p>
+<p>实际上这里会触发浏览器对应的 event，我们也可以：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;li<br>  key=&#123;item&#125;<br>  className=<span class="hljs-string">&quot;list-group-item&quot;</span><br>  onClick=&#123;<span class="hljs-function">(<span class="hljs-params">event</span>) =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(event)&#125;<br>&gt;<br>  &#123;item&#125;<br>&lt;/li&gt;<br></code></pre></td></tr></table></figure>
+
+<p>看看这个 event 是什么：</p>
+<p><img src="/img/react/event1" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/react/event2" srcset="/img/loading.gif" lazyload></p>
+<p>在 React 中它是 MouseEvent，我们可以将这段处理的代码抽象成函数：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">MouseEvent</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">handleClick</span>(<span class="hljs-params"><span class="hljs-attr">event</span>: <span class="hljs-title class_">MouseEvent</span></span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(event);<br>  &#125;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;getMessage()&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;item&#125;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;handleClick&#125;</span>&gt;</span></span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<p>注意把处理函数提升到组件时，便需要指定其参数类型了，否则 ts 编译器会哈气，告诉你这样是不行的</p>
+<p>这时候你在后面的 event 后加点也无法弹出任何属性</p>
+<p>这便是 typescript 的特性，在参数类型不确定的时候必须<strong>显式指出参数对应的类型</strong>，这样便可避免掉很多 js 里写代码时会出现的 bug</p>
+<h3 id="管理状态"><a href="#管理状态" class="headerlink" title="管理状态"></a>管理状态</h3><p>现在我们想要在点击列表项的时候实现高亮——很自然的把这个问题分为两部分：高亮与点击事件，前者是好办的，直接使用 CSS 即可</p>
+<p>但是后者呢？直接在组件内处理 onClick 函数么？很自然的想到如下手法：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> items = [<span class="hljs-string">&quot;New York&quot;</span>, <span class="hljs-string">&quot;San Francisco&quot;</span>, <span class="hljs-string">&quot;Tokyo&quot;</span>, <span class="hljs-string">&quot;London&quot;</span>, <span class="hljs-string">&quot;Paris&quot;</span>];<br>  <span class="hljs-comment">// items = [];</span><br>  <span class="hljs-keyword">let</span> selectedIndex = <span class="hljs-number">1</span>;<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getMessage</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> items.<span class="hljs-property">length</span> === <span class="hljs-number">0</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No items found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>  &#125;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;getMessage()&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item, index) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;index&#125;</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">className</span>=<span class="hljs-string">&#123;</span></span></span><br><span class="hljs-tag"><span class="language-xml">              <span class="hljs-attr">index</span> === <span class="hljs-string">selectedIndex</span></span></span><br><span class="hljs-tag"><span class="language-xml">                ? &quot;<span class="hljs-attr">list-group-item</span> <span class="hljs-attr">active</span>  &quot;</span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">:</span> &quot;<span class="hljs-attr">list-group-item</span>&quot;</span></span><br><span class="hljs-tag"><span class="language-xml">            &#125;</span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> &#123;</span><br><span class="language-xml">              selectedIndex = index;</span><br><span class="language-xml">            &#125;&#125;</span><br><span class="language-xml">          &gt;</span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<p>很遗憾这样并不能成功，因为这里的<code>selectedIndex</code>只是组件内部的一个局部变量，处理 onClick 的时候并不会重新渲染组件</p>
+<p>于是我们需要引入 React 的一个特性——钩子函数（Hook）。顾名思义，它能够像一把钩子一样跳出组件本身，去获得组件之外的东西</p>
+<p>这里我们用到的钩子函数即为<code>useState</code>，用法如下</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> [val, setVal] = <span class="hljs-title function_">useState</span>(init_value);<br></code></pre></td></tr></table></figure>
+
+<p>此处前者为值本身，后者为设置该值的函数，二者组成一个套件，可以在组件内部任意使用，也可传递给子组件等</p>
+<p>把我们的思路用钩子函数重写出来：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> items = [<span class="hljs-string">&quot;New York&quot;</span>, <span class="hljs-string">&quot;San Francisco&quot;</span>, <span class="hljs-string">&quot;Tokyo&quot;</span>, <span class="hljs-string">&quot;London&quot;</span>, <span class="hljs-string">&quot;Paris&quot;</span>];<br>  <span class="hljs-comment">// items = [];</span><br>  <span class="hljs-keyword">const</span> [selectedIndex, setSelectedIndex] = <span class="hljs-title function_">useState</span>(-<span class="hljs-number">1</span>);<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getMessage</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> items.<span class="hljs-property">length</span> === <span class="hljs-number">0</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No items found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>ListGroup<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;getMessage()&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item, index) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;index&#125;</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">className</span>=<span class="hljs-string">&#123;</span></span></span><br><span class="hljs-tag"><span class="language-xml">              <span class="hljs-attr">index</span> === <span class="hljs-string">selectedIndex</span></span></span><br><span class="hljs-tag"><span class="language-xml">                ? &quot;<span class="hljs-attr">list-group-item</span> <span class="hljs-attr">active</span>  &quot;</span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">:</span> &quot;<span class="hljs-attr">list-group-item</span>&quot;</span></span><br><span class="hljs-tag"><span class="language-xml">            &#125;</span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> setSelectedIndex(index)&#125;</span><br><span class="language-xml">          &gt;</span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br></code></pre></td></tr></table></figure>
+
+<p>打开浏览器，果然就可以正常运行了</p>
+<h3 id="使用-Properties-传参"><a href="#使用-Properties-传参" class="headerlink" title="使用 Properties 传参"></a>使用 Properties 传参</h3><p>现在我们要做一些解耦的工作：我们想让我们开发的组件更加独立一点，毕竟我们现在的列表内容还是硬编码的。作为函数式组件，我们当然想像给函数传递参数一样把数据传递给组件，进而组件可以只需要渲染得到的东西即可</p>
+<h4 id="传递数据"><a href="#传递数据" class="headerlink" title="传递数据"></a>传递数据</h4><p>方式即为使用 interface 定义一个 Props：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">ListGroupProps</span> &#123;<br>  <span class="hljs-attr">items</span>: <span class="hljs-built_in">string</span>[];<br>  <span class="hljs-attr">heading</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后再把它传递给组件，注意这里可以提前分解 props，这样就不需要更改组件内部的代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params">&#123; items, heading &#125;: <span class="hljs-title class_">ListGroupProps</span></span>);<br></code></pre></td></tr></table></figure>
+
+<p>在父级组件使用时只需要像给 HTML 元素添加属性一样即可：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;<span class="hljs-title class_">ListGroup</span> items=&#123;items&#125; heading=&#123;heading&#125; /&gt;<br></code></pre></td></tr></table></figure>
+
+<h4 id="传递函数"><a href="#传递函数" class="headerlink" title="传递函数"></a>传递函数</h4><p>有时候我希望组件做什么是我自己说了算，而不是它说了算，它只需要做好一个忠诚的部下，同时在父组件需要时把信息上传给父组件</p>
+<p>同样的我们可以把函数也通过 props 传递，注意声明参数类型</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">ListGroupProps</span> &#123;<br>  <span class="hljs-attr">items</span>: <span class="hljs-built_in">string</span>[];<br>  <span class="hljs-attr">heading</span>: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-attr">onSelectItem</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">item</span>: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;<br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">ListGroup</span>(<span class="hljs-params">&#123; items, heading, onSelectItem &#125;: <span class="hljs-title class_">ListGroupProps</span></span>) &#123;<br>  <span class="hljs-keyword">const</span> [selectedIndex, setSelectedIndex] = <span class="hljs-title function_">useState</span>(-<span class="hljs-number">1</span>);<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getMessage</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> items.<span class="hljs-property">length</span> === <span class="hljs-number">0</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No items found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>&#123;heading&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;getMessage()&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;items.map((item, index) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;index&#125;</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">className</span>=<span class="hljs-string">&#123;</span></span></span><br><span class="hljs-tag"><span class="language-xml">              <span class="hljs-attr">index</span> === <span class="hljs-string">selectedIndex</span></span></span><br><span class="hljs-tag"><span class="language-xml">                ? &quot;<span class="hljs-attr">list-group-item</span> <span class="hljs-attr">active</span>  &quot;</span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">:</span> &quot;<span class="hljs-attr">list-group-item</span>&quot;</span></span><br><span class="hljs-tag"><span class="language-xml">            &#125;</span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> &#123;</span><br><span class="language-xml">              setSelectedIndex(index);</span><br><span class="language-xml">              onSelectItem(item);</span><br><span class="language-xml">            &#125;&#125;</span><br><span class="language-xml">          &gt;</span><br><span class="language-xml">            &#123;item&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ListGroup</span>;<br><span class="hljs-comment">// src/components/ListGroup.tsx</span><br></code></pre></td></tr></table></figure>
+
+<p>在父组件中：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> <span class="hljs-title class_">ListGroup</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./components/ListGroup&quot;</span>;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">App</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> items = [<span class="hljs-string">&quot;New York&quot;</span>, <span class="hljs-string">&quot;San Francisco&quot;</span>, <span class="hljs-string">&quot;Tokyo&quot;</span>, <span class="hljs-string">&quot;London&quot;</span>, <span class="hljs-string">&quot;Paris&quot;</span>];<br>  <span class="hljs-keyword">const</span> heading = <span class="hljs-string">&quot;Cities&quot;</span>;<br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">onSelectItem</span> = (<span class="hljs-params"><span class="hljs-attr">item</span>: <span class="hljs-built_in">string</span></span>) =&gt; &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(item);<br>  &#125;;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ListGroup</span> <span class="hljs-attr">items</span>=<span class="hljs-string">&#123;items&#125;</span> <span class="hljs-attr">heading</span>=<span class="hljs-string">&#123;heading&#125;</span> <span class="hljs-attr">onSelectItem</span>=<span class="hljs-string">&#123;onSelectItem&#125;</span> /&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  );<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">App</span>;<br><span class="hljs-comment">// src/App.tsx</span><br></code></pre></td></tr></table></figure>
+
+<p>这样我们在点击列表项的时候既通过它组件自身改变了颜色，又通过 props 传递函数把 item 的信息上报给了父组件，并在父组件中于控制台上打印出来（注意这里函数调用的引用关系）</p>
+<p><img src="/img/react/state" srcset="/img/loading.gif" lazyload></p>
+<h3 id="Props-VS-State"><a href="#Props-VS-State" class="headerlink" title="Props VS State"></a>Props VS State</h3><p><img src="/img/react/propsVsState" srcset="/img/loading.gif" lazyload></p>
+<p>注意 Props 应当在组件内被视作不可变的，我们不能<strong>在组件内部更改之</strong>，可以视作这是上级领导下达的命令，我们做子组件的只需要严格执行（Render）之，而 state 则是可变的，用来管理组件的一些内容</p>
+<p>二者共同点便是，一旦被改变都可以引发浏览器重新渲染组件，并更新我们的 DOM（Props 在父级组件可以改变，如我需要给列表动态地传递需要渲染的内容的时候）</p>
+<h3 id="传递-children"><a href="#传递-children" class="headerlink" title="传递 children"></a>传递 children</h3><p>有时候我们想像 HTML 元素一样直接往中间“插入”另外的元素&#x2F;子组件，可以使用的方法是使用 children 传参：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">AlertProps</span> &#123;<br>  <span class="hljs-attr">children</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Alert</span> = (<span class="hljs-params">&#123; children &#125;: <span class="hljs-title class_">AlertProps</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;alert alert-primary&quot;</span>&gt;</span>&#123;children&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Alert</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这样我们可以像下方一样使用组件：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;<span class="hljs-title class_">Alert</span>&gt;<span class="hljs-title class_">Hello</span>&lt;/<span class="hljs-title class_">Alert</span>&gt;<br></code></pre></td></tr></table></figure>
+
+<p>如果我希望传递进去的可以是更多的子组件&#x2F;HTML 元素呢？使用<code>ReactNode</code>类型即可做到</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">ReactNode</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">AlertProps</span> &#123;<br>  <span class="hljs-attr">children</span>: <span class="hljs-title class_">ReactNode</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Alert</span> = (<span class="hljs-params">&#123; children &#125;: <span class="hljs-title class_">AlertProps</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;alert alert-primary&quot;</span>&gt;</span>&#123;children&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Alert</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这样便结束了对 React 基础概念的探索，后面的主题将依次细致分析各个方面，如设置组件样式的不同方法、深入状态管理、Web 表单设计、以及利用 React 同后端交互等话题</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/Web/" class="category-chain-item">Web</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/Web/React/" class="category-chain-item">React</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/React/" class="print-no-link">#React</a>
+      
+        <a href="/tags/Web/" class="print-no-link">#Web</a>
+      
+        <a href="/tags/TypeScript/" class="print-no-link">#TypeScript</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Primary React (1)</div>
+      <div>http://example.com/2025/03/01/ReactP1/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/03/05/ReactP2/" title="Primary React (2)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Primary React (2)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/01/06/dlll/" title="电路理论期末复习">
+                        <span class="hidden-mobile">电路理论期末复习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

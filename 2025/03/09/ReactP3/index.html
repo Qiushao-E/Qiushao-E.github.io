@@ -1,0 +1,991 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="React 基础笔记第三部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Primary React (3)">
+<meta property="og:url" content="http://example.com/2025/03/09/ReactP3/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="React 基础笔记第三部分">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/react/form1">
+<meta property="og:image" content="http://example.com/img/react/zod">
+<meta property="article:published_time" content="2025-03-09T08:06:08.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:09:12.599Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/react/form1">
+  
+  
+  
+  <title>Primary React (3) - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Primary React (3)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-09 16:06" pubdate>
+          2025年3月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          68 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Primary React (3)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Primary-React-3"><a href="#Primary-React-3" class="headerlink" title="Primary React (3)"></a>Primary React (3)</h1><p>本文是 mosh 的 React 基础课的第三部分笔记，包括 Web 表单设计与 React 和后端进行交互两部分内容</p>
+<h2 id="Building-Forms"><a href="#Building-Forms" class="headerlink" title="Building Forms"></a>Building Forms</h2><p>这部分内容包括 React 中和 Web 表单相关的知识，包括用第三方库构建 Web 表单和数据验证等内容</p>
+<h3 id="创建表单"><a href="#创建表单" class="headerlink" title="创建表单"></a>创建表单</h3><p>这一部分需要用回之前的 bootstrap.css 库，先取消 main 里的注释</p>
+<p>这里介绍一个快速输入的小技巧，也就是 emmet 缩写：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">div.mb-3&gt;label.form-label+input.form-control<br></code></pre></td></tr></table></figure>
+
+<p>整体上很好理解：</p>
+<ul>
+<li>.符号表示 CSS 类名</li>
+<li>&gt;符号表示下属 HTML 标记</li>
+<li>+符号表示并列 HTML 标记</li>
+</ul>
+<p>看一下最后的结果：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这里的 htmlFor 是 jsx 语言里对 for 属性的特化版本，原因是 for 是 js 语言里的关键字</p>
+<p>我们将它和 input 的 id 设置成相同的内容（通常为 input 的属性），这样就将二者关联起来</p>
+<p>看看效果：</p>
+<p><img src="/img/react/form1" srcset="/img/loading.gif" lazyload></p>
+<p>太接近边缘了，我们可以考虑使用全局 CSS 来解决这个问题，在&#x2F;src 目录下创建 index.css 文件</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">body</span> &#123;<br>  <span class="hljs-attribute">padding</span>: <span class="hljs-number">20px</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这样就设置好了整体样式</p>
+<p>最后添加一些细节，完成我们的表单主体：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<p>注意这里的按钮的 type 应该设置为 submit，否则不能触发表单的提交事件</p>
+<p>但是现在的表单还只是个花架子，没有处理输入的功能，下一步就来实现之</p>
+<h3 id="提交表单"><a href="#提交表单" class="headerlink" title="提交表单"></a>提交表单</h3><h4 id="onSubmit-事件"><a href="#onSubmit-事件" class="headerlink" title="onSubmit 事件"></a>onSubmit 事件</h4><p>要让表单在提交的时候有所作为，关键就是做这个 onSubmit 事件，它是表单的一个属性，负责处理提交事件（也就是上面说到的按下按钮后被触发的提交事件）</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">e</span>: <span class="hljs-title class_">React</span>.<span class="hljs-title class_">FormEvent</span></span>) =&gt; &#123;<br>    e.<span class="hljs-title function_">preventDefault</span>();<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Form submitted&quot;</span>);<br>  &#125;;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">&#123;handleSubmit&#125;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Age</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<p>注意这里的 preventDefault 是用来防止表单被发表到服务器的，我们现在还是只在本地做测试</p>
+<p>同样不要忘了要给出 e 的类型，这是 ts 的要求</p>
+<h4 id="处理提交数据"><a href="#处理提交数据" class="headerlink" title="处理提交数据"></a>处理提交数据</h4><p>如何获取输入的数据以便于进行下一步操作呢？听起来有点像我们的钩子思想了，事实上也确实如此，这一集我们需要用到一个新的钩子：useRef，它可以引用 DOM 元素，从而将我们的输入提取出来</p>
+<h5 id="useRef"><a href="#useRef" class="headerlink" title="useRef"></a>useRef</h5><p>一个需要注意的点是，useRef 初始化必须为 null 或者现有的 DOM 元素，不能为空，通常初始化为 null 即可</p>
+<p>同样的，使用 useRef 需要给出对应的 DOM 类型，在这里即为 HTMLInputElement，同时在 input 元素里设置 ref 属性，这样就可以将二者关联起来</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useRef, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> nameRef = useRef&lt;<span class="hljs-title class_">HTMLInputElement</span>&gt;(<span class="hljs-literal">null</span>);<br>  <span class="hljs-keyword">const</span> ageRef = useRef&lt;<span class="hljs-title class_">HTMLInputElement</span>&gt;(<span class="hljs-literal">null</span>);<br>  <span class="hljs-keyword">const</span> [person, setPerson] = <span class="hljs-title function_">useState</span>(&#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-attr">age</span>: <span class="hljs-number">0</span> &#125;);<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">e</span>: <span class="hljs-title class_">React</span>.<span class="hljs-title class_">FormEvent</span>&lt;<span class="hljs-title class_">HTMLFormElement</span>&gt;</span>) =&gt; &#123;<br>    e.<span class="hljs-title function_">preventDefault</span>();<br>    <span class="hljs-title function_">setPerson</span>(&#123;<br>      <span class="hljs-attr">name</span>: nameRef.<span class="hljs-property">current</span>?.<span class="hljs-property">value</span> || <span class="hljs-string">&quot;&quot;</span>,<br>      <span class="hljs-attr">age</span>: <span class="hljs-built_in">parseInt</span>(ageRef.<span class="hljs-property">current</span>?.<span class="hljs-property">value</span> || <span class="hljs-string">&quot;0&quot;</span>),<br>    &#125;);<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(person);<br>  &#125;;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">&#123;handleSubmit&#125;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&#123;nameRef&#125;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Age</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&#123;ageRef&#125;</span> /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<p>实际情况下，我们是需要将得到的内容发布到后端的，处理方式一般是构造一个对象然后做相应处理，在上面的示例代码中，我们仅仅是在控制台上打印之</p>
+<h5 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h5><p>如果想使用 useState 来实现提交表单操作也是可以的：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FormEvent</span>, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [person, setPerson] = <span class="hljs-title function_">useState</span>(&#123; <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-attr">age</span>: <span class="hljs-number">0</span> &#125;);<br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">e</span>: <span class="hljs-title class_">FormEvent</span>&lt;<span class="hljs-title class_">HTMLFormElement</span>&gt;</span>) =&gt; &#123;<br>    e.<span class="hljs-title function_">preventDefault</span>();<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(person);<br>  &#125;;<br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">&#123;handleSubmit&#125;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">onChange</span>=<span class="hljs-string">&#123;(event)</span> =&gt;</span></span><br><span class="language-xml">            setPerson(&#123; ...person, name: event.target.value &#125;)</span><br><span class="language-xml">          &#125;</span><br><span class="language-xml">          id=&quot;name&quot;</span><br><span class="language-xml">          type=&quot;text&quot;</span><br><span class="language-xml">          className=&quot;form-control&quot;</span><br><span class="language-xml">        /&gt;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Age</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">onChange</span>=<span class="hljs-string">&#123;(event)</span> =&gt;</span></span><br><span class="language-xml">            setPerson(&#123; ...person, age: parseInt(event.target.value) &#125;)</span><br><span class="language-xml">          &#125;</span><br><span class="language-xml">          id=&quot;age&quot;</span><br><span class="language-xml">          type=&quot;number&quot;</span><br><span class="language-xml">          className=&quot;form-control&quot;</span><br><span class="language-xml">        /&gt;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="受控组件"><a href="#受控组件" class="headerlink" title="受控组件"></a>受控组件</h3><p>当前我们的表单只具备提交的基本功能，但是对于输入框具体显示什么还不是由 React 说了算的。如果我们想实现更复杂的操作，比如重置表单，设置表单默认值等，就需要用到受控组件的技术，把“组件显示什么”这种问题统一收归 React 来管理</p>
+<p>说白了，就是中央集权</p>
+<p>方法也很简单，设置 value 字段即可</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;form onSubmit=&#123;handleSubmit&#125;&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">      Name</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">      <span class="hljs-attr">onChange</span>=<span class="hljs-string">&#123;(event)</span> =&gt;</span> setPerson(&#123; ...person, name: event.target.value &#125;)&#125;</span><br><span class="language-xml">      id=&quot;name&quot;</span><br><span class="language-xml">      type=&quot;text&quot;</span><br><span class="language-xml">      className=&quot;form-control&quot;</span><br><span class="language-xml">      value=&#123;person.name&#125;</span><br><span class="language-xml">    /&gt;</span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">      Age</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">      <span class="hljs-attr">onChange</span>=<span class="hljs-string">&#123;(event)</span> =&gt;</span></span><br><span class="language-xml">        setPerson(&#123; ...person, age: parseInt(event.target.value) &#125;)</span><br><span class="language-xml">      &#125;</span><br><span class="language-xml">      id=&quot;age&quot;</span><br><span class="language-xml">      type=&quot;number&quot;</span><br><span class="language-xml">      className=&quot;form-control&quot;</span><br><span class="language-xml">      value=&#123;person.age&#125;</span><br><span class="language-xml">    /&gt;</span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">    Submit</span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br>&lt;/form&gt;<br></code></pre></td></tr></table></figure>
+
+<h3 id="使用-React-Hook-Form"><a href="#使用-React-Hook-Form" class="headerlink" title="使用 React Hook Form"></a>使用 React Hook Form</h3><p>当组件多起来之后，每个 input 都需要设置 onChange&#x2F;value 等属性，这无疑过于麻烦了</p>
+<p>所以我们可以引入先进生产力：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i react-hook-form@latest<br></code></pre></td></tr></table></figure>
+
+<p>代码中就可以直接使用 useForm 接口来获取想要的函数了</p>
+<h4 id="处理提交"><a href="#处理提交" class="headerlink" title="处理提交"></a>处理提交</h4><p>这里我们只介绍 register 和 onSubmit 两个，更多的可以去查阅文档等</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> &#123; register, handleSubmit &#125; = <span class="hljs-title function_">useForm</span>();<br></code></pre></td></tr></table></figure>
+
+<p>实际上就是该库提供的两个实用函数，可以简化我们的代码逻辑：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useForm, <span class="hljs-title class_">FieldValues</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-hook-form&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123; register, handleSubmit &#125; = <span class="hljs-title function_">useForm</span>();<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">onSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">data</span>: <span class="hljs-title class_">FieldValues</span></span>) =&gt; &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(data);<br>  &#125;;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">&#123;handleSubmit(onSubmit)&#125;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">name</span>&quot;)&#125;</span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;name&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Age</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">age</span>&quot;)&#125;</span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        /&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<p>onSubmit 其实好理解，就是做了一层包装，然后利用 register 传进去的数据写一个自己的 handler 即可</p>
+<p>重点在 register 的用法上：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&#123;...<span class="hljs-title function_">register</span>(<span class="hljs-string">&quot;age&quot;</span>)&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这一层其实就相当于设置了很多属性，等价于：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;input<br>  name=<span class="hljs-string">&quot;name&quot;</span><br>  onChange=&#123;<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">/* React Hook Form 的处理逻辑 */</span><br>  &#125;&#125;<br>  onBlur=&#123;<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">/* React Hook Form 的处理逻辑 */</span><br>  &#125;&#125;<br>  ref=&#123;<span class="hljs-comment">/* React Hook Form 的引用 */</span>&#125;<br>/&gt;<br></code></pre></td></tr></table></figure>
+
+<p>把 value 和 onChange 的显示设置方式给去掉了，只需要一个扩展芙就完事</p>
+<p>虽然这里没有 value 字段，但是同样是受控组件，react-hook-form 库提供了一层抽象屏障，用它自己的方式为我们实现了中央集权</p>
+<p><del>这不就是宰相么</del></p>
+<p>想要 reset？找宰相要就行了</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123; register, setValue, reset &#125; = <span class="hljs-title function_">useForm</span>(&#123;<br>    <span class="hljs-attr">defaultValues</span>: &#123;<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;默认值&quot;</span>,<br>    &#125;,<br>  &#125;);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">name</span>&quot;)&#125; /&gt;</span></span><br><span class="language-xml"></span><br><span class="language-xml">      &#123;/* 可以通过 setValue 设置值 */&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> setValue(&quot;name&quot;, &quot;新值&quot;)&#125;&gt;设置新值<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml"></span><br><span class="language-xml">      &#123;/* 可以重置表单 */&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> reset()&#125;&gt;重置<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  );<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h4 id="数据验证"><a href="#数据验证" class="headerlink" title="数据验证"></a>数据验证</h4><p>该库同样可以帮我们实现数据验证</p>
+<p>我们只需要设置 register 的第二个参数即可，这里你可以控制你想要的错误信息：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;input<br>  &#123;...<span class="hljs-title function_">register</span>(<span class="hljs-string">&quot;name&quot;</span>, &#123; <span class="hljs-attr">required</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">minLength</span>: <span class="hljs-number">3</span> &#125;)&#125;<br>  <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;text&quot;</span><br>  className=<span class="hljs-string">&quot;form-control&quot;</span><br>  id=<span class="hljs-string">&quot;name&quot;</span><br>/&gt;<br><br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">  &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">age</span>&quot;, &#123; <span class="hljs-attr">required:</span> <span class="hljs-attr">true</span> &#125;)&#125;</span></span><br><span class="hljs-tag"><span class="language-xml">  <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">  <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">  <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">/&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+<p>如何将错误展现出来？找宰相要一个 error，打印嘛：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> &#123;<br>  register,<br>  handleSubmit,<br>  <span class="hljs-attr">formState</span>: &#123; errors &#125;,<br>&#125; = <span class="hljs-title function_">useForm</span>();<br></code></pre></td></tr></table></figure>
+
+<p>用上之前学的&amp;&amp;运算符</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&#123;<br>  errors.<span class="hljs-property">name</span>?.<span class="hljs-property">type</span> === <span class="hljs-string">&quot;required&quot;</span> &amp;&amp; (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>Name is required<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span><br>  );<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>最后为了提高编码体验，可以传一个 interface 给宰相，这样我们写 errors 加点的时候就能看见表单属性了</p>
+<p>放一个整体的代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useForm, <span class="hljs-title class_">FieldValues</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-hook-form&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">FormData</span> &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-attr">age</span>: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123;<br>    register,<br>    handleSubmit,<br>    <span class="hljs-attr">formState</span>: &#123; errors &#125;,<br>  &#125; = useForm&lt;<span class="hljs-title class_">FormData</span>&gt;();<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">onSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">data</span>: <span class="hljs-title class_">FieldValues</span></span>) =&gt; &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(data);<br>  &#125;;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">&#123;handleSubmit(onSubmit)&#125;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">name</span>&quot;, &#123; <span class="hljs-attr">required:</span> <span class="hljs-attr">true</span>, <span class="hljs-attr">minLength:</span> <span class="hljs-attr">3</span> &#125;)&#125;</span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;name&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        /&gt;</span></span><br><span class="language-xml">        &#123;errors.name?.type === &quot;required&quot; &amp;&amp; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>Name is required<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span><br><span class="language-xml">        )&#125;</span><br><span class="language-xml">        &#123;errors.name?.type === &quot;minLength&quot; &amp;&amp; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>At least be 3 characters<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span><br><span class="language-xml">        )&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Age</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">age</span>&quot;, &#123; <span class="hljs-attr">required:</span> <span class="hljs-attr">true</span> &#125;)&#125;</span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        /&gt;</span></span><br><span class="language-xml">        &#123;errors.age &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>Age is required<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="使用-zod"><a href="#使用-zod" class="headerlink" title="使用 zod"></a>使用 zod</h3><p>这一节将引入一个更方便的库——zod，它在数据验证的处理上比我们之前的方式还要优化许多</p>
+<p>当然 zod 不是来替代掉 useRef 的，它们是合作与辅助的关系，zod 可以让 useRef 更强大</p>
+<p>首先下载相关库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i zod@latest --save<br>npm i @hookform/resolvers@latest --save<br></code></pre></td></tr></table></figure>
+
+<h4 id="数据验证-1"><a href="#数据验证-1" class="headerlink" title="数据验证"></a>数据验证</h4><p>zod 的第一个作用是简化数据形式验证：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> schema = z.<span class="hljs-title function_">object</span>(&#123;<br>  <span class="hljs-attr">name</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">3</span>),<br>  <span class="hljs-attr">age</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">1</span>),<br>&#125;);<br><br><span class="hljs-keyword">type</span> <span class="hljs-title class_">FormData</span> = z.<span class="hljs-property">infer</span>&lt;<span class="hljs-keyword">typeof</span> schema&gt;;<br></code></pre></td></tr></table></figure>
+
+<p>我们只需要定义这样一个 schema 即可，还能自动生成 interface 而非手动定义</p>
+<p>下一步就是和 useRef 结合起来，这里就需要我们下载的第二个库了——用 resolver 把它传进去</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> &#123;<br>  register,<br>  handleSubmit,<br>  <span class="hljs-attr">formState</span>: &#123; errors &#125;,<br>&#125; = useForm&lt;<span class="hljs-title class_">FormData</span>&gt;(&#123; <span class="hljs-attr">resolver</span>: <span class="hljs-title function_">zodResolver</span>(schema) &#125;);<br></code></pre></td></tr></table></figure>
+
+<p>然后再在后面的部分把之前的错误验证内容删除，回到最初样子：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&#123;...<span class="hljs-title function_">register</span>(<span class="hljs-string">&quot;name&quot;</span>)&#125;<br>&#123;...<span class="hljs-title function_">register</span>(<span class="hljs-string">&quot;age&quot;</span>)&#125;<br></code></pre></td></tr></table></figure>
+
+<p>错误信息同样可以简化，直接使用提供的默认信息即可：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&#123;<br>  errors.<span class="hljs-property">name</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>&#123;errors.name.message&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>&#125;<br>&#123;<br>  errors.<span class="hljs-property">age</span> &amp;&amp; <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>&#123;errors.age.message&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>现在的效果如下：</p>
+<p><img src="/img/react/zod" srcset="/img/loading.gif" lazyload></p>
+<p>当然这并非不可以定制，相关的功能只要更改我们的 schema 就好了</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> schema = z.<span class="hljs-title function_">object</span>(&#123;<br>  <span class="hljs-attr">name</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">3</span>, &#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&quot;Name must be at least 3 characters&quot;</span> &#125;),<br>  <span class="hljs-attr">age</span>: z<br>    .<span class="hljs-title function_">number</span>(&#123; <span class="hljs-attr">invalid_type_error</span>: <span class="hljs-string">&quot;Age field is required&quot;</span> &#125;)<br>    .<span class="hljs-title function_">min</span>(<span class="hljs-number">18</span>, &#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&quot;Age must be at least 18&quot;</span> &#125;),<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>相关的更改会随着 resolver 传给 useRef，并最终反应到组件上，又是一层新的集权模式</p>
+<p>最后放一个全量的代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useForm, <span class="hljs-title class_">FieldValues</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-hook-form&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; z &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;zod&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; zodResolver &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@hookform/resolvers/zod&quot;</span>;<br><br><span class="hljs-keyword">const</span> schema = z.<span class="hljs-title function_">object</span>(&#123;<br>  <span class="hljs-attr">name</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">3</span>, &#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&quot;Name must be at least 3 characters&quot;</span> &#125;),<br>  <span class="hljs-attr">age</span>: z<br>    .<span class="hljs-title function_">number</span>(&#123; <span class="hljs-attr">invalid_type_error</span>: <span class="hljs-string">&quot;Age field is required&quot;</span> &#125;)<br>    .<span class="hljs-title function_">min</span>(<span class="hljs-number">18</span>, &#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&quot;Age must be at least 18&quot;</span> &#125;),<br>&#125;);<br><br><span class="hljs-keyword">type</span> <span class="hljs-title class_">FormData</span> = z.<span class="hljs-property">infer</span>&lt;<span class="hljs-keyword">typeof</span> schema&gt;;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">Form</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123;<br>    register,<br>    handleSubmit,<br>    <span class="hljs-attr">formState</span>: &#123; errors &#125;,<br>  &#125; = useForm&lt;<span class="hljs-title class_">FormData</span>&gt;(&#123; <span class="hljs-attr">resolver</span>: <span class="hljs-title function_">zodResolver</span>(schema) &#125;);<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">onSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">data</span>: <span class="hljs-title class_">FieldValues</span></span>) =&gt; &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(data);<br>  &#125;;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">&#123;handleSubmit(onSubmit)&#125;</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Name</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">name</span>&quot;)&#125;</span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;name&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        /&gt;</span></span><br><span class="language-xml">        &#123;errors.name &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>&#123;errors.name.message&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-3&quot;</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;age&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-label&quot;</span>&gt;</span></span><br><span class="language-xml">          Age</span><br><span class="language-xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">input</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &#123;<span class="hljs-attr">...register</span>(&quot;<span class="hljs-attr">age</span>&quot;, &#123; <span class="hljs-attr">valueAsNumber:</span> <span class="hljs-attr">true</span> &#125;)&#125; // <span class="hljs-attr">防止组件将之解释为字符串</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;age&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        /&gt;</span></span><br><span class="language-xml">        &#123;errors.age &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-danger&quot;</span>&gt;</span>&#123;errors.age.message&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span></span><br><span class="language-xml">        Submit</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">Form</span>;<br></code></pre></td></tr></table></figure>
+
+<h4 id="设置按钮有效性"><a href="#设置按钮有效性" class="headerlink" title="设置按钮有效性"></a>设置按钮有效性</h4><p>当输入不合规的时候，我们希望按钮直接无效，同样可以找这个奇妙库实现，找我们的宰相要一个 isValid 就行了</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> &#123;<br>  register,<br>  handleSubmit,<br>  <span class="hljs-attr">formState</span>: &#123; errors, isValid &#125;,<br>&#125; = useForm&lt;<span class="hljs-title class_">FormData</span>&gt;(&#123; <span class="hljs-attr">resolver</span>: <span class="hljs-title function_">zodResolver</span>(schema), <span class="hljs-attr">mode</span>: <span class="hljs-string">&quot;onBlur&quot;</span> &#125;);<br><br>......<br><br>&lt;button className=<span class="hljs-string">&quot;btn btn-primary&quot;</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;submit&quot;</span> disabled=&#123;!isValid&#125;&gt;<br>  <span class="hljs-title class_">Submit</span><br>&lt;/button&gt;<br></code></pre></td></tr></table></figure>
+
+<p>这里还需要注意一下 mode 参数，它提供了几种不同的选项：</p>
+<blockquote>
+<p>onSubmit（默认值）：仅在点击提交按钮时进行验证；提交前不显示任何错误信息</p>
+<p>onChange：在输入时实时验证；用户每次修改输入值时都会立即显示错误信息</p>
+<p>onBlur：在输入框失去焦点时验证；用户完成输入并离开输入框后才显示错误信息</p>
+<p>onTouched：在字段首次获得焦点后，才开始像 onChange 一样工作；适合不想一开始就显示错误，但后续需要实时反馈的场景</p>
+<p>all：结合了 onChange 和 onBlur 的特性；在输入时和失去焦点时都进行验证；提供最严格的验证方式</p>
+</blockquote>
+<p>这样表单相关的内容就介绍结束了，细想会发现其实 mosh 的课是一个循序渐进的过程：他往往会先介绍一些功能的最基本的实现方式，然后再告诉你这样做可能会有什么缺点，随后便会引入新的库来简化实现，同时还会教你一些关于新库的一些使用技巧。最后相当于你学到了一种需求多种解决手段的能力。</p>
+<h2 id="Connecting-to-the-Backend"><a href="#Connecting-to-the-Backend" class="headerlink" title="Connecting to the Backend"></a>Connecting to the Backend</h2><p>前端的（基础）部分基本讲完了，现在我们来学习怎么把前后端怼到一起！</p>
+<h3 id="理解-useEffect"><a href="#理解-useEffect" class="headerlink" title="理解 useEffect"></a>理解 useEffect</h3><p>介绍后端之前，我们先学习一个新的钩子——useEffect()</p>
+<h4 id="渲染后执行"><a href="#渲染后执行" class="headerlink" title="渲染后执行"></a>渲染后执行</h4><p>之前讲过，React 设计哲学的一个要点就是我们写出的组件要是“Pure Component”，即输入相同则输出相同</p>
+<p>但是有时候我们也会难免有一些涉及到组件之外的操作，这时候就需要 useEffect 操作，它的作用就是将涉及副作用的代码在组件渲染后再执行</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useEffect, useRef &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">useEffectExample</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> ref = useRef&lt;<span class="hljs-title class_">HTMLInputElement</span>&gt;(<span class="hljs-literal">null</span>);<br><br>  <span class="hljs-comment">// after render</span><br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-keyword">if</span> (ref.<span class="hljs-property">current</span>) ref.<span class="hljs-property">current</span>.<span class="hljs-title function_">focus</span>();<br>  &#125;);<br><br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-property">title</span> = <span class="hljs-string">&quot;My App&quot;</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;useEffect&quot;</span>);<br>  &#125;);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-control&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&#123;ref&#125;</span> /&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> useEffectExample;<br></code></pre></td></tr></table></figure>
+
+<p>这里我们放在箭头函数里的内容就会涉及到组件之外的部分，而我们将之放在 useEffect 里，就可以在组件渲染完成后执行这些代码</p>
+<h4 id="配置-effect-依赖项"><a href="#配置-effect-依赖项" class="headerlink" title="配置 effect 依赖项"></a>配置 effect 依赖项</h4><p>考虑以下 bug 代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useEffect, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">ProductList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [products, setProducts] = useState&lt;<span class="hljs-built_in">string</span>[]&gt;([]);<br><br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Fetching products&quot;</span>);<br>    <span class="hljs-title function_">setProducts</span>([<span class="hljs-string">&quot;Product 1&quot;</span>, <span class="hljs-string">&quot;Product 2&quot;</span>, <span class="hljs-string">&quot;Product 3&quot;</span>]);<br>  &#125;);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      &#123;products.map((product) =&gt; (</span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;product&#125;</span>&gt;</span>&#123;product&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      ))&#125;</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ProductList</span>;<br></code></pre></td></tr></table></figure>
+
+<p>ts 编译器并不会哈气，但是如果真的把这个组件扔到浏览器上，<strong>浏览器会疯狂哈气并告诉你这组件陷入了无限循环</strong></p>
+<p>这是为什么呢？我们知道 useEffect 内的代码是在组件渲染后执行的，但是在上面的例子里，这部分被执行的代码里包括了 setProduct 函数，根据 useState 的规则，状态变量被更改之后组件需要被重新渲染，于是就造成了死循环：重新渲染——执行代码——状态变量被改变——重新渲染——···········</p>
+<p>解决方法同样来自 useEffect，我们只需要给它配置第二个参数，即依赖项即可</p>
+<ul>
+<li>在不配置的时候，useEffect 是默认在组件渲染后执行</li>
+<li>配置为空数组，则 useEffect 仅在初次渲染后执行一次</li>
+<li>配置为依赖项数组，则 useEffect 会在依赖项发生更改时执行</li>
+</ul>
+<p>若要解决上面示例 bug 代码的矛盾，直接配一个空数组就行</p>
+<p>下面我们再来看一个配置依赖项的例子，我们设计俩新的组件来说明：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-title class_">UseEffectExample</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./useEffectExample&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">ProductList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [category, setCategory] = useState&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">&quot;&quot;</span>);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">select</span></span></span><br><span class="hljs-tag"><span class="language-xml">        <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;form-select&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        <span class="hljs-attr">onChange</span>=<span class="hljs-string">&#123;(e)</span> =&gt;</span> setCategory(e.target.value)&#125;</span><br><span class="language-xml">      &gt;</span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>Select Category<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;aaa&quot;</span>&gt;</span>aaa<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;bbb&quot;</span>&gt;</span>bbb<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;ccc&quot;</span>&gt;</span>ccc<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">UseEffectExample</span> <span class="hljs-attr">category</span>=<span class="hljs-string">&#123;category&#125;</span> /&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">ProductList</span>;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useEffect &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">UseEffectExample</span> = (<span class="hljs-params">&#123; category &#125;: &#123; category: <span class="hljs-built_in">string</span> &#125;</span>) =&gt; &#123;<br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Fetching products in&quot;</span>, category);<br>  &#125;, [category]);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Category: &#123;category&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">UseEffectExample</span>;<br></code></pre></td></tr></table></figure>
+
+<p>如果不看 useEffect 的话，这只是一个简单的状态传递的例子：状态在父级组件被选择更改，在子组件中通过 props 传进去，然后发生修改</p>
+<p>现在假设我想在选择后做一些事，比如通过这个 category 向后端查询一批数据，必然就会用到 useEffect。简化起见这里就使用一个控制台打印来代替</p>
+<p>如果我不配置 useEffect 的依赖项，那么当 category 被更改时，这段代码就可能不会被执行，所以这里就需要配置依赖项数组，直接设置为 props 里传进来的 category，于是这段代码就可以在每次 category 发生更改时被执行了</p>
+<h4 id="Effect-清理"><a href="#Effect-清理" class="headerlink" title="Effect 清理"></a>Effect 清理</h4><p>在某些场景下我们需要对 effect 对应的清理函数，例如：我们有一个聊天服务器，渲染组件的时候连接进去，撤销组件的时候取消连接，这里取消连接就是我们需要的清理函数</p>
+<p>同样以控制台打印为代替，我们做一个示例：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useEffect &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">UseEffectExample</span> = (<span class="hljs-params">&#123; category &#125;: &#123; category: <span class="hljs-built_in">string</span> &#125;</span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">connect</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Connecting to the database&quot;</span>);<br>  &#125;;<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">disconnect</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Disconnecting from the database&quot;</span>);<br>  &#125;;<br><br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-title function_">connect</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">disconnect</span>();<br>  &#125;, [category]);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Category: &#123;category&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">UseEffectExample</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这里被 return 的函数就是我们的 cleanup fuction，在 useEffect 的定义中，它将在下一次 effect 执行前，先执行这个清理函数</p>
+<h3 id="Fetching-Data"><a href="#Fetching-Data" class="headerlink" title="Fetching Data"></a>Fetching Data</h3><p>现在我们开始正式学习连接后端相关的知识。然而我们现在手上并没有后端，所以可以使用这个网站：</p>
+<p><a target="_blank" rel="noopener" href="https://jsonplaceholder.typicode.com/">JSONPlaceholder - Free Fake REST API</a></p>
+<p>它可以提供一个虚假的后端，帮助我们练习</p>
+<h4 id="渲染数据"><a href="#渲染数据" class="headerlink" title="渲染数据"></a>渲染数据</h4><p>React 对于获取数据本身有一个通用的函数叫 fetch，但是我们并不打算用，我们要用的是 axios 库，所以安装它：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i axios@latest --save<br></code></pre></td></tr></table></figure>
+
+<p>然后用它给 url 发送 http 请求就可以了，这里用的是 get 方法：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> axios <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;axios&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; useEffect, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">User</span> &#123;<br>  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">UserList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [users, setUsers] = useState&lt;<span class="hljs-title class_">User</span>[]&gt;([]);<br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    axios<br>      .<span class="hljs-property">get</span>&lt;<span class="hljs-title class_">User</span>[]&gt;(<span class="hljs-string">&quot;https://jsonplaceholder.typicode.com/users&quot;</span>)<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>(res.<span class="hljs-property">data</span>);<br>      &#125;);<br>  &#125;, []);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>User List<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">        &#123;users.map((user) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;user.id&#125;</span>&gt;</span></span><br><span class="language-xml">            &#123;user.name&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">UserList</span>;<br></code></pre></td></tr></table></figure>
+
+<p>注意这里的 then 方法：由于 get 实际上并不是瞬间完成的，所以这里会返回一个叫做 promise 的对象，这是异步操作的结果。而 promise 有个方法叫做 then，意思就是如果 get 操作成功后该干什么，其内部参数为一个箭头函数，箭头函数又有一个参数 response 表示 get 成功后返回的结果，那么我们这里使用 res.data 即可表示获取到的 user 数组</p>
+<p>另一个需要注意的点是这里的 interface，它实际上是帮助我们改善 coding 体验的，因为 ts 本身并不知道 data 返回的类型，我可以把感兴趣的属性封装成接口，再用泛型接口传就可以了</p>
+<h4 id="处理错误"><a href="#处理错误" class="headerlink" title="处理错误"></a>处理错误</h4><p>相应的，不是每次 then 都能 then 出来，有时候 then 不出来就会出问题，这时候 axios 同样为我们提供了很好的工具来捕捉错误——catch 方法，跟在 then 后面就行：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">UserList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [users, setUsers] = useState&lt;<span class="hljs-title class_">User</span>[]&gt;([]);<br>  <span class="hljs-keyword">const</span> [error, setError] = useState&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">&quot;&quot;</span>);<br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    axios<br>      .<span class="hljs-property">get</span>&lt;<span class="hljs-title class_">User</span>[]&gt;(<span class="hljs-string">&quot;https://jsonplaceholder.typicode.com/users&quot;</span>)<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>(res.<span class="hljs-property">data</span>);<br>      &#125;)<br>      .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>); <span class="hljs-comment">// 在这里！！！！！</span><br>      &#125;);<br>  &#125;, []);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      &#123;error &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;alert alert-danger&quot;</span>&gt;</span>&#123;error&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>User List<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">        &#123;users.map((user) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;user.id&#125;</span>&gt;</span></span><br><span class="language-xml">            &#123;user.name&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>最后搭配上经典的&amp;&amp;运算符处理错误信息显示即可</p>
+<h4 id="中断请求"><a href="#中断请求" class="headerlink" title="中断请求"></a>中断请求</h4><p>上文介绍 effect 的时候有提到清理函数，它在获取数据时也是有必要存在的。例如当用户离开了我们的界面时，我们自然也就不再需要获取数据了。</p>
+<p>处理这样的逻辑需要用到 AbortController，它是浏览器自带的，专门用来做这样的事，我们将这个功能加入我们的 UserList</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> controller = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AbortController</span>();<br>  axios<br>    .<span class="hljs-property">get</span>&lt;<span class="hljs-title class_">User</span>[]&gt;(<span class="hljs-string">&quot;https://jsonplaceholder.typicode.com/users&quot;</span>, &#123;<br>      <span class="hljs-attr">signal</span>: controller.<span class="hljs-property">signal</span>,<br>    &#125;)<br>    .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setUsers</span>(res.<span class="hljs-property">data</span>);<br>    &#125;)<br>    .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-keyword">if</span> (err <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">CanceledError</span>) <span class="hljs-keyword">return</span>;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(err);<br>    &#125;);<br>  <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> controller.<span class="hljs-title function_">abort</span>();<br>&#125;, []);<br></code></pre></td></tr></table></figure>
+
+<p>在这里：</p>
+<ul>
+<li><p>AbortController 是遥控器</p>
+</li>
+<li><p>signal 是遥控器和电视之间的红外线信号</p>
+</li>
+<li><p>abort() 是按下关机键</p>
+</li>
+<li><p>请求是电视</p>
+</li>
+</ul>
+<p>于是在撤销组件时，我们的控制器就发出了相应的 abort 信号，并通过 signal 传给 axios，中断这个请求</p>
+<blockquote>
+<p>注意：controller 必须在 useEffect 内部创建，因为 AbortController 的状态会持续存在。一旦一个 controller 被 abort，它就永久处于 aborted 状态，不能被重用。所以我们在 useEffect 内创建就相当于每次挂载组件就有一个新的 controller，abort 后就没了。</p>
+<p>如果在外部创建的话，一方面违背了 pure component 的要求，另一方面在严格模式下，第一次卸载组件时的 abort 操作会禁止掉第二次的挂载，这也可以看出严格模式对于检查我们的组件的作用。</p>
+</blockquote>
+<h4 id="显示加载器"><a href="#显示加载器" class="headerlink" title="显示加载器"></a>显示加载器</h4><p>如果想在数据加载时显示加载器，使用状态变量即可，全量的代码如下：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> axios, &#123; <span class="hljs-title class_">CanceledError</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;axios&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; useEffect, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">User</span> &#123;<br>  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">UserList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [users, setUsers] = useState&lt;<span class="hljs-title class_">User</span>[]&gt;([]);<br>  <span class="hljs-keyword">const</span> [error, setError] = useState&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">&quot;&quot;</span>);<br>  <span class="hljs-keyword">const</span> [isLoading, setIsLoading] = useState&lt;<span class="hljs-built_in">boolean</span>&gt;(<span class="hljs-literal">false</span>); <span class="hljs-comment">// 在这里设置状态变量</span><br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> controller = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AbortController</span>();<br>    <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">true</span>);<br>    axios<br>      .<span class="hljs-property">get</span>&lt;<span class="hljs-title class_">User</span>[]&gt;(<span class="hljs-string">&quot;https://jsonplaceholder.typicode.com/users&quot;</span>, &#123;<br>        <span class="hljs-attr">signal</span>: controller.<span class="hljs-property">signal</span>,<br>      &#125;)<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>(res.<span class="hljs-property">data</span>);<br>        <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">false</span>); <span class="hljs-comment">// 更改之</span><br>      &#125;)<br>      .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (err <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">CanceledError</span>) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>        <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">false</span>); <span class="hljs-comment">// 更改之</span><br>      &#125;);<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> controller.<span class="hljs-title function_">abort</span>();<br>  &#125;, []);<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      &#123;error &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;alert alert-danger&quot;</span>&gt;</span>&#123;error&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>User List<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">      &#123;isLoading &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;spinner-border&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>&#125; //</span><br><span class="language-xml">      显示加载器，这是bootstrap里的类</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;users.map((user) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item&quot;</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;user.id&#125;</span>&gt;</span></span><br><span class="language-xml">            &#123;user.name&#125;</span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">UserList</span>;<br></code></pre></td></tr></table></figure>
+
+<p>理论上可以使用 finally 方法来避免代码冗余，但是它在严格模式下会失效，所以弃之</p>
+<h3 id="Changing-Data"><a href="#Changing-Data" class="headerlink" title="Changing Data"></a>Changing Data</h3><p>下一步是更改数据，通常对于更改数据的操作而言有两种更新方式：</p>
+<ul>
+<li>乐观更新：即先更新前端，再给后端发信息，如果没啥问题就 ok，有问题另当别论</li>
+<li>悲观更新：即先给后端发信息，ok 了再更新前端，有问题就直接中止</li>
+</ul>
+<p>区别就是假设大多数对后端的操作是成功还是失败，对于用户体验而言，当然是乐观更新更好，我们这里也选择乐观更新</p>
+<h4 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h4><p>先看删除的操作如何实现，第一步是添加相应的按钮：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;ul className=<span class="hljs-string">&quot;list-group &quot;</span>&gt;<br>  &#123;users.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">user</span>) =&gt;</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">li</span></span></span><br><span class="hljs-tag"><span class="language-xml">      <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item d-flex justify-content-between&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">      <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;user.id&#125;</span></span></span><br><span class="hljs-tag"><span class="language-xml">    &gt;</span></span><br><span class="language-xml">      &#123;user.name&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span></span></span><br><span class="hljs-tag"><span class="language-xml">        <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-outline-danger&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">        <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> handleDelete(user)&#125;</span><br><span class="language-xml">      &gt;</span><br><span class="language-xml">        Delete</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br>  ))&#125;<br>&lt;/ul&gt;<br></code></pre></td></tr></table></figure>
+
+<p>注意这里的 CSS 类，它可以帮我们将按钮和列表内容推到两边，美观一些</p>
+<p>下一步是写好相应的 handler：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">handleDelete</span> = (<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> originalUsers = [...users];<br>  <span class="hljs-title function_">setUsers</span>(users.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">u</span>) =&gt;</span> u.<span class="hljs-property">id</span> !== user.<span class="hljs-property">id</span>));<br>  axios<br>    .<span class="hljs-title function_">delete</span>(<span class="hljs-string">`https://jsonplaceholder.typicode.com/users/<span class="hljs-subst">$&#123;user.id&#125;</span>`</span>)<br>    .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>注意这里先保存旧数据的操作：使用乐观更新时，如果后端更新失败，我们是需要将前端复原的</p>
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add</h4><p>添加数据的方法如出一辙，设置一个按钮用来添加：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;button className=<span class="hljs-string">&quot;btn btn-primary mb-3&quot;</span> onClick=&#123;handleAdd&#125;&gt;<br>  <span class="hljs-title class_">Add</span><br>&lt;/button&gt;<br></code></pre></td></tr></table></figure>
+
+<p>本来这里应该用表单的，不过这里就省略了，我们硬编码一个给后端：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">handleAdd</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> originalUsers = [...users];<br>  <span class="hljs-keyword">const</span> newUser = &#123; <span class="hljs-attr">id</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;New User&quot;</span> &#125;;<br>  <span class="hljs-title function_">setUsers</span>([newUser, ...users]);<br>  axios<br>    .<span class="hljs-title function_">post</span>(<span class="hljs-string">&quot;https://jsonplaceholder.typicode.com/users&quot;</span>, newUser)<br>    .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setUsers</span>([res.<span class="hljs-property">data</span>, ...users]);<br>    &#125;)<br>    .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>这时候使用的方法就是 post 了，把新的数据发上去，并在前端设置。</p>
+<p>为什么需要设置两次？因为第一次设置的时候是乐观更新的设置，id 是我随便取的；第二次设置相当于把后端发来的真 id 给灌注进去了</p>
+<p>为了方便可读性还可以这样：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tsx">.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">&#123; data: savedUser &#125;</span>) =&gt;</span> &#123;<br>  <span class="hljs-title function_">setUsers</span>([savedUser, ...users]);<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h4 id="update"><a href="#update" class="headerlink" title="update"></a>update</h4><p>最后是更新数据，我们这里同样使用硬编码来模拟（实际肯定是用表单的）</p>
+<p>首先是按钮：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs tsx">&lt;div&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span></span></span><br><span class="hljs-tag"><span class="language-xml">    <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-outline-secondary mx-1&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">    <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> handleUpdate(user)&#125;</span><br><span class="language-xml">  &gt;</span><br><span class="language-xml">    Update</span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-outline-danger&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> handleDelete(user)&#125;&gt;</span><br><span class="language-xml">    Delete</span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br>&lt;/div&gt;<br></code></pre></td></tr></table></figure>
+
+<p>为了排版好看我们把它们放在了一个 div 里</p>
+<p>下一步写好 handler：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">const</span> <span class="hljs-title function_">handleUpdate</span> = (<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> originalUsers = [...users];<br>  <span class="hljs-keyword">const</span> updatedUser = &#123; ...user, <span class="hljs-attr">name</span>: user.<span class="hljs-property">name</span> + <span class="hljs-string">&quot;!&quot;</span> &#125;;<br>  <span class="hljs-title function_">setUsers</span>(users.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">u</span>) =&gt;</span> (u.<span class="hljs-property">id</span> === user.<span class="hljs-property">id</span> ? updatedUser : u)));<br>  axios<br>    .<span class="hljs-title function_">patch</span>(<span class="hljs-string">`https://jsonplaceholder.typicode.com/users/<span class="hljs-subst">$&#123;user.id&#125;</span>`</span>, updatedUser)<br>    .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>唯一不同的是对后端使用的方法：对于更新对象来说使用 put 和 patch 都是可以的，具体用什么根据后端决定，这里就直接用 patch</p>
+<h3 id="创建可重用-API-Client"><a href="#创建可重用-API-Client" class="headerlink" title="创建可重用 API Client"></a>创建可重用 API Client</h3><p>现在我们的代码有些冗杂了，我们可以将所有相关的逻辑提取到一个单独的文件中作为 client，这样我们的组件就不需要直接调用 axios，而是使用我们自己写的 client 去和后端通信。</p>
+<p>这里就直接给出最后的代码：</p>
+<p>首先是 api-client.ts，它内部封装了 axios 的初步逻辑</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> axios, &#123; <span class="hljs-title class_">CanceledError</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;axios&quot;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> axios.<span class="hljs-title function_">create</span>(&#123;<br>  <span class="hljs-attr">baseURL</span>: <span class="hljs-string">&quot;https://jsonplaceholder.typicode.com&quot;</span>,<br>&#125;);<br><br><span class="hljs-keyword">export</span> &#123; <span class="hljs-title class_">CanceledError</span> &#125;;<br></code></pre></td></tr></table></figure>
+
+<p>其次是 user-service.ts，它内部利用 api-client 的操作实现了对这里 user 的所有操作：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> apiClient <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./api-client&quot;</span>;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">User</span> &#123;<br>  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> &#123;<br>  <span class="hljs-title function_">getAllUsers</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">const</span> controller = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AbortController</span>();<br>    <span class="hljs-keyword">const</span> request = apiClient.<span class="hljs-property">get</span>&lt;<span class="hljs-title class_">User</span>[]&gt;(<span class="hljs-string">&quot;/users&quot;</span>, &#123;<br>      <span class="hljs-attr">signal</span>: controller.<span class="hljs-property">signal</span>,<br>    &#125;);<br>    <span class="hljs-keyword">return</span> &#123; request, <span class="hljs-attr">cancel</span>: <span class="hljs-function">() =&gt;</span> controller.<span class="hljs-title function_">abort</span>() &#125;;<br>  &#125;<br><br>  <span class="hljs-title function_">deleteUser</span>(<span class="hljs-params"><span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span></span>) &#123;<br>    <span class="hljs-keyword">return</span> apiClient.<span class="hljs-title function_">delete</span>(<span class="hljs-string">`/users/<span class="hljs-subst">$&#123;id&#125;</span>`</span>);<br>  &#125;<br><br>  <span class="hljs-title function_">createUser</span>(<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) &#123;<br>    <span class="hljs-keyword">return</span> apiClient.<span class="hljs-title function_">post</span>(<span class="hljs-string">&quot;/users&quot;</span>, user);<br>  &#125;<br><br>  <span class="hljs-title function_">updateUser</span>(<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) &#123;<br>    <span class="hljs-keyword">return</span> apiClient.<span class="hljs-title function_">patch</span>(<span class="hljs-string">`/users/<span class="hljs-subst">$&#123;user.id&#125;</span>`</span>, user);<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UserService</span>();<br></code></pre></td></tr></table></figure>
+
+<p>最后是我们的 UserList.tsx，我们看看重构后的代码是什么样子的：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> &#123; useEffect, useState &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">CanceledError</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../services/api-client&quot;</span>;<br><span class="hljs-keyword">import</span> userService, &#123; <span class="hljs-title class_">User</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../services/user-service&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">UserList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [users, setUsers] = useState&lt;<span class="hljs-title class_">User</span>[]&gt;([]);<br>  <span class="hljs-keyword">const</span> [error, setError] = useState&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">&quot;&quot;</span>);<br>  <span class="hljs-keyword">const</span> [isLoading, setIsLoading] = useState&lt;<span class="hljs-built_in">boolean</span>&gt;(<span class="hljs-literal">false</span>);<br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> &#123; request, cancel &#125; = userService.<span class="hljs-title function_">getAllUsers</span>();<br>    <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">true</span>);<br>    request<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>(res.<span class="hljs-property">data</span>);<br>        <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">false</span>);<br>      &#125;)<br>      .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (err <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">CanceledError</span>) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>        <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">false</span>);<br>      &#125;);<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">cancel</span>();<br>  &#125;, []);<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleDelete</span> = (<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> originalUsers = [...users];<br>    <span class="hljs-title function_">setUsers</span>(users.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">u</span>) =&gt;</span> u.<span class="hljs-property">id</span> !== user.<span class="hljs-property">id</span>));<br>    userService.<span class="hljs-title function_">deleteUser</span>(user.<span class="hljs-property">id</span>).<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>  &#125;;<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleAdd</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> originalUsers = [...users];<br>    <span class="hljs-keyword">const</span> newUser = &#123; <span class="hljs-attr">id</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;New User&quot;</span> &#125;;<br>    <span class="hljs-title function_">setUsers</span>([newUser, ...users]);<br>    userService<br>      .<span class="hljs-title function_">createUser</span>(newUser)<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">&#123; data: savedUser &#125;</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>([savedUser, ...users]);<br>      &#125;)<br>      .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>        <span class="hljs-title function_">setUsers</span>(originalUsers);<br>      &#125;);<br>  &#125;;<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleUpdate</span> = (<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> originalUsers = [...users];<br>    <span class="hljs-keyword">const</span> updatedUser = &#123; ...user, <span class="hljs-attr">name</span>: user.<span class="hljs-property">name</span> + <span class="hljs-string">&quot;!&quot;</span> &#125;;<br>    <span class="hljs-title function_">setUsers</span>(users.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">u</span>) =&gt;</span> (u.<span class="hljs-property">id</span> === user.<span class="hljs-property">id</span> ? updatedUser : u)));<br>    userService.<span class="hljs-title function_">updateUser</span>(updatedUser).<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>  &#125;;<br><br>  <span class="hljs-keyword">return</span> (<br>	...<span class="hljs-comment">// 这里省略</span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">UserList</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这样代码就清爽了许多，同时组件里不需要知道任何和后端相关的东西</p>
+<h3 id="创建通用-HTTP-Service"><a href="#创建通用-HTTP-Service" class="headerlink" title="创建通用 HTTP Service"></a>创建通用 HTTP Service</h3><p>进一步重构，现在我们的 Client 只适用于 user，如果我要 post 呢？如果我要 todo 呢？我们可以创建一个完全通用的 HTTP Service 来处理这些逻辑：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> apiClient <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./api-client&quot;</span>;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">Entity</span> &#123;<br>  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpService</span> &#123;<br>  <span class="hljs-attr">endpoint</span>: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"><span class="hljs-attr">endpoint</span>: <span class="hljs-built_in">string</span></span>) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">endpoint</span> = endpoint;<br>  &#125;<br><br>  getAll&lt;T&gt;() &#123;<br>    <span class="hljs-keyword">const</span> controller = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AbortController</span>();<br>    <span class="hljs-keyword">const</span> request = apiClient.<span class="hljs-property">get</span>&lt;T[]&gt;(<span class="hljs-variable language_">this</span>.<span class="hljs-property">endpoint</span>, &#123;<br>      <span class="hljs-attr">signal</span>: controller.<span class="hljs-property">signal</span>,<br>    &#125;);<br>    <span class="hljs-keyword">return</span> &#123; request, <span class="hljs-attr">cancel</span>: <span class="hljs-function">() =&gt;</span> controller.<span class="hljs-title function_">abort</span>() &#125;;<br>  &#125;<br><br>  <span class="hljs-title function_">delete</span>(<span class="hljs-params"><span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span></span>) &#123;<br>    <span class="hljs-keyword">return</span> apiClient.<span class="hljs-title function_">delete</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.endpoint&#125;</span>/<span class="hljs-subst">$&#123;id&#125;</span>`</span>);<br>  &#125;<br><br>  create&lt;T&gt;(<span class="hljs-attr">entity</span>: T) &#123;<br>    <span class="hljs-keyword">return</span> apiClient.<span class="hljs-title function_">post</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">endpoint</span>, entity);<br>  &#125;<br><br>  update&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Entity</span>&gt;(<span class="hljs-attr">entity</span>: T) &#123;<br>    <span class="hljs-keyword">return</span> apiClient.<span class="hljs-title function_">patch</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.endpoint&#125;</span>/<span class="hljs-subst">$&#123;entity.id&#125;</span>`</span>, entity);<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">create</span> = (<span class="hljs-params"><span class="hljs-attr">endpoint</span>: <span class="hljs-built_in">string</span></span>) =&gt; <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpService</span>(endpoint);<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> create;<br></code></pre></td></tr></table></figure>
+
+<p>这样在 user-service 里只需要处理好 user 的 interface 和导出这里的 HttpService 实例就行了</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> create <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./http-service&quot;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">User</span> &#123;<br>  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title function_">create</span>(<span class="hljs-string">&quot;/users&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>最后不要忘了在组件中修改名称~</p>
+<h3 id="创建自定义-Hook"><a href="#创建自定义-Hook" class="headerlink" title="创建自定义 Hook"></a>创建自定义 Hook</h3><p>最后一部分是创建自定义的 hook，用来集成所有钩子相关的逻辑：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">CanceledError</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;axios&quot;</span>;<br><span class="hljs-keyword">import</span> &#123; useState, useEffect &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;<br><span class="hljs-keyword">import</span> userService, &#123; <span class="hljs-title class_">User</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../services/user-service&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">useUsers</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> [users, setUsers] = useState&lt;<span class="hljs-title class_">User</span>[]&gt;([]);<br>  <span class="hljs-keyword">const</span> [error, setError] = useState&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">&quot;&quot;</span>);<br>  <span class="hljs-keyword">const</span> [isLoading, setIsLoading] = useState&lt;<span class="hljs-built_in">boolean</span>&gt;(<span class="hljs-literal">false</span>);<br>  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> &#123; request, cancel &#125; = userService.<span class="hljs-property">getAll</span>&lt;<span class="hljs-title class_">User</span>&gt;();<br>    <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">true</span>);<br>    request<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>(res.<span class="hljs-property">data</span>);<br>        <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">false</span>);<br>      &#125;)<br>      .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (err <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">CanceledError</span>) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>        <span class="hljs-title function_">setIsLoading</span>(<span class="hljs-literal">false</span>);<br>      &#125;);<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">cancel</span>();<br>  &#125;, []);<br><br>  <span class="hljs-keyword">return</span> &#123; users, error, isLoading, setError, setUsers &#125;;<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> useUsers;<br><span class="hljs-comment">// /src/hooks/useUsers.ts</span><br></code></pre></td></tr></table></figure>
+
+<p>这样我们在组件里就会变得非常清爽，而且我们的钩子也可以在其他地方使用：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-keyword">import</span> userService, &#123; <span class="hljs-title class_">User</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../services/user-service&quot;</span>;<br><span class="hljs-keyword">import</span> useUsers <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../hooks/useUsers&quot;</span>;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">UserList</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123; users, error, isLoading, setError, setUsers &#125; = <span class="hljs-title function_">useUsers</span>();<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleDelete</span> = (<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> originalUsers = [...users];<br>    <span class="hljs-title function_">setUsers</span>(users.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">u</span>) =&gt;</span> u.<span class="hljs-property">id</span> !== user.<span class="hljs-property">id</span>));<br>    userService.<span class="hljs-title function_">delete</span>(user.<span class="hljs-property">id</span>).<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>  &#125;;<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleAdd</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> originalUsers = [...users];<br>    <span class="hljs-keyword">const</span> newUser = &#123; <span class="hljs-attr">id</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;New User&quot;</span> &#125;;<br>    <span class="hljs-title function_">setUsers</span>([newUser, ...users]);<br>    userService<br>      .<span class="hljs-title function_">create</span>(newUser)<br>      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">&#123; data: savedUser &#125;</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setUsers</span>([savedUser, ...users]);<br>      &#125;)<br>      .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>        <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>        <span class="hljs-title function_">setUsers</span>(originalUsers);<br>      &#125;);<br>  &#125;;<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleUpdate</span> = (<span class="hljs-params"><span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span></span>) =&gt; &#123;<br>    <span class="hljs-keyword">const</span> originalUsers = [...users];<br>    <span class="hljs-keyword">const</span> updatedUser = &#123; ...user, <span class="hljs-attr">name</span>: user.<span class="hljs-property">name</span> + <span class="hljs-string">&quot;!&quot;</span> &#125;;<br>    <span class="hljs-title function_">setUsers</span>(users.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">u</span>) =&gt;</span> (u.<span class="hljs-property">id</span> === user.<span class="hljs-property">id</span> ? updatedUser : u)));<br>    userService.<span class="hljs-title function_">update</span>(updatedUser).<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-title function_">setError</span>(err.<span class="hljs-property">message</span>);<br>      <span class="hljs-title function_">setUsers</span>(originalUsers);<br>    &#125;);<br>  &#125;;<br><br>  <span class="hljs-keyword">return</span> (<br>    <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span></span><br><span class="language-xml">      &#123;error &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;alert alert-danger&quot;</span>&gt;</span>&#123;error&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>&#125;</span><br><span class="language-xml">      &#123;isLoading &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;spinner-border&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-primary mb-3&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;handleAdd&#125;</span>&gt;</span></span><br><span class="language-xml">        Add</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group &quot;</span>&gt;</span></span><br><span class="language-xml">        &#123;users.map((user) =&gt; (</span><br><span class="language-xml">          <span class="hljs-tag">&lt;<span class="hljs-name">li</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;list-group-item d-flex justify-content-between&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">            <span class="hljs-attr">key</span>=<span class="hljs-string">&#123;user.id&#125;</span></span></span><br><span class="hljs-tag"><span class="language-xml">          &gt;</span></span><br><span class="language-xml">            &#123;user.name&#125;</span><br><span class="language-xml">            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">              <span class="hljs-tag">&lt;<span class="hljs-name">button</span></span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-outline-secondary mx-1&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> handleUpdate(user)&#125;</span><br><span class="language-xml">              &gt;</span><br><span class="language-xml">                Update</span><br><span class="language-xml">              <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">              <span class="hljs-tag">&lt;<span class="hljs-name">button</span></span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;btn btn-outline-danger&quot;</span></span></span><br><span class="hljs-tag"><span class="language-xml">                <span class="hljs-attr">onClick</span>=<span class="hljs-string">&#123;()</span> =&gt;</span> handleDelete(user)&#125;</span><br><span class="language-xml">              &gt;</span><br><span class="language-xml">                Delete</span><br><span class="language-xml">              <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">          <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span><br><span class="language-xml">        ))&#125;</span><br><span class="language-xml">      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/&gt;</span></span><br>  );<br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title class_">UserList</span>;<br></code></pre></td></tr></table></figure>
+
+<p>到这里后端通信相关的内容就结束啦，所有 React 初级教程的笔记也到此为止（不包含他的 gameHub 实践项目，那个是类似 project 的东西）</p>
+<p>下一部分是 mosh 的中级 React 课程，我们将学习更多的库和更多的高级方法。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Courses/" class="category-chain-item">Courses</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/Web/" class="category-chain-item">Web</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Courses/Web/React/" class="category-chain-item">React</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/React/" class="print-no-link">#React</a>
+      
+        <a href="/tags/Web/" class="print-no-link">#Web</a>
+      
+        <a href="/tags/TypeScript/" class="print-no-link">#TypeScript</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Primary React (3)</div>
+      <div>http://example.com/2025/03/09/ReactP3/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/05/ReactP2/" title="Primary React (2)">
+                        <span class="hidden-mobile">Primary React (2)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
