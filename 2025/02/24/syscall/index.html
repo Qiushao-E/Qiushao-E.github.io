@@ -1,0 +1,840 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之系统调用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统调用">
+<meta property="og:url" content="http://example.com/2025/02/24/syscall/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之系统调用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/chcore/lab3_1.png">
+<meta property="article:published_time" content="2025-02-24T14:12:23.000Z">
+<meta property="article:modified_time" content="2025-03-11T14:19:53.199Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/chcore/lab3_1.png">
+  
+  
+  
+  <title>系统调用 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="系统调用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-24 22:12" pubdate>
+          2025年2月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">系统调用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h1><blockquote>
+<p>系统调用是系统为用户程序提供的高特权操作接口。在本实验中，用户程序通过  <code>svc</code>  指令进入内核模式。在内核模式下，首先操作系统代码和硬件将保存用户程序的状态。操作系统根据系统调用号码执行相应的系统调用处理代码，完成系统调用的实际功能，并保存返回值。最后，操作系统和硬件将恢复用户程序的状态，将系统调用的返回值返回给用户程序，继续用户程序的执行</p>
+</blockquote>
+<p>书接上回，在异常管理的部分已经讲了系统调用的整体流程。本部分内容将讲解其实现细节，并以 printf 函数为例探究一次系统调用的逻辑关系链</p>
+<h1 id="系统调用流程"><a href="#系统调用流程" class="headerlink" title="系统调用流程"></a>系统调用流程</h1><p>我们在异常管理部分已经分析了系统调用的大体流程：</p>
+<ul>
+<li>保存上下文，即当前线程的各个寄存器值，该工作由 <code>exception_enter</code>  完成。结合上回分解我们知道它们是直接被保存在内核栈上的</li>
+<li>切换到内核栈，即 <code>switch_to_cpu_stack</code> 宏，此时由用户态进入内核态</li>
+<li>根据系统调用表进行跳转，并执行相应的函数</li>
+<li>处理返回值，恢复上下文，该工作由 <code>exception_exit</code> 完成</li>
+<li>结束系统调用</li>
+</ul>
+<h2 id="内核栈切换"><a href="#内核栈切换" class="headerlink" title="内核栈切换"></a>内核栈切换</h2><p>这里重点再分析一下之前没有讲到的内核栈切换，先看源码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs nasm">.macro switch_to_cpu_stack<br>	mrs     x24, TPIDR_EL1<br>	add	x24, x24, #OFFSET_LOCAL_CPU_STACK<br>	ldr	x24, [x24]<br>	mov	sp, x24<br>.endm<br></code></pre></td></tr></table></figure>
+
+<p>注意到这个寄存器 <code>TPIDR_EL1</code> ，Lab 文档告诉我们它可以读取到当前核的 <code>per_cpu_info</code> ，我们作更深一步的了解：</p>
+<p><code>TPIDR_EL1</code>（Thread Process ID Register for EL1）是 ARM 架构中一个特殊的寄存器，<strong>用于存储当前执行线程或进程的上下文信息</strong>。在操作系统内核中，这个寄存器经常被用来存储指向<code>per_cpu_data</code>结构的指针，该结构包含了特定于 CPU 的数据，比如 CPU 的局部变量和栈指针</p>
+<p>实质上，这是个“保留寄存器”，硬件上没有对其的直接操作，留给操作系统实现者自行使用。具体的初始化和设置在 <code>smp</code> 之中，chcore 将其设置为指向 <code>per_cpu_info</code> 结构体的指针，并且在之后不再变化</p>
+<h2 id="CPU-信息结构体"><a href="#CPU-信息结构体" class="headerlink" title="CPU 信息结构体"></a>CPU 信息结构体</h2><p>现在让我们来看看这个结构体是个什么东东：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">per_cpu_info</span> &#123;</span><br>	<span class="hljs-comment">/* The execution context of current thread */</span><br>	u64 cur_exec_ctx;<br><br>	<span class="hljs-comment">/* Per-CPU stack */</span><br>	<span class="hljs-type">char</span> *cpu_stack;<br><br>	<span class="hljs-comment">/* struct thread *fpu_owner */</span><br>	<span class="hljs-type">void</span> *fpu_owner;<br>	u32 fpu_disable;<br><br>	<span class="hljs-type">char</span> pad[pad_to_cache_line(<span class="hljs-keyword">sizeof</span>(u64) +<br>				   <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">char</span> *) +<br>				   <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">void</span> *) +<br>				   <span class="hljs-keyword">sizeof</span>(u32))];<br>&#125; __attribute__((packed, aligned(<span class="hljs-number">64</span>)));<br></code></pre></td></tr></table></figure>
+
+<p>其中 FPU 指浮点运算单元，这个指针即表示当前使用 FPU 的线程，最后的 pad 以及结尾的编译器声明则旨在让结构体按照 64 字节大小对齐，从而避免多个 CPU 核心访问同一缓存行导致的性能问题</p>
+<p>那么 <code>TPIDR_EL1</code> 又是在哪里被设置的呢？我们顺着看其 init 函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">init_per_cpu_info</span><span class="hljs-params">(u32 cpuid)</span><br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">per_cpu_info</span> *<span class="hljs-title">info</span>;</span><br><br>	<span class="hljs-keyword">if</span> (cpuid == <span class="hljs-number">0</span>)<br>		ctr_el0 = read_ctr();<br><br>	info = &amp;cpu_info[cpuid];<br><br>	info-&gt;cur_exec_ctx = <span class="hljs-number">0</span>;<br><br>	info-&gt;cpu_stack = (<span class="hljs-type">char</span> *)(KSTACKx_ADDR(cpuid) + CPU_STACK_SIZE);<br><br>	info-&gt;fpu_owner = <span class="hljs-literal">NULL</span>;<br>	info-&gt;fpu_disable = <span class="hljs-number">0</span>;<br>	<span class="hljs-comment">// 寄存器在此处被初始化</span><br>	<span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span><span class="hljs-params">(<span class="hljs-string">&quot;msr tpidr_el1, %0&quot;</span>::<span class="hljs-string">&quot;r&quot;</span> (info))</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这样一来，切换内核栈的那部分汇编代码就好理解了：系统直接按照结构体的大小读出 CPU 的栈指针，然后一把塞到 <code>sp</code> 寄存器里，即完成了栈的切换。那个 <code>#OFFSET_XXX</code> 宏的定义自然也能猜到是什么了，事实上，它就定义在 <code>smp.h</code> 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * The offset in the per_cpu struct, i.e., struct per_cpu_info.</span><br><span class="hljs-comment"> * The base addr of this struct is stored in TPIDR_EL1 register.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * IMPORTANT: modify the following offset values after</span><br><span class="hljs-comment"> * modifying struct per_cpu_info.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OFFSET_CURRENT_EXEC_CTX		0</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OFFSET_LOCAL_CPU_STACK		8</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OFFSET_CURRENT_FPU_OWNER	16</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OFFSET_FPU_DISABLE		24</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="用户态-libc-支持"><a href="#用户态-libc-支持" class="headerlink" title="用户态 libc 支持"></a>用户态 libc 支持</h1><p>接下来我们尝试分析 printf 这个用户态函数，文档已经给出了他在 musl-libc 之中的调用链，而跟踪这个调用链，我们就可以一窥 API 和 ABI 的边界</p>
+<h2 id="从-printf-到-stdio-write"><a href="#从-printf-到-stdio-write" class="headerlink" title="从 printf 到__stdio_write"></a>从 printf 到__stdio_write</h2><p>由 Lab 文档知，printf 经过一系列调用，会来到 <code>__stdout_write</code> 函数，并进一步去到 <code>__stdio_write</code> 函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// user/system-services/chcore-libc/musl-libc/src/stdio/__stdout_write.c</span><br><span class="hljs-type">size_t</span> __stdout_write(FILE *f, <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *buf, <span class="hljs-type">size_t</span> len)<br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">winsize</span> <span class="hljs-title">wsz</span>;</span><br>	f-&gt;write = __stdio_write;<br>	<span class="hljs-keyword">if</span> (!(f-&gt;flags &amp; F_SVB) &amp;&amp; __syscall(SYS_ioctl, f-&gt;fd, TIOCGWINSZ, &amp;wsz))<br>		f-&gt;lbf = <span class="hljs-number">-1</span>;<br>	<span class="hljs-keyword">return</span> __stdio_write(f, buf, len);<br>&#125;<br><br><span class="hljs-comment">// user/system-services/chcore-libc/musl-libc/src/stdio/__stdio_write.c</span><br><span class="hljs-type">size_t</span> __stdio_write(FILE *f, <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *buf, <span class="hljs-type">size_t</span> len)<br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iovec</span> <span class="hljs-title">iovs</span>[2] =</span> &#123;<br>		&#123; .iov_base = f-&gt;wbase, .iov_len = f-&gt;wpos-f-&gt;wbase &#125;,<br>		&#123; .iov_base = (<span class="hljs-type">void</span> *)buf, .iov_len = len &#125;<br>	&#125;;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iovec</span> *<span class="hljs-title">iov</span> =</span> iovs;<br>	<span class="hljs-type">size_t</span> rem = iov[<span class="hljs-number">0</span>].iov_len + iov[<span class="hljs-number">1</span>].iov_len;<br>	<span class="hljs-type">int</span> iovcnt = <span class="hljs-number">2</span>;<br>	<span class="hljs-type">ssize_t</span> cnt;<br>	<span class="hljs-keyword">for</span> (;;) &#123;<br>		<span class="hljs-comment">// HERE!!!</span><br>		cnt = syscall(SYS_writev, f-&gt;fd, iov, iovcnt);<br>		<span class="hljs-comment">// ...循环剩余内容</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里的 <code>SYS_writev</code> 是一个用户态中的宏，负责表示系统调用编号，从而和系统调用联系起来</p>
+<h2 id="用户态-syscall-宏展开"><a href="#用户态-syscall-宏展开" class="headerlink" title="用户态 syscall 宏展开"></a>用户态 syscall 宏展开</h2><p>继续深究这里的 syscall 宏，其中暗藏大量玄机：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> __scc</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __scc(X) ((long) (X))</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-type">long</span> <span class="hljs-type">syscall_arg_t</span>;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>hidden <span class="hljs-type">long</span> __syscall_ret(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>),<br>	__syscall_cp(<span class="hljs-type">syscall_arg_t</span>, <span class="hljs-type">syscall_arg_t</span>, <span class="hljs-type">syscall_arg_t</span>, <span class="hljs-type">syscall_arg_t</span>,<br>	             <span class="hljs-type">syscall_arg_t</span>, <span class="hljs-type">syscall_arg_t</span>, <span class="hljs-type">syscall_arg_t</span>);<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall1(n,a) __syscall1(n,__scc(a))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall2(n,a,b) __syscall2(n,__scc(a),__scc(b))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall3(n,a,b,c) __syscall3(n,__scc(a),__scc(b),__scc(c))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall4(n,a,b,c,d) __syscall4(n,__scc(a),__scc(b),__scc(c),__scc(d))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall5(n,a,b,c,d,e) __syscall5(n,__scc(a),__scc(b),__scc(c),__scc(d),__scc(e))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall6(n,a,b,c,d,e,f) __syscall6(n,__scc(a),__scc(b),__scc(c),__scc(d),__scc(e),__scc(f))</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall7(n,a,b,c,d,e,f,g) __syscall7(n,__scc(a),__scc(b),__scc(c),__scc(d),__scc(e),__scc(f),__scc(g))</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __SYSCALL_NARGS_X(a,b,c,d,e,f,g,h,n,...) n</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __SYSCALL_NARGS(...) __SYSCALL_NARGS_X(__VA_ARGS__,7,6,5,4,3,2,1,0,)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __SYSCALL_CONCAT_X(a,b) a##b</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __SYSCALL_CONCAT(a,b) __SYSCALL_CONCAT_X(a,b)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __SYSCALL_DISP(b,...) __SYSCALL_CONCAT(b,__SYSCALL_NARGS(__VA_ARGS__))(__VA_ARGS__)</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> __syscall(...) __SYSCALL_DISP(__syscall,__VA_ARGS__)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> syscall(...) __syscall_ret(__syscall(__VA_ARGS__))</span><br><br></code></pre></td></tr></table></figure>
+
+<p>这里循环套圈了很多，我们做一个拆解：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 原始调用</span><br>syscall(SYS_write, fd, buf, count);<br><br><span class="hljs-comment">// 1. 展开syscall宏</span><br>__syscall_ret(__syscall(SYS_write, fd, buf, count))<br><br><span class="hljs-comment">// 2. 展开__syscall宏</span><br>__syscall_ret(__SYSCALL_DISP(__syscall, SYS_write, fd, buf, count))<br><br><span class="hljs-comment">// 3. 确定参数数量（3个）并连接宏名</span><br>__syscall_ret(__syscall3(SYS_write, __scc(fd), __scc(buf), __scc(count)))<br><br><span class="hljs-comment">// 4. 类型转换</span><br>__syscall_ret(__syscall3(SYS_write,<br>                         ((<span class="hljs-type">long</span>)(fd)),<br>                         ((<span class="hljs-type">long</span>)(buf)),<br>                         ((<span class="hljs-type">long</span>)(count))))<br><br><span class="hljs-comment">// 5. 最终调用实际的系统调用函数并处理返回值</span><br></code></pre></td></tr></table></figure>
+
+<p>遵循这个链继续到 <code>syscall_dispatcher.c</code> 文件，会发现它先经历了 <code>__syscall3</code> 后到 <code>__syscall6</code> 的调用，并进入 <code>chcore_writev</code></p>
+<p>这个函数只有三个参数，但是为什么会调用到有 6 个参数的 syscall 呢？这里既可能是为了灵活性的考量，也可能是不同架构下的 write 对应的 syscall 参数不同，选了比较大的那个（例如 pwrite 就需要 5 个参数）</p>
+<p>继续追踪，来到 chcore_write 函数，这里调用了 stdout 这一个初始化的 fd 的 fd_ops 的 write 函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">ssize_t</span> <span class="hljs-title function_">chcore_write</span><span class="hljs-params">(<span class="hljs-type">int</span> fd, <span class="hljs-type">void</span> *buf, <span class="hljs-type">size_t</span> count)</span><br>&#123;<br>        <span class="hljs-keyword">if</span> (fd &lt; <span class="hljs-number">0</span> || fd_dic[fd] == <span class="hljs-number">0</span>)<br>                <span class="hljs-keyword">return</span> -EBADF;<br>        <span class="hljs-keyword">return</span> fd_dic[fd]-&gt;fd_op-&gt;write(fd, buf, count);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="找寻-chcore-stdout-write-真身"><a href="#找寻-chcore-stdout-write-真身" class="headerlink" title="找寻 chcore_stdout_write 真身"></a>找寻 chcore_stdout_write 真身</h2><p>诶，发现找不下去了！这是因为这时候我们并不知道这里的 <code>write</code> 函数是什么！于是我们考虑反向搜寻，从 <code>chcore_stdout_write</code> 函数往前找：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// user/system-services/chcore-libc/libchcore/porting/overrides/src/chcore-port/stdio.c</span><br><span class="hljs-type">static</span> <span class="hljs-type">ssize_t</span> <span class="hljs-title function_">chcore_stdout_write</span><span class="hljs-params">(<span class="hljs-type">int</span> fd, <span class="hljs-type">void</span> *buf, <span class="hljs-type">size_t</span> count)</span><br>&#123;<br>        <span class="hljs-comment">/* <span class="hljs-doctag">TODO:</span> stdout should also follow termios flags */</span><br>        <span class="hljs-type">char</span> buffer[STDOUT_BUFSIZE];<br>        <span class="hljs-type">size_t</span> size = <span class="hljs-number">0</span>;<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span> *p = buf; p &lt; (<span class="hljs-type">char</span> *)buf + count; p++) &#123;<br>                <span class="hljs-keyword">if</span> (size + <span class="hljs-number">2</span> &gt; STDOUT_BUFSIZE) &#123;<br>                        put(buffer, size);<br>                        size = <span class="hljs-number">0</span>;<br>                &#125;<br><br>                <span class="hljs-keyword">if</span> (*p == <span class="hljs-string">&#x27;\n&#x27;</span>) &#123;<br>                        buffer[size++] = <span class="hljs-string">&#x27;\r&#x27;</span>;<br>                &#125;<br>                buffer[size++] = *p;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>                put(buffer, size);<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> count;<br></code></pre></td></tr></table></figure>
+
+<p>注意到这里使用了 <code>put</code> 函数，它则有了对 syscall_table 直接的调用，正式打破了用户态的边界：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">put</span><span class="hljs-params">(<span class="hljs-type">char</span> buffer[], <span class="hljs-type">unsigned</span> size)</span><br>&#123;<br>        chcore_syscall2(CHCORE_SYS_putstr, (<span class="hljs-type">vaddr_t</span>)buffer, size);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>但是还有个问题：我们的 <code>chcore_stdout_write</code> 又是如何从 <code>printf</code> 调用到的呢？</p>
+<p>继续反向追踪，我们可以发现如下的结构体定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// user/system-services/chcore-libc/libchcore/porting/overrides/src/chcore-port/stdio.c</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">fd_ops</span> <span class="hljs-title">stdout_ops</span> =</span> &#123;<br>        .read = chcore_stdio_read,<br>        .write = chcore_stdout_write,<br>        .close = chcore_stdout_close,<br>        .poll = chcore_stdio_poll,<br>        .ioctl = chcore_stdio_ioctl,<br>        .fcntl = chcore_stdio_fcntl,<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>继续顺藤摸瓜，我们就能找到用这个结构体来初始化 <code>fd_dic</code> 的函数了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// user/system-services/chcore-libc/libchcore/porting/overrides/src/chcore-port/syscall_dispatcher.c</span><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * This function is local to libc and it will</span><br><span class="hljs-comment"> * only be executed once during the libc init time.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * It will be executed in the dynamic loader (for dynamic-apps) or</span><br><span class="hljs-comment"> * just before calling user main (for static-apps).</span><br><span class="hljs-comment"> * Nevertheless, when loading a dynamic application, it will be invoked twice.</span><br><span class="hljs-comment"> * This is why the variable `initialized` is required.</span><br><span class="hljs-comment"> */</span><br>__attribute__((constructor(<span class="hljs-number">101</span>))) <span class="hljs-type">void</span> __libc_chcore_init(<span class="hljs-type">void</span>)<br>&#123;<br>        <span class="hljs-type">static</span> <span class="hljs-type">int</span> initialized = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> fd0, fd1, fd2;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">termios</span> *<span class="hljs-title">ts</span>;</span><br>        <span class="hljs-type">char</span> *pidstr;<br>        <span class="hljs-type">size_t</span> i;<br>        <span class="hljs-type">elf_auxv_t</span> *auxv;<br><br>				<span class="hljs-comment">// ......</span><br><br>        <span class="hljs-comment">/* STDOUT */</span><br>        fd1 = alloc_fd();<br>        assert(fd1 == STDOUT_FILENO);<br>        fd_dic[fd1]-&gt;type = FD_TYPE_STDOUT;<br>        fd_dic[fd1]-&gt;fd = fd1;<br>        fd_dic[fd1]-&gt;fd_op = &amp;stdout_ops; <span class="hljs-comment">// 这里！！！！！</span><br><br>			  <span class="hljs-comment">// ......</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>这样一来，我们就打通了 printf 的整个调用函数链条，最终通过 put 函数向内核态调用 syscall，从 api 过渡到 abi</p>
+<h2 id="分析-FILE-的-write-函数"><a href="#分析-FILE-的-write-函数" class="headerlink" title="分析 FILE*的 write 函数"></a>分析 FILE*的 write 函数</h2><p>上面是 printf 的整个流程，最终得到了 <code>chcore_stdout_write</code> 和内核交互。但是我们熟知的 fopen 等 FILE*的 write 又在哪里呢</p>
+<p>FILE 是 一个等效于 <code>_IO_FILE</code> 结构体的宏，而后者在 <code>user/system-services/chcore-libc/musl-libc/src/internal/stdio_impl.h</code> 中有着声明</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_FILE</span> &#123;</span><br>	<span class="hljs-type">unsigned</span> flags;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *rpos, *rend;<br>	<span class="hljs-type">int</span> (*close)(FILE *);<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *wend, *wpos;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *mustbezero_1;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *wbase;<br>	<span class="hljs-type">size_t</span> (*read)(FILE *, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *, <span class="hljs-type">size_t</span>);<br>	<span class="hljs-type">size_t</span> (*write)(FILE *, <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *, <span class="hljs-type">size_t</span>);<br>	<span class="hljs-type">off_t</span> (*seek)(FILE *, <span class="hljs-type">off_t</span>, <span class="hljs-type">int</span>);<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *buf;<br>	<span class="hljs-type">size_t</span> buf_size;<br>	FILE *prev, *next;<br>	<span class="hljs-type">int</span> fd;<br>	<span class="hljs-type">int</span> pipe_pid;<br>	<span class="hljs-type">long</span> lockcount;<br>	<span class="hljs-type">int</span> mode;<br>	<span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> lock;<br>	<span class="hljs-type">int</span> lbf;<br>	<span class="hljs-type">void</span> *cookie;<br>	<span class="hljs-type">off_t</span> off;<br>	<span class="hljs-type">char</span> *getln_buf;<br>	<span class="hljs-type">void</span> *mustbezero_2;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *shend;<br>	<span class="hljs-type">off_t</span> shlim, shcnt;<br>	FILE *prev_locked, *next_locked;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> __<span class="hljs-title">locale_struct</span> *<span class="hljs-title">locale</span>;</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>实际上，这个 <code>_IO_FILE</code> 是 OS 实现者自己完成的，与 POSIX 对接只需要有 read, write, seek, close 四个方法，它的实现可以用这个函数来说明</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs c">FILE *__fdopen(<span class="hljs-type">int</span> fd, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *mode)<br>&#123;<br>	FILE *f;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">winsize</span> <span class="hljs-title">wsz</span>;</span><br><br>	<span class="hljs-comment">/* Check for valid initial mode character */</span><br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strchr</span>(<span class="hljs-string">&quot;rwa&quot;</span>, *mode)) &#123;<br>		errno = EINVAL;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>	&#125;<br><br>	<span class="hljs-comment">/* Allocate FILE+buffer or fail */</span><br>	<span class="hljs-keyword">if</span> (!(f=<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span> *f + UNGET + BUFSIZ))) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>	<span class="hljs-comment">/* Zero-fill only the struct, not the buffer */</span><br>	<span class="hljs-built_in">memset</span>(f, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span> *f);<br><br>	<span class="hljs-comment">/* Impose mode restrictions */</span><br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strchr</span>(mode, <span class="hljs-string">&#x27;+&#x27;</span>)) f-&gt;flags = (*mode == <span class="hljs-string">&#x27;r&#x27;</span>) ? F_NOWR : F_NORD;<br><br>	<span class="hljs-comment">/* Apply close-on-exec flag */</span><br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">strchr</span>(mode, <span class="hljs-string">&#x27;e&#x27;</span>)) __syscall(SYS_fcntl, fd, F_SETFD, FD_CLOEXEC);<br><br>	<span class="hljs-comment">/* Set append mode on fd if opened for append */</span><br>	<span class="hljs-keyword">if</span> (*mode == <span class="hljs-string">&#x27;a&#x27;</span>) &#123;<br>		<span class="hljs-type">int</span> flags = __syscall(SYS_fcntl, fd, F_GETFL);<br>		<span class="hljs-keyword">if</span> (!(flags &amp; O_APPEND))<br>			__syscall(SYS_fcntl, fd, F_SETFL, flags | O_APPEND);<br>		f-&gt;flags |= F_APP;<br>	&#125;<br><br>	f-&gt;fd = fd;<br>	f-&gt;buf = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)f + <span class="hljs-keyword">sizeof</span> *f + UNGET;<br>	f-&gt;buf_size = BUFSIZ;<br><br>	<span class="hljs-comment">/* Activate line buffered mode for terminals */</span><br>	f-&gt;lbf = EOF;<br>	<span class="hljs-keyword">if</span> (!(f-&gt;flags &amp; F_NOWR) &amp;&amp; !__syscall(SYS_ioctl, fd, TIOCGWINSZ, &amp;wsz))<br>		f-&gt;lbf = <span class="hljs-string">&#x27;\n&#x27;</span>;<br><br>	<span class="hljs-comment">/* Initialize op ptrs. No problem if some are unneeded. */</span><br>	f-&gt;read = __stdio_read;<br>	f-&gt;write = __stdio_write;<br>	f-&gt;seek = __stdio_seek;<br>	f-&gt;close = __stdio_close;<br><br>	<span class="hljs-keyword">if</span> (!libc.threaded) f-&gt;lock = <span class="hljs-number">-1</span>;<br><br>	<span class="hljs-comment">/* Add new FILE to open file list */</span><br>	<span class="hljs-keyword">return</span> __ofl_add(f);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>我们从 write 往回找可以看到，在调用 <code>__fdopen</code> 的时候，我们由一个 fd，动态地生成了这个 <code>_IO_FILE</code> 结构体，并把他的方法用 <code>__stdio_xx</code> 赋值</p>
+<p>在 <code>__stdio_xx</code> 内部是 libc 库实现的逻辑，但落到最后是调用 SYS_readv, SYS_read 的 syscall</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">size_t</span> __stdio_read(FILE *f, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *buf, <span class="hljs-type">size_t</span> len)<br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iovec</span> <span class="hljs-title">iov</span>[2] =</span> &#123;<br>		&#123; .iov_base = buf, .iov_len = len - !!f-&gt;buf_size &#125;,<br>		&#123; .iov_base = f-&gt;buf, .iov_len = f-&gt;buf_size &#125;<br>	&#125;;<br>	<span class="hljs-type">ssize_t</span> cnt;<br><br>	cnt = iov[<span class="hljs-number">0</span>].iov_len ? syscall(SYS_readv, f-&gt;fd, iov, <span class="hljs-number">2</span>)<br>		: syscall(SYS_read, f-&gt;fd, iov[<span class="hljs-number">1</span>].iov_base, iov[<span class="hljs-number">1</span>].iov_len);<br>	<span class="hljs-keyword">if</span> (cnt &lt;= <span class="hljs-number">0</span>) &#123;<br>		f-&gt;flags |= cnt ? F_ERR : F_EOF;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>	&#125;<br>	<span class="hljs-keyword">if</span> (cnt &lt;= iov[<span class="hljs-number">0</span>].iov_len) <span class="hljs-keyword">return</span> cnt;<br>	cnt -= iov[<span class="hljs-number">0</span>].iov_len;<br>	f-&gt;rpos = f-&gt;buf;<br>	f-&gt;rend = f-&gt;buf + cnt;<br>	<span class="hljs-keyword">if</span> (f-&gt;buf_size) buf[len<span class="hljs-number">-1</span>] = *f-&gt;rpos++;<br>	<span class="hljs-keyword">return</span> len;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>最后给到用户的就是 fopen 了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c">FILE *<span class="hljs-title function_">fopen</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *<span class="hljs-keyword">restrict</span> filename, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *<span class="hljs-keyword">restrict</span> mode)</span><br>&#123;<br>	FILE *f;<br>	<span class="hljs-type">int</span> fd;<br>	<span class="hljs-type">int</span> flags;<br><br>	<span class="hljs-comment">/* Check for valid initial mode character */</span><br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strchr</span>(<span class="hljs-string">&quot;rwa&quot;</span>, *mode)) &#123;<br>		errno = EINVAL;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>	&#125;<br><br>	<span class="hljs-comment">/* Compute the flags to pass to open() */</span><br>	flags = __fmodeflags(mode);<br><br>	fd = sys_open(filename, flags, <span class="hljs-number">0666</span>);<br>	<span class="hljs-keyword">if</span> (fd &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">if</span> (flags &amp; O_CLOEXEC)<br>		__syscall(SYS_fcntl, fd, F_SETFD, FD_CLOEXEC);<br><br>	f = __fdopen(fd, mode);<br>	<span class="hljs-keyword">if</span> (f) <span class="hljs-keyword">return</span> f;<br><br>	__syscall(SYS_close, fd);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>由此我们可以得出, 内核里面始终只维护 fd, 而用户态的 FILE*其实是 libc 做的一层包装，而如果想要自定义 kernel, 只需要保证 SYS_readv, SYS_writev, SYS_read, SYS_write 这些宏存在，并处理对应参数的 syscall 就行</p>
+<h2 id="关于-stdout"><a href="#关于-stdout" class="headerlink" title="关于 stdout"></a>关于 stdout</h2><p>众所周知，stdout 只是一个 stdout 文件的宏，而 stdout 文件就是 FILE*类型的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// user/system-services/chcore-libc/musl-libc/src/stdio/stdout.c</span><br>hidden FILE __stdout_FILE = &#123;<br>	.buf = buf+UNGET,<br>	.buf_size = <span class="hljs-keyword">sizeof</span> buf-UNGET,<br>	.fd = <span class="hljs-number">1</span>,<br>	.flags = F_PERM | F_NORD,<br>	.lbf = <span class="hljs-string">&#x27;\n&#x27;</span>,<br>	.write = __stdout_write,<br>	.seek = __stdio_seek,<br>	.close = __stdio_close,<br>	.lock = <span class="hljs-number">-1</span>,<br>&#125;;<br>FILE *<span class="hljs-type">const</span> <span class="hljs-built_in">stdout</span> = &amp;__stdout_FILE;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// user/system-services/chcore-libc/musl-libc/src/stdio/__stdout_write.c</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdio_impl.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/ioctl.h&gt;</span></span><br><br><span class="hljs-type">size_t</span> __stdout_write(FILE *f, <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *buf, <span class="hljs-type">size_t</span> len)<br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">winsize</span> <span class="hljs-title">wsz</span>;</span><br>	f-&gt;write = __stdio_write;<br>	<span class="hljs-keyword">if</span> (!(f-&gt;flags &amp; F_SVB) &amp;&amp; __syscall(SYS_ioctl, f-&gt;fd, TIOCGWINSZ, &amp;wsz))<br>		f-&gt;lbf = <span class="hljs-number">-1</span>;<br>	<span class="hljs-keyword">return</span> __stdio_write(f, buf, len);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="调用逻辑图"><a href="#调用逻辑图" class="headerlink" title="调用逻辑图"></a>调用逻辑图</h2><p>最后，我们用一张逻辑链条图来结束今天的旅程：</p>
+<p><img src="/img/chcore/lab3_1.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="用户态程序编写"><a href="#用户态程序编写" class="headerlink" title="用户态程序编写"></a>用户态程序编写</h1><p>万事具备，现在我们可以尝试自己动手编写我们的用户态程序了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Hello ChCore!\n&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>按照文档指示，用已经生成好的工具链编译</p>
+<p>不要忘了结果放到 build&#x2F;ramdisk 文件夹里面，这样内核启动时将自动运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./build/chcore-libc/bin/musl-gcc ./user/apps/my-apps/hello.c -o ./build/ramdisk/hello-world.bin<br></code></pre></td></tr></table></figure>
+
+<p>然后 <code>./chbuild rambuild</code> 重新生成内核镜像，再 <code>./build/simulate.sh</code> 重新进入 chcore</p>
+<p>便可以看到我们编写的 Hello-world!成功运行了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ ./hello-world.bin<br>Hello ChCore!<br></code></pre></td></tr></table></figure>
+
+<p>至此，系统调用部分的源码解析到此为止</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E8%BF%9B%E7%A8%8B%C2%B7%E7%BA%BF%E7%A8%8B%C2%B7%E5%BC%82%E5%B8%B8/" class="category-chain-item">进程·线程·异常</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>系统调用</div>
+      <div>http://example.com/2025/02/24/syscall/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/26/mulkersup/" title="多核支持">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">多核支持</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/22/irqManage/" title="异常管理">
+                        <span class="hidden-mobile">异常管理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

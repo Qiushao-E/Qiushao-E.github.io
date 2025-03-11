@@ -1,0 +1,915 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之缺页管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="缺页管理">
+<meta property="og:url" content="http://example.com/2025/02/19/pgfault/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之缺页管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-19T08:50:18.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:52:33.513Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>缺页管理 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="缺页管理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-19 16:50" pubdate>
+          2025年2月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">缺页管理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="缺页管理"><a href="#缺页管理" class="headerlink" title="缺页管理"></a>缺页管理</h1><p><strong>本节</strong>内容讲解 Chcore 中对缺页异常的处理，同时也会拓展 ARM 异常相关的知识。由于缺页异常会涉及到进程的虚拟地址区域 （VMR&#x2F;VMA）和物理内存对象（PMO）的相关知识，所以我们也会对这部分作相应的解析，以帮助大家学习。本节内容顺序如下：</p>
+<ul>
+<li>ARM 异常基础知识</li>
+<li>缺页异常函数的源码解析</li>
+<li>VMR 和 PMO 相关源码解析</li>
+</ul>
+<h1 id="ARM-异常机制"><a href="#ARM-异常机制" class="headerlink" title="ARM 异常机制"></a>ARM 异常机制</h1><h2 id="异常类型"><a href="#异常类型" class="headerlink" title="异常类型"></a>异常类型</h2><p>ARM 将异常分为同步异常和异步异常两大类。同步异常是由指令执行直接引发的，例如系统调用、页面错误或非法指令等，这类异常具有<strong>确定性</strong>，每次执行到特定指令时都会触发。而异步异常包括硬件中断（IRQ）、快速中断（FIQ）和错误（ERROR），它们与当前指令无关，通常由<strong>外部事件或硬件故障</strong>引起</p>
+<ul>
+<li><strong>sync</strong>: 同步异常，如系统调用或页面错误。</li>
+<li><strong>irq</strong>: 硬件中断请求（IRQ），由外部设备生成的中断。</li>
+<li><strong>fiq</strong>: 快速中断请求（FIQ），用于更高优先级的中断处理。</li>
+<li><strong>error</strong>: 处理其他类型的错误，如未定义指令或故障。</li>
+</ul>
+<h2 id="处理逻辑"><a href="#处理逻辑" class="headerlink" title="处理逻辑"></a>处理逻辑</h2><p>缺页异常说到底也是 ARM 异常的一个子集，在学习缺页异常之前，不妨先看看整体的异常管理设计逻辑是什么样的</p>
+<p>根据异常类型和当前的执行模式（内核态或用户态），设计相应的处理逻辑：</p>
+<ul>
+<li><strong>同步异常处理逻辑</strong>：<ul>
+<li><strong>用户态（EL0）触发的同步异常</strong>：<ul>
+<li><strong>目标</strong>：不能直接让内核崩溃，必须妥善处理</li>
+<li><strong>处理方式</strong>：根据异常类型回调对应的处理逻辑。例如，对于页面错误，可以实现需求分页或 COW 机制</li>
+</ul>
+</li>
+<li><strong>内核态（EL1）触发的同步异常</strong>：<ul>
+<li><strong>目标</strong>：尝试修复一些提前设计的机制和可以处理的操作，其他情况应导致系统崩溃</li>
+<li><strong>处理方式</strong>：对于可修复的异常，执行相应的修复逻辑；对于不可修复的异常，记录错误信息并触发系统崩溃</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>中断处理逻辑</strong>：<ul>
+<li><strong>目标</strong>：快速响应并处理外部设备的中断请求</li>
+<li><strong>处理方式</strong>：调用中断处理逻辑，完成中断处理后返回到中断发生前的状态</li>
+</ul>
+</li>
+<li><strong>错误处理逻辑</strong>：<ul>
+<li><strong>目标</strong>：处理不可恢复的错误，确保系统稳定性</li>
+<li><strong>处理方式</strong>：记录错误信息并触发系统崩溃（panic），以便进行后续的调试和分析</li>
+</ul>
+</li>
+</ul>
+<p>落实到实现本身，则需要根据当前的异常级别寄存器（EL0 或 EL1）来区分内核态和用户态，并在异常发生时保存上下文信息。</p>
+<p>于是对于同步异常，就可以通过特定寄存器（如 FAR_ELx）获取产生异常的指令地址，从而进行调试和分析</p>
+<h1 id="缺页异常源码解析"><a href="#缺页异常源码解析" class="headerlink" title="缺页异常源码解析"></a>缺页异常源码解析</h1><p>有了对 ARM 异常机制与处理逻辑的基本了解，我们就可以进一步分析 <code>do_page_fault</code> 的源码了</p>
+<p>可以参考代码中的注释，英文为自带的，中文为附加的助于理解的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">do_page_fault</span><span class="hljs-params">(u64 esr, u64 fault_ins_addr, <span class="hljs-type">int</span> type, u64 *fix_addr)</span><br>&#123;<br>        <span class="hljs-type">vaddr_t</span> fault_addr;<br>        <span class="hljs-type">int</span> fsc; <span class="hljs-comment">// fault status code</span><br>        <span class="hljs-type">int</span> wnr;<br>        <span class="hljs-type">int</span> ret;<br>				<span class="hljs-comment">// 从far_el1寄存器读取汇编</span><br>        fault_addr = get_fault_addr();<br>        <span class="hljs-comment">// #define GET_ESR_EL1_FSC(esr_el1) (((esr_el1) &gt;&gt; ESR_EL1_FSC_SHIFT) &amp; FSC_MASK)</span><br>        fsc = GET_ESR_EL1_FSC(esr);<br>        <span class="hljs-keyword">switch</span> (fsc) &#123;<br>        <span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L0:<br>        <span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L1:<br>        <span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L2:<br>        <span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L3: &#123;<br>				<span class="hljs-comment">// 地址转换错误，根据vma进行进一步处理，也就是缺页异常</span><br>                ret = handle_trans_fault(current_thread-&gt;vmspace, fault_addr);<br>                <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// 没有正确处理</span><br>                        <span class="hljs-comment">/* The trap happens in the kernel */</span><br>                        <span class="hljs-keyword">if</span> (type &lt; SYNC_EL0_64) &#123;<br>                        <span class="hljs-comment">// EL1 的 type, 表示内核态的异常，跳转到no_context标签</span><br>                                <span class="hljs-keyword">goto</span> no_context;<br>                        &#125;<br>												<span class="hljs-comment">// 用户态的异常处理失败，打印信息后退出</span><br>                        kinfo(<span class="hljs-string">&quot;do_page_fault: faulting ip is 0x%lx (real IP),&quot;</span><br>                              <span class="hljs-string">&quot;faulting address is 0x%lx,&quot;</span><br>                              <span class="hljs-string">&quot;fsc is trans_fault (0b%b),&quot;</span><br>                              <span class="hljs-string">&quot;type is %d\n&quot;</span>,<br>                              fault_ins_addr,<br>                              fault_addr,<br>                              fsc,<br>                              type);<br>                        kprint_vmr(current_thread-&gt;vmspace);<br><br>                        kinfo(<span class="hljs-string">&quot;current_cap_group is %s\n&quot;</span>,<br>                                        current_cap_group-&gt;cap_group_name);<br><br>                        sys_exit_group(<span class="hljs-number">-1</span>);<br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">case</span> DFSC_PERM_FAULT_L1:<br>        <span class="hljs-keyword">case</span> DFSC_PERM_FAULT_L2:<br>        <span class="hljs-keyword">case</span> DFSC_PERM_FAULT_L3:<br>        <span class="hljs-comment">// 权限错误</span><br>                wnr = GET_ESR_EL1_WnR(esr);<br>                <span class="hljs-comment">// WnR, ESR bit[6]. Write not Read. The cause of data abort.</span><br>                <span class="hljs-keyword">if</span> (wnr) &#123;<br>                <span class="hljs-comment">//写权限错误</span><br>                        ret = handle_perm_fault(<br>                                current_thread-&gt;vmspace, fault_addr, VMR_WRITE);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-comment">//读权限错误</span><br>                        ret = handle_perm_fault(<br>                                current_thread-&gt;vmspace, fault_addr, VMR_READ);<br>                &#125;<br><br>                <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) &#123;<br>                        <span class="hljs-comment">/* The trap happens in the kernel */</span><br>                        <span class="hljs-keyword">if</span> (type &lt; SYNC_EL0_64) &#123;<br>                                <span class="hljs-keyword">goto</span> no_context;<br>                        &#125;<br>                        sys_exit_group(<span class="hljs-number">-1</span>);<br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> DFSC_ACCESS_FAULT_L1:<br>        <span class="hljs-keyword">case</span> DFSC_ACCESS_FAULT_L2:<br>        <span class="hljs-keyword">case</span> DFSC_ACCESS_FAULT_L3:<br>        <span class="hljs-comment">// Access faults：没有access bit的pte，此处还不支持处理，仅打印信息</span><br>                kinfo(<span class="hljs-string">&quot;do_page_fault: fsc is access_fault (0b%b)\n&quot;</span>, fsc);<br>                BUG_ON(<span class="hljs-number">1</span>);<br>                <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">default</span>:<br>        <span class="hljs-comment">//默认处理流程，指遇到了奇奇怪怪的的错误，且系统当前还不支持处理它们</span><br>        <span class="hljs-comment">//因此这里的处理流程就是打印错误相关的信息，然后触发内核panic终止之</span><br>                kinfo(<span class="hljs-string">&quot;do_page_fault: faulting ip is 0x%lx (real IP),&quot;</span><br>                      <span class="hljs-string">&quot;faulting address is 0x%lx,&quot;</span><br>                      <span class="hljs-string">&quot;fsc is unsupported now (0b%b)\n&quot;</span>,<br>                      fault_ins_addr,<br>                      fault_addr,<br>                      fsc);<br>                kprint_vmr(current_thread-&gt;vmspace);<br><br>                kinfo(<span class="hljs-string">&quot;current_cap_group is %s\n&quot;</span>,<br>                      current_cap_group-&gt;cap_group_name);<br><br>                BUG_ON(<span class="hljs-number">1</span>);<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span>;<br><span class="hljs-comment">// no_context 这一名称来源于内核的异常处理流程。</span><br><span class="hljs-comment">// 当内核检测到异常发生在内核态时，它发现没有“用户态上下文”</span><br><span class="hljs-comment">//（即不是用户程序引发的异常），因此称之为 no_context</span><br><span class="hljs-comment">// 这只是一个逻辑分支，用于区分内核态异常的处理流程</span><br>no_context:<br>        kinfo(<span class="hljs-string">&quot;kernel_fault: faulting ip is 0x%lx (real IP),&quot;</span><br>              <span class="hljs-string">&quot;faulting address is 0x%lx,&quot;</span><br>              <span class="hljs-string">&quot;fsc is 0b%b\n&quot;</span>,<br>              fault_ins_addr,<br>              fault_addr,<br>              fsc);<br>        __do_kernel_fault(esr, fault_ins_addr, fix_addr);<br>&#125;<br><span class="hljs-type">static</span> <span class="hljs-type">void</span> __do_kernel_fault(u64 esr, u64 fault_ins_addr, u64 *fix_addr)<br>&#123;<br>        kdebug(<span class="hljs-string">&quot;kernel_fault triggered\n&quot;</span>);<br>        <span class="hljs-comment">// 内核态page fault的时候，查表尝试修复，修复不了就终止内核</span><br>        <span class="hljs-keyword">if</span> (fixup_exception(fault_ins_addr, fix_addr)) &#123;<br>                <span class="hljs-keyword">return</span>;<br>        &#125;<br><br>        BUG_ON(<span class="hljs-number">1</span>);<br><br>        sys_exit_group(<span class="hljs-number">-1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>对于这里好多种的 switch 分支，再统一分类说明一下：</p>
+<p><strong>转换错误（Translation Fault）</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L0:<br><span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L1:<br><span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L2:<br><span class="hljs-keyword">case</span> DFSC_TRANS_FAULT_L3:<br></code></pre></td></tr></table></figure>
+
+<p>这组错误表示<strong>页表项不存在</strong>，也就是本文的核心<strong>缺页异常</strong>，常见场景：</p>
+<ul>
+<li>第一次访问堆区新分配的内存</li>
+<li>访问未映射的内存区域</li>
+<li>栈增长时的新页面访问</li>
+</ul>
+<p><strong>权限错误（Permission Fault）</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">case</span> DFSC_PERM_FAULT_L1:<br><span class="hljs-keyword">case</span> DFSC_PERM_FAULT_L2:<br><span class="hljs-keyword">case</span> DFSC_PERM_FAULT_L3:<br></code></pre></td></tr></table></figure>
+
+<p>这组错误表示<strong>访问权限不足</strong>，常见场景：</p>
+<ul>
+<li>写入只读内存（如代码段）</li>
+<li>执行不可执行的内存</li>
+<li>用户态访问内核内存</li>
+</ul>
+<p><strong>访问错误（Access Fault）</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">case</span> DFSC_ACCESS_FAULT_L1:<br><span class="hljs-keyword">case</span> DFSC_ACCESS_FAULT_L2:<br><span class="hljs-keyword">case</span> DFSC_ACCESS_FAULT_L3:<br></code></pre></td></tr></table></figure>
+
+<p>这组错误表示<strong>硬件级别的访问失败</strong>，常见场景：</p>
+<ul>
+<li>访问未对齐的地址</li>
+<li>硬件级别的内存访问限制</li>
+<li>TLB（页表缓存）相关错误</li>
+</ul>
+<p>后面几种不必过多了解，感兴趣的可以进一步阅读相关源码</p>
+<p>接下来我们学习 VMR 和 PMO 的相关代码，之后再回过头来梳理一遍我们的缺页异常处理流程</p>
+<h1 id="VMR-PMO"><a href="#VMR-PMO" class="headerlink" title="VMR &amp; PMO"></a>VMR &amp; PMO</h1><p>回顾 Lab 文档，我们知道：</p>
+<blockquote>
+<p>在 ChCore 中，一个进程的虚拟地址空间由多段“虚拟地址区域”（VMR，又称 VMA）组成，一段 VMR 记录了这段虚拟地址对应的“物理内存对象”（PMO），而 PMO 中则记录了物理地址相关信息。因此，想要处理缺页异常，首先需要找到当前进程发生页错误的虚拟地址所处的 VMR，进而才能得知其对应的物理地址，从而在页表中完成映射。</p>
+</blockquote>
+<p>我们先来看看 VMR 的数据结构是如何设计的（已经添加了详细的注释）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * vmregion表示一个虚拟地址空间中的连续内存区域</span><br><span class="hljs-comment"> * 例如：代码段、数据段、堆、栈等</span><br><span class="hljs-comment"> */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmregion</span> &#123;</span><br>        <span class="hljs-comment">/* 作为vmspace.vmr_list的节点，用于顺序遍历所有vmregion */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">list_node</span>;</span><br><br>        <span class="hljs-comment">/* 作为vmspace.vmr_tree的节点，用于按地址快速查找vmregion */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rb_node</span> <span class="hljs-title">tree_node</span>;</span><br><br>        <span class="hljs-comment">/* 作为PMO的mapping_list的节点，用于跟踪所有映射到此PMO的vmregion */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">mapping_list_node</span>;</span><br><br>        <span class="hljs-comment">/* 指向此vmregion所属的虚拟地址空间 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmspace</span> *<span class="hljs-title">vmspace</span>;</span><br><br>        <span class="hljs-comment">/* 此内存区域的起始虚拟地址 */</span><br>        <span class="hljs-type">vaddr_t</span> start;<br><br>        <span class="hljs-comment">/* 此内存区域的大小（字节数）*/</span><br>        <span class="hljs-type">size_t</span> size;<br><br>        <span class="hljs-comment">/* 在对应物理内存对象(PMO)中的偏移量 */</span><br>        <span class="hljs-type">size_t</span> offset;<br><br>        <span class="hljs-comment">/* 访问权限标志（如：可读、可写、可执行等）*/</span><br>        <span class="hljs-type">vmr_prop_t</span> perm;<br><br>        <span class="hljs-comment">/* 指向此区域对应的物理内存对象 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">pmobject</span> *<span class="hljs-title">pmo</span>;</span><br><br>        <span class="hljs-comment">/* 写时复制(CoW)机制中的私有页面链表 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">cow_private_pages</span>;</span><br>&#125;;<br><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * vmspace表示一个完整的虚拟地址空间</span><br><span class="hljs-comment"> * 通常对应一个进程的整个地址空间</span><br><span class="hljs-comment"> */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmspace</span> &#123;</span><br>        <span class="hljs-comment">/* vmregion链表的头节点，用于顺序遍历所有内存区域 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">vmr_list</span>;</span><br><br>        <span class="hljs-comment">/* vmregion红黑树的根节点，用于快速查找特定地址所在的内存区域 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rb_root</span> <span class="hljs-title">vmr_tree</span>;</span><br><br>        <span class="hljs-comment">/* 指向此地址空间的页表根节点 */</span><br>        <span class="hljs-type">void</span> *pgtbl;<br><br>        <span class="hljs-comment">/* 进程上下文ID，用于避免TLB冲突 */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> pcid;<br><br>        <span class="hljs-comment">/* 用于保护vmregion操作（增删改）的锁 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> <span class="hljs-title">vmspace_lock</span>;</span><br><br>        <span class="hljs-comment">/* 用于保护页表操作的锁 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> <span class="hljs-title">pgtbl_lock</span>;</span><br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * TLB刷新相关：</span><br><span class="hljs-comment">         * 记录此vmspace在哪些CPU核心上运行过</span><br><span class="hljs-comment">         * 用于确定需要在哪些CPU上进行TLB刷新</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> history_cpus[PLAT_CPU_NUM];<br><br>        <span class="hljs-comment">/* 指向堆区域的边界vmregion，用于堆的动态扩展 */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmregion</span> *<span class="hljs-title">heap_boundary_vmr</span>;</span><br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * 记录已映射的物理内存大小（Resident Set Size）</span><br><span class="hljs-comment">         * 受pgtbl_lock保护</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">long</span> rss;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>其实就是 vmregion 包含在 vmspace 里的关系，类比一本书和书里的不同章节</p>
+<p>以下是示意图便于理解：</p>
+
+<pre>
+<code class="mermaid" >
+classDiagram
+class vmregion {
+-struct list_head list_node
+-struct rb_node tree_node
+-struct list_head mapping_list_node
+-struct vmspace* vmspace
+-vaddr_t start
+-size_t size
+-size_t offset
+-vmr_prop_t perm
+-struct pmobject* pmo
+-struct list_head cow_private_pages
+}
+
+    class vmspace {
+        -struct list_head vmr_list
+        -struct rb_root vmr_tree
+        -void* pgtbl
+        -unsigned long pcid
+        -struct lock vmspace_lock
+        -struct lock pgtbl_lock
+        -unsigned char history_cpus[PLAT_CPU_NUM]
+        -struct vmregion* heap_boundary_vmr
+        -long rss
+    }
+
+    vmregion "1" --> "1" vmspace : back_ref
+    vmspace "1" --> "many" vmregion : has(both rbtree & list)
+    	vmregion "1" --> "1" vmregion : list_node, tree_node
+
+</code>
+</pre>
+
+<p>观察其设计不难发现一个“奇怪”的现象，那就是它同时维护了双向链表和红黑树的数据结构</p>
+<p>这两种数据结构各有优劣，但若同时出现，则是一种“以空间换时间”的策略，以集众数据结构之长。虽然维护两套数据结构需要额外的内存空间和更新开销，但却能够在不同场景下都获得最优的性能表现。从缓存的视角上看，在扫描时，list 能保证新插入的项被优先遍历，有更强的 TLB 亲和性，而红黑树的设计则保证了在查找特定元素时稳定的时间发挥。这种设计在 Linux 中同样被广泛采用</p>
+<p>举两个例子分别说明两种情况，以下代码均出自 chcore 中 vma 的操作函数的源码</p>
+<h3 id="链表的情况"><a href="#链表的情况" class="headerlink" title="链表的情况"></a>链表的情况</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">free_vmregion</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> vmregion *vmr)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">cow_private_page</span> *<span class="hljs-title">cur_record</span> =</span> <span class="hljs-literal">NULL</span>, *tmp = <span class="hljs-literal">NULL</span>;<br><br>        <span class="hljs-comment">// 使用链表遍历所有CoW私有页面</span><br>        for_each_in_list_safe (cur_record, tmp, node, &amp;vmr-&gt;cow_private_pages) &#123;<br>                free_cow_private_page(cur_record);<br>        &#125;<br>        list_del(&amp;vmr-&gt;mapping_list_node);<br>        kfree((<span class="hljs-type">void</span> *)vmr);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>例如在 freeVMR 时，这种遍历的操作需求就很适合用链表来实现</p>
+<h3 id="红黑树的情况"><a href="#红黑树的情况" class="headerlink" title="红黑树的情况"></a>红黑树的情况</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">struct</span> vmregion *<span class="hljs-title function_">find_vmr_for_va</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> vmspace *vmspace, <span class="hljs-type">vaddr_t</span> addr)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmregion</span> *<span class="hljs-title">vmr</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rb_node</span> *<span class="hljs-title">node</span>;</span><br><br>        <span class="hljs-comment">// 使用红黑树快速查找地址对应的VMR</span><br>        node = rb_search(<br>                &amp;vmspace-&gt;vmr_tree,<br>                (<span class="hljs-type">const</span> <span class="hljs-type">void</span> *)addr,<br>                cmp_vmr_and_va);<br><br>        <span class="hljs-keyword">if</span> (unlikely(node == <span class="hljs-literal">NULL</span>))<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br><br>        vmr = rb_entry(node, <span class="hljs-keyword">struct</span> vmregion, tree_node);<br>        <span class="hljs-keyword">return</span> vmr;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>涉及到查找的时候，就该红黑树大显神通了，利用封装好的函数和宏，兼具效率与代码可读性</p>
+<h3 id="PMO"><a href="#PMO" class="headerlink" title="PMO"></a>PMO</h3><p>在地址空间 vmr 中，还需要保证虚拟内存地址和物理地址的映射，从而避免查进程自身空间的页表，不需要保持内核页表和每个进程页表的项的对应。这就轮到 PMO 发挥作用的时候了，我们看看其数据结构的设计</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* This struct represents some physical memory resource */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">pmobject</span> &#123;</span><br>        <span class="hljs-type">paddr_t</span> start;<br>        <span class="hljs-type">size_t</span> size;<br>        <span class="hljs-type">pmo_type_t</span> type;<br>        <span class="hljs-comment">/* record physical pages for on-demand-paging pmo */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">radix</span> *<span class="hljs-title">radix</span>;</span><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * The field of &#x27;private&#x27; depends on &#x27;type&#x27;.</span><br><span class="hljs-comment">         * PMO_FILE: it points to fmap_fault_pool</span><br><span class="hljs-comment">         * others: NULL</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">void</span> *private;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">mapping_list</span>;</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>这里使用了 start 和 size 的结构，支持 copy-on-writing 和 on demand paging。具体而言，声明时，只需要记录 pmo 的 start+size，在 pmo 之中维护访问过的&#x2F;没访问的物理地址集合，在出现 pagefault 的时候分配，并更新这个集合就行。而对于如何维护这个集合的问题，chcore 采用了 radix-tree 的形式，在 Linux 中也有相似应用</p>
+<blockquote>
+<p>在 Linux 内核中，radix tree（或其改进版本 xarray）被用于管理 page cache 和内存对象（如 PMO，Physical Memory Object）时的地址到页面映射。这种选择的背后是对性能、功能和扩展性的权衡</p>
+</blockquote>
+<p>似乎只用 bitmap 也能达到一样的效果，那么为什么不用 bitmap 呢？这是因为 radix tree 管理的 pmo 的地址空间通常是<strong>很大一段稀疏的</strong>（启用 on demand paging）。这对 bitmap 非常不友好，而 radix tree 对稀疏和懒分配有很好的支持。此外，bitmap 只能标记存在与否，而 radix tree 可以存指针，从而达到更灵活的元数据管理</p>
+<h3 id="回顾-trans-fault-的处理"><a href="#回顾-trans-fault-的处理" class="headerlink" title="回顾 trans_fault 的处理"></a>回顾 trans_fault 的处理</h3><p>有了 VMR&amp;PMO 的知识，我们就可以进一步研究之前处理地址转换错误（也就是缺页异常）的时候的细节操作了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">handle_trans_fault</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> vmspace *vmspace, <span class="hljs-type">vaddr_t</span> fault_addr)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmregion</span> *<span class="hljs-title">vmr</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">pmobject</span> *<span class="hljs-title">pmo</span>;</span><br>        <span class="hljs-type">paddr_t</span> pa;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> offset;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> index;<br>        <span class="hljs-type">int</span> ret = <span class="hljs-number">0</span>;<br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * Grab lock here.</span><br><span class="hljs-comment">         * Because two threads (in same process) on different cores</span><br><span class="hljs-comment">         * may fault on the same page, so we need to prevent them</span><br><span class="hljs-comment">         * from adding the same mapping twice.</span><br><span class="hljs-comment">         */</span><br>        lock(&amp;vmspace-&gt;vmspace_lock);<br>        vmr = find_vmr_for_va(vmspace, fault_addr);<br><br>        <span class="hljs-keyword">if</span> (vmr == <span class="hljs-literal">NULL</span>) &#123;<br>                kinfo(<span class="hljs-string">&quot;handle_trans_fault: no vmr found for va 0x%lx!\n&quot;</span>,<br>                      fault_addr);<br>                dump_pgfault_error();<br>                unlock(&amp;vmspace-&gt;vmspace_lock);<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> defined(CHCORE_ARCH_AARCH64) || defined(CHCORE_ARCH_SPARC)</span><br>                <span class="hljs-comment">/* kernel fault fixup is only supported on AArch64 and Sparc */</span><br>                <span class="hljs-keyword">return</span> -EFAULT;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>                sys_exit_group(<span class="hljs-number">-1</span>);<br>        &#125;<br><br>        pmo = vmr-&gt;pmo;<br>        <span class="hljs-comment">/* Get the offset in the pmo for faulting addr */</span><br>        offset = ROUND_DOWN(fault_addr, PAGE_SIZE) - vmr-&gt;start + vmr-&gt;offset;<br>        <span class="hljs-type">vmr_prop_t</span> perm = vmr-&gt;perm;<br>        <span class="hljs-keyword">switch</span> (pmo-&gt;type) &#123;<br>        <span class="hljs-keyword">case</span> PMO_ANONYM:<br>        <span class="hljs-keyword">case</span> PMO_SHM: &#123;<br>                <span class="hljs-comment">/* Boundary check */</span><br>                BUG_ON(offset &gt;= pmo-&gt;size);<br><br>                <span class="hljs-comment">/* Get the index in the pmo radix for faulting addr */</span><br>                index = offset / PAGE_SIZE;<br><br>                fault_addr = ROUND_DOWN(fault_addr, PAGE_SIZE);<br><br>                pa = get_page_from_pmo(pmo, index);<br>                <span class="hljs-keyword">if</span> (pa == <span class="hljs-number">0</span>) &#123;<br>                        <span class="hljs-comment">/*</span><br><span class="hljs-comment">                         * Not committed before. Then, allocate the physical</span><br><span class="hljs-comment">                         * page.</span><br><span class="hljs-comment">                         */</span><br>                        <span class="hljs-type">void</span> *new_va = get_pages(<span class="hljs-number">0</span>);<br>                        <span class="hljs-type">long</span> rss = <span class="hljs-number">0</span>;<br>                        <span class="hljs-keyword">if</span> (new_va == <span class="hljs-literal">NULL</span>) &#123;<br>                                unlock(&amp;vmspace-&gt;vmspace_lock);<br>                                <span class="hljs-keyword">return</span> -ENOMEM;<br>                        &#125;<br>                        pa = virt_to_phys(new_va);<br>                        BUG_ON(pa == <span class="hljs-number">0</span>);<br>                        <span class="hljs-comment">/* Clear to 0 for the newly allocated page */</span><br>                        <span class="hljs-built_in">memset</span>((<span class="hljs-type">void</span> *)phys_to_virt(pa), <span class="hljs-number">0</span>, PAGE_SIZE);<br>                        <span class="hljs-comment">/*</span><br><span class="hljs-comment">                         * Record the physical page in the radix tree:</span><br><span class="hljs-comment">                         * the offset is used as index in the radix tree</span><br><span class="hljs-comment">                         */</span><br>                        kdebug(<span class="hljs-string">&quot;commit: index: %ld, 0x%lx\n&quot;</span>, index, pa);<br>                        commit_page_to_pmo(pmo, index, pa);<br><br>                        <span class="hljs-comment">/* Add mapping in the page table */</span><br>                        lock(&amp;vmspace-&gt;pgtbl_lock);<br>                        map_range_in_pgtbl(vmspace-&gt;pgtbl,<br>                                           fault_addr,<br>                                           pa,<br>                                           PAGE_SIZE,<br>                                           perm,<br>                                           &amp;rss);<br>                        vmspace-&gt;rss += rss;<br>                        unlock(&amp;vmspace-&gt;pgtbl_lock);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                        <span class="hljs-comment">/*</span><br><span class="hljs-comment">                         * pa != 0: the faulting address has be committed a</span><br><span class="hljs-comment">                         * physical page.</span><br><span class="hljs-comment">                         *</span><br><span class="hljs-comment">                         * For concurrent page faults:</span><br><span class="hljs-comment">                         *</span><br><span class="hljs-comment">                         * When type is PMO_ANONYM, the later faulting threads</span><br><span class="hljs-comment">                         * of the process do not need to modify the page</span><br><span class="hljs-comment">                         * table because a previous faulting thread will do</span><br><span class="hljs-comment">                         * that. (This is always true for the same process)</span><br><span class="hljs-comment">                         * However, if one process map an anonymous pmo for</span><br><span class="hljs-comment">                         * another process (e.g., main stack pmo), the faulting</span><br><span class="hljs-comment">                         * thread (e.g, in the new process) needs to update its</span><br><span class="hljs-comment">                         * page table.</span><br><span class="hljs-comment">                         * So, for simplicity, we just update the page table.</span><br><span class="hljs-comment">                         * Note that adding the same mapping is harmless.</span><br><span class="hljs-comment">                         *</span><br><span class="hljs-comment">                         * When type is PMO_SHM, the later faulting threads</span><br><span class="hljs-comment">                         * needs to add the mapping in the page table.</span><br><span class="hljs-comment">                         * Repeated mapping operations are harmless.</span><br><span class="hljs-comment">                         */</span><br>                        <span class="hljs-keyword">if</span> (pmo-&gt;type == PMO_SHM || pmo-&gt;type == PMO_ANONYM) &#123;<br>                                <span class="hljs-comment">/* Add mapping in the page table */</span><br>                                <span class="hljs-type">long</span> rss = <span class="hljs-number">0</span>;<br>                                lock(&amp;vmspace-&gt;pgtbl_lock);<br>                                map_range_in_pgtbl(vmspace-&gt;pgtbl,<br>                                                   fault_addr,<br>                                                   pa,<br>                                                   PAGE_SIZE,<br>                                                   perm,<br>                                                   &amp;rss);<br>                                vmspace-&gt;rss += rss;<br>                                unlock(&amp;vmspace-&gt;pgtbl_lock);<br>                        &#125;<br>                &#125;<br><br>                <span class="hljs-keyword">if</span> (perm &amp; VMR_EXEC) &#123;<br>                        arch_flush_cache(fault_addr, PAGE_SIZE, SYNC_IDCACHE);<br>                &#125;<br><br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">case</span> PMO_FILE: &#123;<br>                unlock(&amp;vmspace-&gt;vmspace_lock);<br>                fault_addr = ROUND_DOWN(fault_addr, PAGE_SIZE);<br>                handle_user_fault(pmo, ROUND_DOWN(fault_addr, PAGE_SIZE));<br>                BUG(<span class="hljs-string">&quot;Should never be here!\n&quot;</span>);<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">case</span> PMO_FORBID: &#123;<br>                kinfo(<span class="hljs-string">&quot;Forbidden memory access (pmo-&gt;type is PMO_FORBID).\n&quot;</span>);<br>                dump_pgfault_error();<br><br>                unlock(&amp;vmspace-&gt;vmspace_lock);<br>                sys_exit_group(<span class="hljs-number">-1</span>);<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">default</span>: &#123;<br>                kinfo(<span class="hljs-string">&quot;handle_trans_fault: faulting vmr-&gt;pmo-&gt;type&quot;</span><br>                      <span class="hljs-string">&quot;(pmo type %d at 0x%lx)\n&quot;</span>,<br>                      vmr-&gt;pmo-&gt;type,<br>                      fault_addr);<br>                dump_pgfault_error();<br><br>                unlock(&amp;vmspace-&gt;vmspace_lock);<br>                sys_exit_group(<span class="hljs-number">-1</span>);<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>        &#125;<br><br>        unlock(&amp;vmspace-&gt;vmspace_lock);<br>        <span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>结合这个处理函数，我们就可以构建出 chcore 对缺页异常整体的处理了：</p>
+<ul>
+<li>发生缺页异常，触发 <code>do_page_fault</code> 函数</li>
+<li>异常在 switch 分支中被归类为 <code>DFSC_TRANS_FAULT_LX</code> ，且会根据是否是内核态的错误作进一步的处理</li>
+<li>函数获取当前的虚拟地址和 vmspace，将异常转发给 <code>handle_trans_faults</code> 函数</li>
+<li>有了上述二物，处理函数用红黑树查找到具体的 vmregion，并得到对应的 PMO</li>
+<li>根据 PMO 的类型作进一步的处理：如匿名页面和共享内存 <code>PMO_ANONYM, PMO_SHM</code> 、文件映射 <code>PMO_FILE</code> 、禁止访问的内存 <code>PMO_FORBID</code></li>
+</ul>
+<blockquote>
+<p>这里同时需要注意可能出现并发的 pagefault,其语义处理根据不同 type 发生变化：如果是同个进程的多个线程，且类型为 <code>PMO_ANONYM</code> ，那只需要第一个线程更新 radix 即可; 如果是跨进程的线程，则需要各自更新</p>
+</blockquote>
+<ul>
+<li>对于匿名&#x2F;共享内存，需要查询其在 radix tree 中是否已经存在记录。如果存在，就只需要在自己的页表中设置页表映射; 否则为这个 on demand paging 的页面分配空间并更新</li>
+</ul>
+<blockquote>
+<p>在 PHO_SHM 共享内存的时候，多个进程的物理页面是相同的， 即各自的 vma 引用同一个 pmo。所以并发场景下后来的线程会出现 pa 已经在 radix 之中存在的情况</p>
+</blockquote>
+<ul>
+<li>刷新指令缓存，处理完毕</li>
+</ul>
+<p>至此，缺页管理部分的源码解析也到此结束，希望能对你的学习有所裨益！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">内存管理</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">虚拟内存管理</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>缺页管理</div>
+      <div>http://example.com/2025/02/19/pgfault/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/20/threadManage/" title="进程/线程管理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">进程/线程管理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/17/ptmanage/" title="页表管理">
+                        <span class="hidden-mobile">页表管理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

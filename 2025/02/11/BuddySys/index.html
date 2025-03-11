@@ -1,0 +1,987 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之伙伴系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Buddy System">
+<meta property="og:url" content="http://example.com/2025/02/11/BuddySys/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之伙伴系统">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-11T08:27:59.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:46:32.141Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="Buddy System">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Buddy System - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Buddy System"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-11 16:27" pubdate>
+          2025年2月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Buddy System</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Buddy-System-伙伴系统"><a href="#Buddy-System-伙伴系统" class="headerlink" title="Buddy System 伙伴系统"></a>Buddy System 伙伴系统</h1><p>Buddy System，即<strong>伙伴系统</strong>，被广泛应用于分配连续的物理内存页。本节内容将：</p>
+<ul>
+<li>回顾伙伴系统的基础知识与设计理念</li>
+<li>分析 Chcore 源码对伙伴系统的代码实现与架构</li>
+<li>解析 Chcore 源码对伙伴系统操作相关函数的具体实现</li>
+</ul>
+<h1 id="回顾：为什么需要伙伴系统"><a href="#回顾：为什么需要伙伴系统" class="headerlink" title="回顾：为什么需要伙伴系统"></a>回顾：为什么需要伙伴系统</h1><p>面对进程多种多样的内存分配请求，自然需要一个精良的分配器设计来承担这样宏伟的责任。许多分配器无不在<strong>内存碎片（无法被利用的内存）</strong>的困扰下捉襟见肘，而伙伴系统则在一定程度上解决了普通简易分配器会带来的内存碎片问题，尤其是在<strong>分配连续内存</strong>的情况下。</p>
+<h2 id="外部碎片与内部碎片"><a href="#外部碎片与内部碎片" class="headerlink" title="外部碎片与内部碎片"></a>外部碎片与内部碎片</h2><ul>
+<li>外部碎片：单个空闲内存部分小于分配请求的内存大小</li>
+<li>内部碎片：分配内存大于实际内存导致的内存碎片</li>
+</ul>
+<p>Buddy System 将通过合并与级联的设计来避免这些困扰</p>
+<h2 id="伙伴系统的设计理念"><a href="#伙伴系统的设计理念" class="headerlink" title="伙伴系统的设计理念"></a>伙伴系统的设计理念</h2><p>伙伴系统设计理念即基于<strong>伙伴块进行分裂与合并</strong>，主要可概括为以下几点：</p>
+<ul>
+<li>物理内存划为块为单位分配内存，每个块由连续物理页组成，大小为 2^n 个物理页（便于分裂与合并）</li>
+<li>大块可根据分配需求分裂为小块，两个相同的小块可合并为大块，大块分裂出的两个小块即称作伙伴</li>
+<li>分配时根据需求选择块，若这样的空闲块不存在，则找大块分裂；释放内存时查看其伙伴，若伙伴也空闲则直接合并</li>
+</ul>
+<p>如下图所示，相同颜色的块即表示伙伴块</p>
+
+<pre>
+<code class="mermaid" >
+graph TD
+A[内存空间<br>16KB] -->|分割| B[块 1<br>8KB]
+A -->|分割| C[块 2<br>8KB]
+B -->|分割| D[块 3<br>4KB]
+B -->|分割| E[块 4<br>4KB]
+C -->|分割| F[块 5<br>4KB]
+C -->|分割| G[块 6<br>4KB]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#ccf,stroke:#333,stroke-width:2px
+    style C fill:#ccf,stroke:#333,stroke-width:2px
+    style D fill:#cfc,stroke:#333,stroke-width:2px
+    style E fill:#cfc,stroke:#333,stroke-width:2px
+    style F fill:#290,stroke:#333,stroke-width:2px
+    style G fill:#290,stroke:#333,stroke-width:2px
+
+</code>
+</pre>
+
+<p>由此一来，基于 Buddy System 的分配模式便可确保每时每刻的空闲块都是最大的，这样可以避免外部碎片；同时基于分配请求来寻找空闲块分配的操作又尽可能减小了内部碎片的大小。尽量避免了较大内存碎片的产生</p>
+<h1 id="Chcore-伙伴系统的设计"><a href="#Chcore-伙伴系统的设计" class="headerlink" title="Chcore 伙伴系统的设计"></a>Chcore 伙伴系统的设计</h1><h2 id="核心数据结构"><a href="#核心数据结构" class="headerlink" title="核心数据结构"></a>核心数据结构</h2><p>核心数据结构，即 <code>page</code> 和 <code>phys_mem_pool</code> ，如下所示为源码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> N_PHYS_MEM_POOLS 3</span><br><br><span class="hljs-comment">/* The following two are defined in mm.c and filled by mmparse.c. */</span><br><span class="hljs-keyword">extern</span> <span class="hljs-type">paddr_t</span> physmem_map[N_PHYS_MEM_POOLS][<span class="hljs-number">2</span>];<br><span class="hljs-keyword">extern</span> <span class="hljs-type">int</span> physmem_map_num;<br><br><span class="hljs-comment">/* All the following symbols are only used locally in the mm module. */</span><br><br><span class="hljs-comment">/* `struct page` is the metadata of one physical 4k page. */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> &#123;</span><br>        <span class="hljs-comment">/* Free list */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">node</span>;</span><br>        <span class="hljs-comment">/* Whether the correspond physical page is free now. */</span><br>        <span class="hljs-type">int</span> allocated;<br>        <span class="hljs-comment">/* The order of the memory chunck that this page belongs to. */</span><br>        <span class="hljs-type">int</span> order;<br>        <span class="hljs-comment">/* Used for ChCore slab allocator. */</span><br>        <span class="hljs-type">void</span> *slab;<br>        <span class="hljs-comment">/* The physical memory pool this page belongs to */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">phys_mem_pool</span> *<span class="hljs-title">pool</span>;</span><br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">free_list</span> &#123;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">free_list</span>;</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> nr_free;<br>&#125;;<br><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Supported Order: [0, BUDDY_MAX_ORDER).</span><br><span class="hljs-comment"> * The max allocated size (continous physical memory size) is</span><br><span class="hljs-comment"> * 2^(BUDDY_MAX_ORDER - 1) * 4K.</span><br><span class="hljs-comment"> * Given BUDDY_MAX_ORDER is 14, the max allocated chunk is 32M.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUDDY_PAGE_SIZE     (0x1000)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUDDY_MAX_ORDER     (14)</span><br><br><span class="hljs-comment">/* One page size is 4K, so the order is 12. */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUDDY_PAGE_SIZE_ORDER (12)</span><br><br><span class="hljs-comment">/* Each physical memory chunk can be represented by one physical memory pool. */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">phys_mem_pool</span> &#123;</span><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * The start virtual address (for used in kernel) of</span><br><span class="hljs-comment">         * this physical memory pool.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">vaddr_t</span> pool_start_addr;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> pool_mem_size;<br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * The start virtual address (for used in kernel) of</span><br><span class="hljs-comment">         * the metadata area of this pool.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">page_metadata</span>;</span><br><br>        <span class="hljs-comment">/* One lock for one pool. */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> <span class="hljs-title">buddy_lock</span>;</span><br><br>        <span class="hljs-comment">/* The free list of different free-memory-chunk orders. */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">free_list</span> <span class="hljs-title">free_lists</span>[<span class="hljs-title">BUDDY_MAX_ORDER</span>];</span><br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * This field is only used in ChCore unit test.</span><br><span class="hljs-comment">         * The number of (4k) physical pages in this physical memory pool.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> pool_phys_page_num;<br>&#125;;<br><br><span class="hljs-comment">/* Disjoint physical memory can be represented by several phys_mem_pools. */</span><br><span class="hljs-keyword">extern</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">phys_mem_pool</span> <span class="hljs-title">global_mem</span>[<span class="hljs-title">N_PHYS_MEM_POOLS</span>];</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="page"><a href="#page" class="headerlink" title="page"></a>page</h3><p>在 chcore 中，一个 <code>page</code> 结构体即表示一个实际的 4KB 大小的物理内存页，我们来看它的具体成员组成：</p>
+<ul>
+<li><code>struct list_head node</code> ：是用于维护空闲链表的节点，当我们需要把这个页移入&#x2F;移出空闲链表时，就会使用到这个节点</li>
+<li><code>int allocated</code> ：表示该页是否被分配</li>
+<li><code>int order</code> ：表示该页所属的块的阶数（即 2^n 的 n）</li>
+<li><code>struct phys_mem_pool *pool</code> ：表示该页所隶属的内存池</li>
+</ul>
+<p>另外还有 slab，这个会在下文讲解 slab 分配器的时候具体解析</p>
+<h3 id="phys-mem-pool"><a href="#phys-mem-pool" class="headerlink" title="phys_mem_pool"></a>phys_mem_pool</h3><p>chcore 里的内存池即表示一整块连续的物理内存，也就是伙伴系统概念中所提到的整个空闲链表背后所属于的大的连续内存块。所以相应的，它就需要维护链表数组以及其所包含的所有页表元数据。我们还是来看看它的具体成员组成：</p>
+<ul>
+<li><code>vaddr_t pool_start_addr</code> ：内存池表示内存的起始地址</li>
+<li><code>unsigned long pool_mem_size</code> ：内存池表示的内存大小</li>
+<li><code>struct page *page_metadata</code> ：一个页表数组，包含了这个内存块里的所有页表</li>
+<li><code>struct lock buddy_lock</code> ：内存池的锁，用于并行化</li>
+<li><code>struct free_list free_lists[BUDDY_MAX_ORDER]</code> ：空闲链表数组，这里的 order 最大为 14，故有 14 个这样的链表，可以依次表示 4KB 到 32MB 的内存</li>
+</ul>
+<h2 id="核心函数接口"><a href="#核心函数接口" class="headerlink" title="核心函数接口"></a>核心函数接口</h2><p>即伙伴系统用于实际操作这些数据结构的函数，这里先大概介绍一下接口，下文再深入研究其实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">init_buddy</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *, <span class="hljs-keyword">struct</span> page *start_page,</span><br><span class="hljs-params">                <span class="hljs-type">vaddr_t</span> start_addr, <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> page_num)</span>;<br><br><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">get_buddy_chunk</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool,</span><br><span class="hljs-params">                                    <span class="hljs-keyword">struct</span> page *chunk)</span><br><br><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">split_chunk</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-type">int</span> order,</span><br><span class="hljs-params">                                <span class="hljs-keyword">struct</span> page *chunk)</span><br><br><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">merge_chunk</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-keyword">struct</span> page *chunk)</span><br><br><span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">buddy_get_pages</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *, <span class="hljs-type">int</span> order)</span>;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">buddy_free_pages</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *, <span class="hljs-keyword">struct</span> page *page)</span>;<br><br><span class="hljs-type">void</span> *<span class="hljs-title function_">page_to_virt</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> page *page)</span>;<br><br><span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">virt_to_page</span><span class="hljs-params">(<span class="hljs-type">void</span>* ptr)</span>;<br><br><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-title function_">get_free_mem_size_from_buddy</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *)</span>;<br><br><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-title function_">get_total_mem_size_from_buddy</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>从上到下的函数接口依次的功能为：</p>
+<ul>
+<li><code>init_buddy</code> ：初始化伙伴系统，包括其链表数组，页表元数据数组等</li>
+<li><code>get_buddy_chunk</code> ：根据指定内存池和内存块（的起始页表项）找到其伙伴块</li>
+<li><code>split_chunk</code> ：分裂内存块</li>
+<li><code>merge_chunk</code> ：合并伙伴内存块</li>
+<li><code>buddy_get_pages</code> ：查询并获取指定内存池和阶数的内存块</li>
+<li><code>buddy_free_pages</code> ：释放指定内存池的内存块</li>
+<li><code>page_to_virt</code> ：获取给定内存块（page_metadata）的虚拟地址，这是因为 page 类的指针指向的是 <code>page_metadata</code> 而非实际地址</li>
+<li><code>virt_to_page</code> ：根据给定虚拟地址找到相应的内存块（page_metadata），和上面的函数互为逆操作</li>
+<li><code>get_free_mem_size_from_buddy</code> ：获取给定内存池中当前可用的内存总量</li>
+<li><code>get_total_mem_size_from_buddy</code> ：获取给定内存池的总大小</li>
+</ul>
+<h1 id="Chcore-源码对伙伴系统的具体实现"><a href="#Chcore-源码对伙伴系统的具体实现" class="headerlink" title="Chcore 源码对伙伴系统的具体实现"></a>Chcore 源码对伙伴系统的具体实现</h1><p>上一部分我们从上层的视角讲解了伙伴系统的原理以及 Chcore 中伙伴系统的架构，这一部分我们则从下层的视角，来分析上文提到的函数接口以及 Buddy System 核心功能的具体实现</p>
+<p>本节主要着重分析对伙伴系统的初始化以及对伙伴块的操作函数的讲解，而受限于篇幅，辅助函数本处不做解析，感兴趣者可自行阅读</p>
+<h2 id="init-buddy"><a href="#init-buddy" class="headerlink" title="init_buddy"></a>init_buddy</h2><h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * The layout of a phys_mem_pool:</span><br><span class="hljs-comment"> * | page_metadata are (an array of struct page) | alignment pad | usable memory</span><br><span class="hljs-comment"> * |</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * The usable memory: [pool_start_addr, pool_start_addr + pool_mem_size).</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">init_buddy</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-keyword">struct</span> page *start_page,</span><br><span class="hljs-params">                <span class="hljs-type">vaddr_t</span> start_addr, <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> page_num)</span><br>&#123;<br>        <span class="hljs-type">int</span> order;<br>        <span class="hljs-type">int</span> page_idx;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">page</span>;</span><br><br>        BUG_ON(lock_init(&amp;pool-&gt;buddy_lock) != <span class="hljs-number">0</span>);<br><br>        <span class="hljs-comment">/* Init the physical memory pool. */</span><br>        pool-&gt;pool_start_addr = start_addr;<br>        pool-&gt;page_metadata = start_page;<br>        pool-&gt;pool_mem_size = page_num * BUDDY_PAGE_SIZE;<br>        <span class="hljs-comment">/* This field is for unit test only. */</span><br>        pool-&gt;pool_phys_page_num = page_num;<br><br>        <span class="hljs-comment">/* Init the free lists */</span><br>        <span class="hljs-keyword">for</span> (order = <span class="hljs-number">0</span>; order &lt; BUDDY_MAX_ORDER; ++order) &#123;<br>                pool-&gt;free_lists[order].nr_free = <span class="hljs-number">0</span>;<br>                init_list_head(&amp;(pool-&gt;free_lists[order].free_list));<br>        &#125;<br><br>        <span class="hljs-comment">/* Clear the page_metadata area. */</span><br>        <span class="hljs-built_in">memset</span>((<span class="hljs-type">char</span> *)start_page, <span class="hljs-number">0</span>, page_num * <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">struct</span> page));<br><br>        <span class="hljs-comment">/* Init the page_metadata area. */</span><br>        <span class="hljs-keyword">for</span> (page_idx = <span class="hljs-number">0</span>; page_idx &lt; page_num; ++page_idx) &#123;<br>                page = start_page + page_idx;<br>                page-&gt;allocated = <span class="hljs-number">1</span>;<br>                page-&gt;order = <span class="hljs-number">0</span>;<br>                page-&gt;pool = pool;<br>        &#125;<br><br>        <span class="hljs-comment">/* Put each physical memory page into the free lists. */</span><br>        <span class="hljs-keyword">for</span> (page_idx = <span class="hljs-number">0</span>; page_idx &lt; page_num; ++page_idx) &#123;<br>                page = start_page + page_idx;<br>                buddy_free_pages(pool, page);<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>这个函数主要负责初始化我们的伙伴系统，它将接受的参数用于初始化一个特定的内存池，并为之设置相应页表数组和空闲链表数组等。你可能会好奇，这些参数本身又是怎么来的？这便涉及到对整个物理内存系统的初始化，可以移步 <code>mm.c</code> 文件的 <code>mm_init</code> 函数及相关辅助函数作进一步的学习</p>
+<p>根据抽象屏障原则，我们这里只需要关心它是如何初始化一个内存池即可</p>
+<p>我们根据注释分析得到实际上的内存池内存布局：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">内存池的布局：</span><br><span class="hljs-section">+--------------------------------------------------------------------</span><br>|     页面元数据区域        |    对齐填充     |      实际可用内存区域      |<br><span class="hljs-section">| (struct page 数组)      |    (未使用)     |    (用于分配的物理内存)    |</span><br><span class="hljs-section">+------------------------+-------------------------------------------</span><br></code></pre></td></tr></table></figure>
+
+<p>源码的工作可以分成三个阶段：</p>
+<ul>
+<li>初始化物理内存池：根据传入的参数设置物理内存池的相应数据成员，这里的 <code>BUDDY_PAGE_SIZE</code> 是 0x1000，也即 4KB</li>
+<li>初始化空闲链表：用一个 for 循环将每个阶的空闲链表均初始化，这里首先将每个链表的空闲数设为 0，同时用初始化函数 <code>init_list_head</code> 将这个链表节点的首尾都连到自己身上</li>
+<li>初始化页表元数据：先用 <code>memset</code> 将这块内存全部清零；再用 for 循环溜一遍，利用指针运算初始化每个页表相应数据；最后再依次 free 每个物理页表，这里自然会涉及到后面的 merge 操作，并最终得到一个全部空闲的内存池</li>
+</ul>
+<p>可以看见，chcore 中实际的设计和书上提到的基本一致，不过书上的介绍做了一定的简化</p>
+<h2 id="get-buddy-chunk"><a href="#get-buddy-chunk" class="headerlink" title="get_buddy_chunk"></a>get_buddy_chunk</h2><p>找呀找呀找朋友，找到一个伙伴块</p>
+<h3 id="源码-1"><a href="#源码-1" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">get_buddy_chunk</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool,</span><br><span class="hljs-params">                                    <span class="hljs-keyword">struct</span> page *chunk)</span><br>&#123;<br>        <span class="hljs-type">vaddr_t</span> chunk_addr;<br>        <span class="hljs-type">vaddr_t</span> buddy_chunk_addr;<br>        <span class="hljs-type">int</span> order;<br><br>        <span class="hljs-comment">/* Get the address of the chunk. */</span><br>        chunk_addr = (<span class="hljs-type">vaddr_t</span>)page_to_virt(chunk);<br>        order = chunk-&gt;order;<br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * Calculate the address of the buddy chunk according to the address</span><br><span class="hljs-comment">         * relationship between buddies.</span><br><span class="hljs-comment">         */</span><br>        buddy_chunk_addr = chunk_addr<br>                           ^ (<span class="hljs-number">1UL</span> &lt;&lt; (order + BUDDY_PAGE_SIZE_ORDER));<br><br>        <span class="hljs-comment">/* Check whether the buddy_chunk_addr belongs to pool. */</span><br>        <span class="hljs-keyword">if</span> ((buddy_chunk_addr &lt; pool-&gt;pool_start_addr)<br>            || ((buddy_chunk_addr + (<span class="hljs-number">1</span> &lt;&lt; order) * BUDDY_PAGE_SIZE)<br>                &gt; (pool-&gt;pool_start_addr + pool-&gt;pool_mem_size))) &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> virt_to_page((<span class="hljs-type">void</span> *)buddy_chunk_addr);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h3><p>由伙伴块的定义可知，互为伙伴的两个块，它们的内存地址仅有一位不同，且该位由 order 决定</p>
+<p>于是这块代码的核心便在于如何由位运算得到伙伴块的地址，首先，我们有：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dns">块<span class="hljs-keyword">A</span>的伙伴是块B = 块<span class="hljs-keyword">A</span>的地址 ^ size<br>块B的伙伴是块<span class="hljs-keyword">A</span> = 块B的地址 ^ size<br></code></pre></td></tr></table></figure>
+
+<p>于是我们可以由 order 和 BUDDY_PAGE_SIZE_ORDER（这里是 12，因为一个页的大小是 4KB）得到 size 的大小：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">(<span class="hljs-number">1UL</span> &lt;&lt; (order + BUDDY_PAGE_SIZE_ORDER))<br></code></pre></td></tr></table></figure>
+
+<p>再做一个异或，就得到了相应的伙伴块地址。接下来的事情，就交给辅助函数！</p>
+<h2 id="buddy-get-pages"><a href="#buddy-get-pages" class="headerlink" title="buddy_get_pages"></a>buddy_get_pages</h2><p>现在让我们看看一次完整的向伙伴系统申请内存的流程是怎样的！</p>
+<h3 id="源码-2"><a href="#源码-2" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">buddy_get_pages</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-type">int</span> order)</span><br>&#123;<br>        <span class="hljs-type">int</span> cur_order;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> *<span class="hljs-title">free_list</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">page</span> =</span> <span class="hljs-literal">NULL</span>;<br><br>        <span class="hljs-keyword">if</span> (unlikely(order &gt;= BUDDY_MAX_ORDER)) &#123;<br>                kwarn(<span class="hljs-string">&quot;ChCore does not support allocating such too large &quot;</span><br>                      <span class="hljs-string">&quot;contious physical memory\n&quot;</span>);<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>        &#125;<br><br>        lock(&amp;pool-&gt;buddy_lock);<br><br>        <span class="hljs-comment">/* Search a chunk (with just enough size) in the free lists. */</span><br>        <span class="hljs-keyword">for</span> (cur_order = order; cur_order &lt; BUDDY_MAX_ORDER; ++cur_order) &#123;<br>                free_list = &amp;(pool-&gt;free_lists[cur_order].free_list);<br>                <span class="hljs-keyword">if</span> (!list_empty(free_list)) &#123;<br>                        <span class="hljs-comment">/* Get a free memory chunck from the free list */</span><br>                        page = list_entry(free_list-&gt;next, <span class="hljs-keyword">struct</span> page, node);<br>                        list_del(&amp;page-&gt;node);<br>                        pool-&gt;free_lists[cur_order].nr_free -= <span class="hljs-number">1</span>;<br>                        page-&gt;allocated = <span class="hljs-number">1</span>;<br>                        <span class="hljs-keyword">break</span>;<br>                &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (unlikely(page == <span class="hljs-literal">NULL</span>)) &#123;<br>                kdebug(<span class="hljs-string">&quot;[OOM] No enough memory in memory pool %p\n&quot;</span>, pool);<br>                <span class="hljs-keyword">goto</span> out;<br>        &#125;<br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * Split the chunk found and return the start part of the chunck</span><br><span class="hljs-comment">         * which can meet the required size.</span><br><span class="hljs-comment">         */</span><br>        page = split_chunk(pool, order, page);<br><br>out:<br>        unlock(&amp;pool-&gt;buddy_lock);<br>        <span class="hljs-keyword">return</span> page;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h3><p>重点可以看看伙伴系统是如何查找满足要求的空闲块的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Search a chunk (with just enough size) in the free lists. */</span><br><span class="hljs-keyword">for</span> (cur_order = order; cur_order &lt; BUDDY_MAX_ORDER; ++cur_order) &#123;<br>        free_list = &amp;(pool-&gt;free_lists[cur_order].free_list);<br>        <span class="hljs-keyword">if</span> (!list_empty(free_list)) &#123;<br>                <span class="hljs-comment">/* Get a free memory chunck from the free list */</span><br>                page = list_entry(free_list-&gt;next, <span class="hljs-keyword">struct</span> page, node);<br>                list_del(&amp;page-&gt;node);<br>                pool-&gt;free_lists[cur_order].nr_free -= <span class="hljs-number">1</span>;<br>                page-&gt;allocated = <span class="hljs-number">1</span>;<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>从查询要求提供的 order 开始，一级一级向上查找，如果没有则向上加一级，如果有则操作链表，取出这块空闲块，并同时设置空闲链表的相应参数，退出循环</p>
+<p>一个可能的例子如下：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros">假设要申请 <span class="hljs-attribute">order</span>=2 (16KB) 的内存：<br><br>1. 先查找 <span class="hljs-attribute">order</span>=2 的空闲链表<br>2. 如果没有，查找 <span class="hljs-attribute">order</span>=3 的空闲链表<br>3. 如果没有，继续查找更大的空闲链表<br>4. 直到找到可用的内存块或达到最大阶数<br></code></pre></td></tr></table></figure>
+
+<p>至于裂开的操作，我们马上就会讲到</p>
+<h2 id="buddy-free-pages"><a href="#buddy-free-pages" class="headerlink" title="buddy_free_pages"></a>buddy_free_pages</h2><p>和 get 操作类似，我们现在来看看 free 操作是如何进行的</p>
+<h3 id="源码-3"><a href="#源码-3" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">buddy_free_pages</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-keyword">struct</span> page *page)</span><br>&#123;<br>        <span class="hljs-type">int</span> order;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> *<span class="hljs-title">free_list</span>;</span><br><br>        lock(&amp;pool-&gt;buddy_lock);<br><br>        BUG_ON(page-&gt;allocated == <span class="hljs-number">0</span>);<br>        <span class="hljs-comment">/* Mark the chunk @page as free. */</span><br>        page-&gt;allocated = <span class="hljs-number">0</span>;<br>        <span class="hljs-comment">/* Merge the freed chunk. */</span><br>        page = merge_chunk(pool, page);<br><br>        <span class="hljs-comment">/* Put the merged chunk into the its corresponding free list. */</span><br>        order = page-&gt;order;<br>        free_list = &amp;(pool-&gt;free_lists[order].free_list);<br>        list_add(&amp;page-&gt;node, free_list);<br>        pool-&gt;free_lists[order].nr_free += <span class="hljs-number">1</span>;<br><br>        unlock(&amp;pool-&gt;buddy_lock);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-3"><a href="#解析-3" class="headerlink" title="解析"></a>解析</h3><p>get 还需要查询是否有空闲块，而 free 则简单多了——直接设置参数后 merge 即可！最后不要使用链表操作将这个块放进内存池的空闲链表里</p>
+<p>同样的，加锁和去锁在这里也少不了，它们是并发安全性的保证</p>
+<p>下面我们就讲解裂开和合并的具体实现，也是伙伴系统最关键的地方</p>
+<h2 id="spilt-chunk"><a href="#spilt-chunk" class="headerlink" title="spilt_chunk"></a>spilt_chunk</h2><h3 id="源码-4"><a href="#源码-4" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">split_chunk</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-type">int</span> order,</span><br><span class="hljs-params">                                <span class="hljs-keyword">struct</span> page *chunk)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">buddy_chunk</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> *<span class="hljs-title">free_list</span>;</span><br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * If the @chunk&#x27;s order equals to the required order,</span><br><span class="hljs-comment">         * return this chunk.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">if</span> (chunk-&gt;order == order)<br>                <span class="hljs-keyword">return</span> chunk;<br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * If the current order is larger than the required order,</span><br><span class="hljs-comment">         * split the memory chunck into two halves.</span><br><span class="hljs-comment">         */</span><br>        chunk-&gt;order -= <span class="hljs-number">1</span>;<br><br>        buddy_chunk = get_buddy_chunk(pool, chunk);<br>        <span class="hljs-comment">/* The buddy_chunk must exist since we are spliting a large chunk. */</span><br>        <span class="hljs-keyword">if</span> (buddy_chunk == <span class="hljs-literal">NULL</span>) &#123;<br>                BUG(<span class="hljs-string">&quot;buddy_chunk must exist&quot;</span>);<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>        &#125;<br><br>        <span class="hljs-comment">/* Set the metadata of the remaining buddy_chunk. */</span><br>        buddy_chunk-&gt;order = chunk-&gt;order;<br>        buddy_chunk-&gt;allocated = <span class="hljs-number">0</span>;<br><br>        <span class="hljs-comment">/* Put the remaining buddy_chunk into its correspondint free list. */</span><br>        free_list = &amp;(pool-&gt;free_lists[buddy_chunk-&gt;order].free_list);<br>        list_add(&amp;buddy_chunk-&gt;node, free_list);<br>        pool-&gt;free_lists[buddy_chunk-&gt;order].nr_free += <span class="hljs-number">1</span>;<br><br>        <span class="hljs-comment">/* Continue to split current chunk (@chunk). */</span><br>        <span class="hljs-keyword">return</span> split_chunk(pool, order, chunk);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-4"><a href="#解析-4" class="headerlink" title="解析"></a>解析</h3><p>注意该函数接受的参数： <code>order</code> 指的是最后要得到的内存块的 order，这一点也可以在上面申请内存的函数中对该函数的调用发现</p>
+<p>函数整体上采用<strong>尾递归</strong>的设计，每次执行时先判断边界条件，随后再进行具体的单次分裂的操作</p>
+<p>下面是对于其逻辑的具体分析：</p>
+
+<pre>
+<code class="mermaid" >
+flowchart TD
+A[开始分裂] --> B{chunk->order == order?}
+B -->|是| C[返回当前块]
+B -->|否| D[chunk->order -= 1]
+D --> E[获取伙伴块]
+E --> F{伙伴块存在?}
+F -->|否| G[报错返回 NULL]
+F -->|是| H[设置伙伴块元数据]
+H --> I[将伙伴块加入空闲链表]
+I --> J[递归分裂当前块]
+J --> B
+</code>
+</pre>
+
+<p>以将 16KB 分裂为 4KB 为例，我们可以用一个示意图来描述这个过程。此处粉色块表示被加入空闲链表的伙伴块，白色块表示继续递归分裂的块，直到拿到我们想要的块</p>
+
+<pre>
+<code class="mermaid" >
+graph TD
+subgraph "初始状态 order=2 16KB"
+A[16KB 块]
+end
+
+    subgraph "第一次分裂 order=1"
+        B[8KB块] --- C[8KB伙伴块]
+    end
+
+    subgraph "第二次分裂 order=0"
+        D[4KB块] --- E[4KB伙伴块]
+        F[8KB块]
+    end
+
+    A --> B
+    A --> C
+    B --> D
+    B --> E
+    C --> F
+
+    style F fill:#f9f,stroke:#333
+    style E fill:#f9f,stroke:#333
+
+</code>
+</pre>
+
+<p>最后我们再来看合并块的实现</p>
+<h2 id="merge-chunk"><a href="#merge-chunk" class="headerlink" title="merge_chunk"></a>merge_chunk</h2><h3 id="源码-5"><a href="#源码-5" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* The most recursion level of merge_chunk is decided by the macro of</span><br><span class="hljs-comment"> * BUDDY_MAX_ORDER. */</span><br><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> page *<span class="hljs-title function_">merge_chunk</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> phys_mem_pool *pool, <span class="hljs-keyword">struct</span> page *chunk)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">buddy_chunk</span>;</span><br><br>        <span class="hljs-comment">/* The @chunk has already been the largest one. */</span><br>        <span class="hljs-keyword">if</span> (chunk-&gt;order == (BUDDY_MAX_ORDER - <span class="hljs-number">1</span>)) &#123;<br>                <span class="hljs-keyword">return</span> chunk;<br>        &#125;<br><br>        <span class="hljs-comment">/* Locate the buddy_chunk of @chunk. */</span><br>        buddy_chunk = get_buddy_chunk(pool, chunk);<br><br>        <span class="hljs-comment">/* If the buddy_chunk does not exist, no further merge is required. */</span><br>        <span class="hljs-keyword">if</span> (buddy_chunk == <span class="hljs-literal">NULL</span>)<br>                <span class="hljs-keyword">return</span> chunk;<br><br>        <span class="hljs-comment">/* The buddy_chunk is not free, no further merge is required. */</span><br>        <span class="hljs-keyword">if</span> (buddy_chunk-&gt;allocated == <span class="hljs-number">1</span>)<br>                <span class="hljs-keyword">return</span> chunk;<br><br>        <span class="hljs-comment">/* The buddy_chunk is not free as a whole, no further merge is required.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">if</span> (buddy_chunk-&gt;order != chunk-&gt;order)<br>                <span class="hljs-keyword">return</span> chunk;<br><br>        <span class="hljs-comment">/* Remove the buddy_chunk from its current free list. */</span><br>        list_del(&amp;(buddy_chunk-&gt;node));<br>        pool-&gt;free_lists[buddy_chunk-&gt;order].nr_free -= <span class="hljs-number">1</span>;<br><br>        <span class="hljs-comment">/* Merge the two buddies and get a larger chunk @chunk (order+1). */</span><br>        buddy_chunk-&gt;order += <span class="hljs-number">1</span>;<br>        chunk-&gt;order += <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">if</span> (chunk &gt; buddy_chunk)<br>                chunk = buddy_chunk;<br><br>        <span class="hljs-comment">/* Keeping merging. */</span><br>        <span class="hljs-keyword">return</span> merge_chunk(pool, chunk);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-5"><a href="#解析-5" class="headerlink" title="解析"></a>解析</h3><p>有了对分裂块过程的了解，那么合并块理解起来就更简单了：同样是基于尾递归的实现，每次执行时先判断当前块是否已经达到最大的阶数 or 它的伙伴已经不在了，然后再执行相应操作，最后递归处理</p>
+<p>我们以一张示例图结束伙伴块之间的羁绊</p>
+
+<pre>
+<code class="mermaid" >
+flowchart TD
+A[开始合并] --> B{是否最大 order?}
+B -->|是| C[返回当前块]
+B -->|否| D[获取伙伴块]
+D --> E{伙伴块存在?}
+E -->|否| C
+E -->|是| F{伙伴块已分配?}
+F -->|是| C
+F -->|否| G{伙伴块 order 相同?}
+G -->|否| C
+G -->|是| H[从空闲链表移除伙伴块]
+H --> I[增加两个块的 order]
+I --> J[选择较小地址块]
+J --> K[递归继续合并]
+K --> A
+</code>
+</pre>
+
+<p>注意这里判断伙伴块阶数相同的操作，实际上是看伙伴块是否<strong>依然作为一个整体空闲着存在</strong>，而不是已经裂开了</p>
+<p>同样以 4KB——16KB 为例，介绍一次典型的合并过程</p>
+
+<pre>
+<code class="mermaid" >
+graph TD
+subgraph "初始状态 order=0"
+A[4KB 块] --- B[4KB 伙伴块]
+C[4KB 块] --- D[4KB 伙伴块]
+end
+
+    subgraph "第一次合并 order=1"
+        E[8KB块] --- F[8KB块]
+    end
+
+    subgraph "第二次合并 order=2"
+        G[16KB块]
+    end
+
+    A --> E
+    B --> E
+    C --> F
+    D --> F
+    E --> G
+    F --> G
+
+    style A fill:#f9f,stroke:#333
+    style B fill:#f9f,stroke:#333
+    style C fill:#f9f,stroke:#333
+    style D fill:#f9f,stroke:#333
+
+</code>
+</pre>
+
+<p>这样便完成了对 merge 操作的实现的介绍与解析</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">内存管理</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">物理内存管理</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/Buddy-System/" class="print-no-link">#Buddy System</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Buddy System</div>
+      <div>http://example.com/2025/02/11/BuddySys/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/13/SLab/" title="SLab分配器">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">SLab分配器</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/01/06/dlll/" title="电路理论期末复习">
+                        <span class="hidden-mobile">电路理论期末复习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

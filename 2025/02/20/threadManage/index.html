@@ -1,0 +1,1026 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之进程&#x2F;线程管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程&#x2F;线程管理">
+<meta property="og:url" content="http://example.com/2025/02/20/threadManage/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之进程&#x2F;线程管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-20T14:03:58.000Z">
+<meta property="article:modified_time" content="2025-03-11T14:08:06.192Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>进程/线程管理 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="进程/线程管理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-20 22:03" pubdate>
+          2025年2月20日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">进程/线程管理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="进程-线程管理"><a href="#进程-线程管理" class="headerlink" title="进程&#x2F;线程管理"></a>进程&#x2F;线程管理</h1><p>本部分内容主要讲解 Chcore 中进程&#x2F;线程管理的部分。从能力组机制的作用，到其具体的实现，再到其具体落实到线程管理的过程。</p>
+<h1 id="能力组机制"><a href="#能力组机制" class="headerlink" title="能力组机制"></a>能力组机制</h1><h2 id="能力组的概念"><a href="#能力组的概念" class="headerlink" title="能力组的概念"></a>能力组的概念</h2><h3 id="能力"><a href="#能力" class="headerlink" title="能力"></a>能力</h3><p>我们知道，在 Chcore 中，系统资源的管理分配是通过将一切系统资源都视作 Object（对象）来实现的。而能力，则是一种访问控制机制，可以理解为”带有权限的引用”。它包含两个基本要素：</p>
+<ul>
+<li>对象的引用（指向要访问的资源）</li>
+<li>对该对象的权限（允许进行什么操作）</li>
+</ul>
+<p>由此我们便可以理解文档中提到的“能力组本身只是一个包含指向 object 的指针的数组”</p>
+<h3 id="能力组"><a href="#能力组" class="headerlink" title="能力组"></a>能力组</h3><blockquote>
+<p>文档告诉我们：</p>
+<ol>
+<li>所有进程&#x2F;线程都有一个独立的能力组，拥有一个全局唯一 ID (<strong>Badge</strong>)</li>
+<li>所有对象（包括进程或<strong>能力组</strong>本身）都属于一个或多个能力组当中，也就是说子进程与线程将属于父进程的能力组当中，在某个能力组的对象拥有一个能力组内的能力 ID(<strong>cap</strong>)。</li>
+<li>对象可以共享，即单个对象可以在多个能力组中共存，同时在不同 cap_group 中可以有不同的<strong>cap</strong></li>
+<li>对所有对象的取用和返还都使用引用计数进行追踪。当引用计数为 0 后，当内核垃圾回收器唤醒后，会自动回收.</li>
+<li>能力组内的能力具有权限，表明该能力是否能被共享(CAP_RIGHT_COPY)以及是否能被删除(CAP_RIGHT_REVOKE)</li>
+</ol>
+</blockquote>
+<h3 id="Linux-中的应用"><a href="#Linux-中的应用" class="headerlink" title="Linux 中的应用"></a>Linux 中的应用</h3><p>此事在 Linux 之中亦有记载……</p>
+<p>ref: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/sparkdev/p/11417781.html">https://www.cnblogs.com/sparkdev/p/11417781.html</a></p>
+<p>wiki 上的简单名词介绍 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Capability-based_operating_system">https://en.wikipedia.org/wiki/Capability-based_operating_system</a></p>
+<p>tl;dr 能力组是为安全而生的进程“部分 root”的机制，例如你可以在用户态运行&#x2F;bin&#x2F;ping</p>
+<h2 id="数据结构实现"><a href="#数据结构实现" class="headerlink" title="数据结构实现"></a>数据结构实现</h2><p>说到这里，我们可以看看 Chcore 代码中对几个相关数据结构的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">object</span> &#123;</span><br>        u64 type;<br>        u64 size;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">copies_head</span>;</span> <span class="hljs-comment">// 指向同一对象的slots链表</span><br>       <span class="hljs-comment">// ...其他字段</span><br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">object_slot</span> &#123;</span><br>    <span class="hljs-type">int</span> slot_id;                    <span class="hljs-comment">// 槽位ID</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">cap_group</span> *<span class="hljs-title">cap_group</span>;</span>    <span class="hljs-comment">// 所属的能力组，反向引用</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">object</span> *<span class="hljs-title">object</span>;</span>          <span class="hljs-comment">// 指向实际对象</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">copies</span>;</span>        <span class="hljs-comment">// 指向同一对象的复制槽位链表</span><br>    <span class="hljs-type">cap_right_t</span> rights;            <span class="hljs-comment">// 对对象的访问权限</span><br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slot_table</span> &#123;</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> slots_size;        <span class="hljs-comment">// 槽位表大小</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">object_slot</span> **<span class="hljs-title">slots</span>;</span>     <span class="hljs-comment">// 槽位数组</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> *full_slots_bmp;  <span class="hljs-comment">// 完全填满的槽位位图</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> *slots_bmp;       <span class="hljs-comment">// 槽位使用位图</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rwlock</span> <span class="hljs-title">table_guard</span>;</span>      <span class="hljs-comment">// 读写锁保护</span><br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">cap_group</span> &#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slot_table</span> <span class="hljs-title">slot_table</span>;</span>   <span class="hljs-comment">// 槽位表</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> <span class="hljs-title">threads_lock</span>;</span>       <span class="hljs-comment">// 线程列表锁</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">thread_list</span>;</span>   <span class="hljs-comment">// 线程列表</span><br>    <span class="hljs-type">int</span> thread_cnt;                 <span class="hljs-comment">// 线程计数</span><br>    <span class="hljs-type">badge_t</span> badge;                  <span class="hljs-comment">// 全局唯一标识</span><br>    <span class="hljs-type">int</span> pid;                        <span class="hljs-comment">// 进程ID</span><br>    <span class="hljs-comment">// ... 其他字段</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>结合中文注释一步一步看下来就能理解文档的意思了：</p>
+<ul>
+<li>能力组本身，即 <code>cap_group</code> ，通过 <code>slot_table</code> 引用一系列的 <code>object_slot</code> 进而得到对对象的引用，也就是“指向 object 指针的数组”</li>
+<li>能力本身，即 <code>object_slot</code> ，指的即是包含了权限的内核对象的引用，如文件描述符，网络连接等，通过上述指针关系，一步步从属于能力组的安排</li>
+<li>那么 object 在多个能力组之间的共享又是如何实现的？便在于 <code>object</code> 中对能力组的反向引用，从而得到一个具体的对象所属于的不同能力组</li>
+<li>同样的， <code>cap_group</code> 里的 <code>thread_list</code> 同样是对线程的又一个反向引用，即实现了不同线程之间共享能力组的操作。举例：假设父进程 p 持有一系列内核对象的资源，例如文件描述符等，那 p 的线程以及子进程皆应该有文件描述符等资源</li>
+</ul>
+<h2 id="概念关系图"><a href="#概念关系图" class="headerlink" title="概念关系图"></a>概念关系图</h2><p>由此我们可以画出这些概念在 Chcore 代码中的关系图，有点绕，但是确实如此</p>
+
+<pre>
+<code class="mermaid" >
+classDiagram
+class cap_group {
++slot_table slot_table
++lock threads_lock
++list_head thread_list
++int thread_cnt
++badge_t badge
++int pid
++char cap_group_name[64]
++lock futex_lock
++htable futex_entries
+}
+
+    class slot_table {
+        +unsigned int slots_size
+        +object_slot** slots
+        +unsigned long* full_slots_bmp
+        +unsigned long* slots_bmp
+        +rwlock table_guard
+    }
+
+    class object_slot {
+        +int slot_id
+        +cap_group* cap_group
+        +object* object
+        +list_head copies
+        +cap_right_t rights
+    }
+
+    class object {
+        +type
+        +refcount
+        +...其他字段
+    }
+
+    class thread {
+    	    +cap_group* cap_group
+    	    +...其他字段
+    }
+
+    cap_group  *--  slot_table : 包含
+    slot_table  *--  object_slot : 管理
+    object_slot  -->  object : 引用
+    object_slot  --  object_slot : copies链表关联
+    object_slot --> cap_group : 反向引用
+    thread *-- cap_group : 包含
+    cap_group --> thread :反向引用
+
+</code>
+</pre>
+
+<h2 id="object-虚函数表"><a href="#object-虚函数表" class="headerlink" title="object 虚函数表"></a>object 虚函数表</h2><p>最后，由于 object 实际上只是一切内存对象的基类，所以在实际析构的时候，还需要根据对象的类型选择对应的析构函数。因此在 Chcore 中，还可以看见用 C 语言写的“虚函数表”，从而用结构体实现了 OOP 的部分特性：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">const</span> obj_deinit_func obj_deinit_tbl[TYPE_NR] = &#123;<br>        [<span class="hljs-number">0</span> ... TYPE_NR - <span class="hljs-number">1</span>] = <span class="hljs-literal">NULL</span>,<br>        [TYPE_CAP_GROUP] = cap_group_deinit,<br>        [TYPE_THREAD] = thread_deinit,<br>        [TYPE_CONNECTION] = connection_deinit,<br>        [TYPE_NOTIFICATION] = notification_deinit,<br>        [TYPE_IRQ] = irq_deinit,<br>        [TYPE_PMO] = pmo_deinit,<br>        [TYPE_VMSPACE] = vmspace_deinit,<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> CHCORE_OPENTRUSTEE</span><br>        [TYPE_CHANNEL] = channel_deinit,<br>        [TYPE_MSG_HDL] = msg_hdl_deinit,<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span> <span class="hljs-comment">/* CHCORE_OPENTRUSTEE */</span></span><br>        [TYPE_PTRACE] = ptrace_deinit<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>针对这样的数据结构, capability.c 之中小心地实现了 <code>cap_group</code> 的复制，释放，传递等函数，之中由于基于引用计数的所有权的复杂性+并发+为了性能降低锁的粒度，代码并不是非常可读，感兴趣的读者可以自行深入研究</p>
+<h2 id="能力组创建"><a href="#能力组创建" class="headerlink" title="能力组创建"></a>能力组创建</h2><p>现在我们再来看 Chcore 是如何具体创建能力组的。在 main 函数中，系统将首先调用<code>create_root_cap_group</code>创建第一个  <code>cap_group</code>  进程，并在  <code>root_cap_group</code>  中创建第一个线程</p>
+<p>此外，用户程序也可以通过  <code>sys_create_cap_group</code>  系统调用创建一个全新的  <code>cap_group</code></p>
+<h3 id="create-root-cap-group"><a href="#create-root-cap-group" class="headerlink" title="create_root_cap_group"></a>create_root_cap_group</h3><p>先看源码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* This is for creating the first (init) user process. */</span><br><span class="hljs-keyword">struct</span> cap_group *<span class="hljs-title function_">create_root_cap_group</span><span class="hljs-params">(<span class="hljs-type">char</span> *name, <span class="hljs-type">size_t</span> name_len)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">cap_group</span> *<span class="hljs-title">cap_group</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmspace</span> *<span class="hljs-title">vmspace</span>;</span><br>        <span class="hljs-type">cap_t</span> slot_id;<br><br>        cap_group = obj_alloc(TYPE_CAP_GROUP, <span class="hljs-keyword">sizeof</span>(*cap_group));<br>        <span class="hljs-keyword">if</span> (!cap_group) &#123;<br>                kwarn(<span class="hljs-string">&quot;failed alloc cap_group in %s\n&quot;</span>, __func__);<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>        &#125;<br>        cap_group_init(cap_group,<br>                       BASE_OBJECT_NUM,<br>                       <span class="hljs-comment">/* Fixed badge */</span> ROOT_CAP_GROUP_BADGE);<br><br>        slot_id = cap_alloc(cap_group, cap_group);<br>        BUG_ON(slot_id != CAP_GROUP_OBJ_ID);<br><br>        vmspace = obj_alloc(TYPE_VMSPACE, <span class="hljs-keyword">sizeof</span>(*vmspace));<br>        <span class="hljs-keyword">if</span> (!vmspace) &#123;<br>                kwarn(<span class="hljs-string">&quot;failed alloc vmspace in %s\n&quot;</span>, __func__);<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>        &#125;<br><br>        <span class="hljs-comment">/* fixed PCID 1 for root process, PCID 0 is not used. */</span><br>        vmspace_init(vmspace, ROOT_PROCESS_PCID);<br><br>        slot_id = cap_alloc(cap_group, vmspace);<br>        BUG_ON(slot_id != VMSPACE_OBJ_ID);<br><br>        <span class="hljs-comment">/* Set the cap_group_name (process_name) for easing debugging */</span><br>        <span class="hljs-built_in">memset</span>(cap_group-&gt;cap_group_name, <span class="hljs-number">0</span>, MAX_GROUP_NAME_LEN + <span class="hljs-number">1</span>);<br>        <span class="hljs-keyword">if</span> (name_len &gt; MAX_GROUP_NAME_LEN)<br>                name_len = MAX_GROUP_NAME_LEN;<br>        <span class="hljs-built_in">memcpy</span>(cap_group-&gt;cap_group_name, name, name_len);<br><br>        root_cap_group = cap_group;<br>        <span class="hljs-keyword">return</span> cap_group;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>从上往下看，函数逻辑依次是：</p>
+<ul>
+<li>创建 <code>cap_group</code> 对象，并分配 slot 槽位</li>
+<li>创建 <code>vmspace</code> 对象，并分配 slot 槽位</li>
+<li>为 <code>cap_group</code> 命名，这里包含名字长度检查等操作</li>
+<li>设置根能力组，即 <code>root_cap_group</code> 为此能力组，结束函数</li>
+</ul>
+<p>不难注意到一个有趣的事情：那就是这里的能力组本身同样是内核对象，因此指向自己的指针也被放在了 <code>slot_table</code> 里。而这则是由于 root 能力组的特殊性决定的——它没有父进程，是系统中的第一个能力组，因此需要建立初始的能力权限管理机制，即自身作为自身的权力来源，进而作为整个系统的权限起点</p>
+<p>而普通的能力组创建，则需严格遵守能力组权限的要求，权限来自父进程</p>
+<h3 id="sys-root-cap-group"><a href="#sys-root-cap-group" class="headerlink" title="sys_root_cap_group"></a>sys_root_cap_group</h3><p>这里的 <code>sys_create_cap_group</code> ，则作为一个 syscall 的 handler 呈现</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">const</span> <span class="hljs-type">void</span> *syscall_table[NR_SYSCALL] = &#123;<br>				<span class="hljs-comment">// ...</span><br>        [CHCORE_SYS_create_cap_group] = sys_create_cap_group,<br></code></pre></td></tr></table></figure>
+
+<p>传入的 <code>*unsigned* *long* *cap_group_args_p</code>* 就是用户态进程传递过来的在其 vm 下的，指向<code>sys_create_cap_group</code> 这个 syscall 的<strong>参数</strong>的指针。在函数具体执行中会将其转换为需要的参数</p>
+<p>明白了这个之后，它的逻辑就比较自然了</p>
+<ul>
+<li>用户态的指针不可信，校验其地址空间是否伸进 kernel，是否有创建权限</li>
+<li>copy 用户态的数据到内核（ 这里的拷贝是没有传递用户态的页表的，在现代 OS 之中，内核态页表包含用户态的页表项，所以 <code>copy_from_user</code> 只是一个简单的 memcpy 而已）</li>
+<li>类似上面的逻辑，alloc 新的 cap_group 对象，cap_init 初始化，根据传入的参数给几个属性赋值</li>
+<li>新 cap_group 应该带上默认的 cap, 即 cap_group 和 vmspace</li>
+</ul>
+<p>内存布局如下：</p>
+
+<pre>
+<code class="mermaid" >
+classDiagram
+class Parent_Cap_Group {
+slot_table
++slots[x]: new_cap_group
+...other slots
+}
+
+    class Child_Cap_Group {
+        slot_table
+        +slots[0]: self
+        +slots[1]: vmspace
+        ...other slots
+    }
+
+    class VMSpace {
+        pcid
+        ...other fields
+    }
+
+    Parent_Cap_Group --> Child_Cap_Group : slot[x]
+    Child_Cap_Group --> Child_Cap_Group : slot[0]
+    Child_Cap_Group --> VMSpace : slot[1]
+
+</code>
+</pre>
+
+<h1 id="创建第一个进程-线程"><a href="#创建第一个进程-线程" class="headerlink" title="创建第一个进程&#x2F;线程"></a>创建第一个进程&#x2F;线程</h1><p>在 Chcore 的 main 函数中，内核会通过调用 <code>create_root_thread</code> 函数来创建第一个进程与线程，这部分内容我们就来研究该函数，同时简单讲解一下对初始化线程上下文的函数 <code>init_thread_ctx</code></p>
+<p>在 Lab 文档里已经写了关于 <code>create_root_thread</code> 函数的流程图，所以这里着重研究源码的细节相关</p>
+<h2 id="create-root-thread"><a href="#create-root-thread" class="headerlink" title="create_root_thread"></a>create_root_thread</h2><p>这部分源码很长</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * The root_thread is actually a first user thread</span><br><span class="hljs-comment"> * which has no difference with other user threads</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">create_root_thread</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">cap_group</span> *<span class="hljs-title">root_cap_group</span>;</span><br>        <span class="hljs-type">cap_t</span> thread_cap;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">root_thread</span>;</span><br>        <span class="hljs-type">char</span> data[<span class="hljs-number">8</span>];<br>        <span class="hljs-type">int</span> ret;<br>        <span class="hljs-type">cap_t</span> stack_pmo_cap;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">thread</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">pmobject</span> *<span class="hljs-title">stack_pmo</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vmspace</span> *<span class="hljs-title">init_vmspace</span>;</span><br>        <span class="hljs-type">vaddr_t</span> <span class="hljs-built_in">stack</span>;<br>        <span class="hljs-type">vaddr_t</span> kva;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">process_metadata</span> <span class="hljs-title">meta</span>;</span><br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * Read from binary.</span><br><span class="hljs-comment">         * The msg and the binary of of the init process(procmgr) are linked</span><br><span class="hljs-comment">         * behind the kernel image via the incbin instruction.</span><br><span class="hljs-comment">         * The binary_procmgr_bin_start points to the first piece of info:</span><br><span class="hljs-comment">         * the entry point of the init process, followed by eight bytes of data</span><br><span class="hljs-comment">         * that stores the mem_size of the binary.</span><br><span class="hljs-comment">         */</span><br><br>        <span class="hljs-built_in">memcpy</span>(data,<br>               (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                        + ROOT_ENTRY_OFF),<br>               <span class="hljs-keyword">sizeof</span>(data));<br>        meta.entry = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)be64_to_cpu(*(u64 *)data);<br><br>        <span class="hljs-built_in">memcpy</span>(data,<br>               (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                        + ROOT_FLAGS_OFF),<br>               <span class="hljs-keyword">sizeof</span>(data));<br>        meta.flags = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)be64_to_cpu(*(u64 *)data);<br><br>        <span class="hljs-built_in">memcpy</span>(data,<br>               (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                        + ROOT_PHENT_SIZE_OFF),<br>               <span class="hljs-keyword">sizeof</span>(data));<br>        meta.phentsize = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)be64_to_cpu(*(u64 *)data);<br><br>        <span class="hljs-built_in">memcpy</span>(data,<br>               (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                        + ROOT_PHNUM_OFF),<br>               <span class="hljs-keyword">sizeof</span>(data));<br>        meta.phnum = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)be64_to_cpu(*(u64 *)data);<br><br>        <span class="hljs-built_in">memcpy</span>(data,<br>               (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                        + ROOT_PHDR_ADDR_OFF),<br>               <span class="hljs-keyword">sizeof</span>(data));<br>        meta.phdr_addr = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)be64_to_cpu(*(u64 *)data);<br><br>        root_cap_group = create_root_cap_group(ROOT_NAME, <span class="hljs-built_in">strlen</span>(ROOT_NAME));<br><br>        BUG_ON(!root_cap_group);<br><br>        init_vmspace = obj_get(root_cap_group, VMSPACE_OBJ_ID, TYPE_VMSPACE);<br><br>        BUG_ON(!init_vmspace);<br><br>        <span class="hljs-comment">/* Allocate and setup a user stack for the init thread */</span><br>        stack_pmo_cap = create_pmo(ROOT_THREAD_STACK_SIZE,<br>                                   PMO_ANONYM,<br>                                   root_cap_group,<br>                                   <span class="hljs-number">0</span>,<br>                                   &amp;stack_pmo,<br>                                   PMO_ALL_RIGHTS);<br>        BUG_ON(stack_pmo_cap &lt; <span class="hljs-number">0</span>);<br><br>        ret = vmspace_map_range(init_vmspace,<br>                                ROOT_THREAD_STACK_BASE,<br>                                ROOT_THREAD_STACK_SIZE,<br>                                VMR_READ | VMR_WRITE,<br>                                stack_pmo);<br>        BUG_ON(ret != <span class="hljs-number">0</span>);<br><br>        <span class="hljs-comment">/* Allocate the init thread */</span><br>        thread = obj_alloc(TYPE_THREAD, <span class="hljs-keyword">sizeof</span>(*thread));<br>        BUG_ON(thread == <span class="hljs-literal">NULL</span>);<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; meta.phnum; i++) &#123;<br>                <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> flags;<br>                <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> offset, vaddr, filesz, memsz;<br><br>                <span class="hljs-built_in">memcpy</span>(data,<br>                       (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                                + ROOT_PHDR_OFF + i * ROOT_PHENT_SIZE<br>                                + PHDR_FLAGS_OFF),<br>                       <span class="hljs-keyword">sizeof</span>(data));<br>                flags = (<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>)le32_to_cpu(*(u32 *)data);<br><br>                <span class="hljs-built_in">memcpy</span>(data,<br>                       (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                                + ROOT_PHDR_OFF + i * ROOT_PHENT_SIZE<br>                                + PHDR_OFFSET_OFF),<br>                       <span class="hljs-keyword">sizeof</span>(data));<br>                offset = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)le64_to_cpu(*(u64 *)data);<br><br>                <span class="hljs-built_in">memcpy</span>(data,<br>                       (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                                + ROOT_PHDR_OFF + i * ROOT_PHENT_SIZE<br>                                + PHDR_VADDR_OFF),<br>                       <span class="hljs-keyword">sizeof</span>(data));<br>                vaddr = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)le64_to_cpu(*(u64 *)data);<br><br>                <span class="hljs-built_in">memcpy</span>(data,<br>                       (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                                + ROOT_PHDR_OFF + i * ROOT_PHENT_SIZE<br>                                + PHDR_FILESZ_OFF),<br>                       <span class="hljs-keyword">sizeof</span>(data));<br>                filesz = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)le64_to_cpu(*(u64 *)data);<br><br>                <span class="hljs-built_in">memcpy</span>(data,<br>                       (<span class="hljs-type">void</span> *)((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start<br>                                + ROOT_PHDR_OFF + i * ROOT_PHENT_SIZE<br>                                + PHDR_MEMSZ_OFF),<br>                       <span class="hljs-keyword">sizeof</span>(data));<br>                memsz = (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)le64_to_cpu(*(u64 *)data);<br><br>                <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">pmobject</span> *<span class="hljs-title">segment_pmo</span>;</span><br>                <span class="hljs-type">size_t</span> pmo_size = ROUND_UP(memsz, PAGE_SIZE);<br><br>                <span class="hljs-type">vaddr_t</span> segment_content_kvaddr =<br>                        ((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)&amp;binary_procmgr_bin_start) + offset;<br><br>                <span class="hljs-comment">/* According to the linker.ld in procmgr,  no exact bss exists</span><br><span class="hljs-comment">                 * in elf.*/</span><br>                BUG_ON(filesz != memsz);<br>                <span class="hljs-comment">// No additional memory for .bss, so we can directly reuse</span><br>                <span class="hljs-comment">// content in kernel image as their physical pages</span><br>                ret = create_pmo(PAGE_SIZE,<br>                                 PMO_DATA,<br>                                 root_cap_group,<br>                                 <span class="hljs-number">0</span>,<br>                                 &amp;segment_pmo,<br>                                 PMO_ALL_RIGHTS);<br>                BUG_ON(ret &lt; <span class="hljs-number">0</span>);<br>                kfree((<span class="hljs-type">void</span> *)phys_to_virt(segment_pmo-&gt;start));<br><span class="hljs-meta">#<span class="hljs-keyword">if</span> CHCORE_ARCH_X86_64</span><br>                <span class="hljs-comment">// See comments of embedded_bin_virt_to_phys</span><br>                segment_pmo-&gt;start =<br>                        embedded_bin_virt_to_phys(segment_content_kvaddr);<br>                segment_pmo-&gt;size = pmo_size;<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>                segment_pmo-&gt;start = virt_to_phys(segment_content_kvaddr);<br>                segment_pmo-&gt;size = pmo_size;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>                <span class="hljs-type">unsigned</span> vmr_flags = <span class="hljs-number">0</span>;<br>                <span class="hljs-keyword">if</span> (flags &amp; PHDR_FLAGS_R)<br>                        vmr_flags |= VMR_READ;<br>                <span class="hljs-keyword">if</span> (flags &amp; PHDR_FLAGS_W)<br>                        vmr_flags |= VMR_WRITE;<br>                <span class="hljs-keyword">if</span> (flags &amp; PHDR_FLAGS_X)<br>                        vmr_flags |= VMR_EXEC;<br><br>                ret = vmspace_map_range(init_vmspace,<br>                                        vaddr,<br>                                        segment_pmo-&gt;size,<br>                                        vmr_flags,<br>                                        segment_pmo);<br>                BUG_ON(ret &lt; <span class="hljs-number">0</span>);<br>        &#125;<br>        obj_put(init_vmspace);<br><br>        <span class="hljs-built_in">stack</span> = ROOT_THREAD_STACK_BASE + ROOT_THREAD_STACK_SIZE;<br><br>        <span class="hljs-comment">/* Allocate a physical page for the main stack for prepare_env */</span><br>        kva = (<span class="hljs-type">vaddr_t</span>)get_pages(<span class="hljs-number">0</span>);<br>        BUG_ON(kva == <span class="hljs-number">0</span>);<br>        commit_page_to_pmo(stack_pmo,<br>                           ROOT_THREAD_STACK_SIZE / PAGE_SIZE - <span class="hljs-number">1</span>,<br>                           virt_to_phys((<span class="hljs-type">void</span> *)kva));<br><br>        prepare_env((<span class="hljs-type">char</span> *)kva, <span class="hljs-built_in">stack</span>, ROOT_NAME, &amp;meta);<br>        <span class="hljs-built_in">stack</span> -= ENV_SIZE_ON_STACK;<br><br>        ret = thread_init(thread,<br>                          root_cap_group,<br>                          <span class="hljs-built_in">stack</span>,<br>                          meta.entry,<br>                          ROOT_THREAD_PRIO,<br>                          TYPE_USER,<br>                          smp_get_cpu_id());<br>        BUG_ON(ret != <span class="hljs-number">0</span>);<br><br>        <span class="hljs-comment">/* Add the thread into the thread_list of the cap_group */</span><br>        lock(&amp;root_cap_group-&gt;threads_lock);<br>        list_add(&amp;thread-&gt;node, &amp;root_cap_group-&gt;thread_list);<br>        root_cap_group-&gt;thread_cnt += <span class="hljs-number">1</span>;<br>        unlock(&amp;root_cap_group-&gt;threads_lock);<br><br>        <span class="hljs-comment">/* Allocate the cap for the init thread */</span><br>        thread_cap = cap_alloc(root_cap_group, thread);<br>        BUG_ON(thread_cap &lt; <span class="hljs-number">0</span>);<br>        thread-&gt;cap = thread_cap;<br><br>        <span class="hljs-comment">/* L1 icache &amp; dcache have no coherence on aarch64 */</span><br>        flush_idcache();<br><br>        root_thread = obj_get(root_cap_group, thread_cap, TYPE_THREAD);<br>        <span class="hljs-comment">/* Enqueue: put init thread into the ready queue */</span><br>        BUG_ON(sched_enqueue(root_thread));<br>        obj_put(root_thread);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>总体而言，可以分为如下几个的步骤：</p>
+<h3 id="读取元数据"><a href="#读取元数据" class="headerlink" title="读取元数据"></a><strong>读取元数据</strong></h3><p>从 kernel 镜像后链接的二进制文件中读取初始化进程（procmgr）的入口点、标志、程序头表项大小、程序头表项数量和程序头表地址。也就是函数开头的一系列 memcpy 函数操作</p>
+<h3 id="内存布局准备"><a href="#内存布局准备" class="headerlink" title="内存布局准备"></a>内存布局准备</h3><p>主要又分为几个小的步骤：</p>
+<ul>
+<li><strong>创建根能力组</strong>：<ul>
+<li>创建一个根能力组（<code>root_cap_group</code>），这是管理线程和进程的能力组</li>
+</ul>
+</li>
+<li><strong>获取初始化虚拟地址空间</strong>：<ul>
+<li>从根能力组中获取初始化虚拟地址空间（<code>init_vmspace</code>）</li>
+</ul>
+</li>
+<li><strong>为根线程分配用户栈</strong>：<ul>
+<li>分配一个物理内存对象（PMO）作为根线程的用户栈，并将其映射到初始化虚拟地址空间</li>
+</ul>
+</li>
+<li><strong>分配根线程</strong>：<ul>
+<li>分配一个线程对象（<code>thread</code>）</li>
+</ul>
+</li>
+<li><strong>映射程序头表项</strong>：<ul>
+<li>遍历程序头表项，为每个段分配 PMO，并将其映射到初始化虚拟地址空间</li>
+<li>最后释放对初始化虚拟地址空间的引用</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; meta.phnum; i++) &#123;<br>    <span class="hljs-comment">// 读取段信息</span><br>    <span class="hljs-comment">// 创建PMO</span><br>    <span class="hljs-comment">// 设置权限</span><br>    <span class="hljs-comment">// 映射到虚拟地址空间</span><br>&#125;<br>obj_put(init_vmspace);<br></code></pre></td></tr></table></figure>
+
+<p>相关的示意图如下所示</p>
+
+<pre>
+<code class="mermaid" >
+graph TD
+subgraph 虚拟内存空间
+A[用户栈区域] --> |映射| B[物理内存/PMO]
+C[程序段] --> |映射| D[内核镜像中的数据]
+end
+</code>
+</pre>
+
+
+<pre>
+<code class="mermaid" >
+graph LR
+subgraph "Program Headers"
+A[段 1] --> B[段 2]
+B --> C[段 3]
+C --> D[...]
+end
+subgraph "Memory Mapping"
+E[PMO1] --> F[PMO2]
+F --> G[PMO3]
+G --> H[...]
+end
+A --> E
+B --> F
+C --> G
+</code>
+</pre>
+
+<h3 id="线程初始化"><a href="#线程初始化" class="headerlink" title="线程初始化"></a>线程初始化</h3><p>同理分为如下小的步骤：</p>
+<ul>
+<li><strong>准备环境</strong>：<ul>
+<li>为根线程准备环境，包括栈和程序入口点</li>
+</ul>
+</li>
+<li><strong>初始化根线程</strong>：<ul>
+<li>使用根能力组、栈地址、入口点和优先级初始化根线程</li>
+<li>其中即包括初始化线程上下文的操作</li>
+</ul>
+</li>
+<li><strong>将根线程添加到能力组的线程列表</strong>：<ul>
+<li>将根线程添加到根能力组的线程列表中，并增加线程计数</li>
+</ul>
+</li>
+<li><strong>为根线程分配能力</strong>：<ul>
+<li>为根线程分配一个能力（<code>thread_cap</code>）</li>
+</ul>
+</li>
+<li><strong>刷新缓存</strong>：<ul>
+<li>刷新指令缓存和数据缓存，以确保新线程的指令和数据是最新的</li>
+</ul>
+</li>
+<li><strong>将根线程放入就绪队列</strong>：<ul>
+<li>将根线程放入调度器的就绪队列，准备执行</li>
+</ul>
+</li>
+</ul>
+
+<pre>
+<code class="mermaid" >
+graph LR
+A[创建线程对象] --> B[初始化线程上下文]
+B --> C[添加到能力组]
+C --> D[分配线程能力]
+D --> E[加入调度队列]
+</code>
+</pre>
+
+<p>除了初始化线程之外，类比能力组的创建同样有关于创建系统线程的 syscall 即 <code>sys_create_thread</code> ，其中涉及到的逻辑便比初始线程的创立简单不少，感兴趣的读者可以自行阅读。二者的区别如下图所示：</p>
+
+<pre>
+<code class="mermaid" >
+classDiagram
+class create_root_thread { +无参数检查 +固定类型(TYPE_USER) +固定优先级 +直接访问 root_cap_group +加载进程管理器二进制
+}
+
+    class sys_create_thread {
+        +严格参数检查
+        +多种线程类型
+        +可配置优先级
+        +通过能力访问cap_group
+        +不加载二进制
+    }
+
+</code>
+</pre>
+
+<h2 id="init-thread-ctx"><a href="#init-thread-ctx" class="headerlink" title="init_thread_ctx"></a>init_thread_ctx</h2><p>初始化上下文的函数相对就要简单很多，根据规则配置相应的寄存器和一些字段即可</p>
+<h3 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h3><p>接口：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">init_thread_ctx</span><span class="hljs-params">(</span><br><span class="hljs-params">    <span class="hljs-keyword">struct</span> thread *thread,  <span class="hljs-comment">// 线程对象</span></span><br><span class="hljs-params">    <span class="hljs-type">vaddr_t</span> <span class="hljs-built_in">stack</span>,         <span class="hljs-comment">// 用户栈地址</span></span><br><span class="hljs-params">    <span class="hljs-type">vaddr_t</span> func,          <span class="hljs-comment">// 入口函数地址</span></span><br><span class="hljs-params">    u32 prio,             <span class="hljs-comment">// 优先级</span></span><br><span class="hljs-params">    u32 type,             <span class="hljs-comment">// 线程类型</span></span><br><span class="hljs-params">    s32 aff               <span class="hljs-comment">// CPU亲和性</span></span><br><span class="hljs-params">)</span><br></code></pre></td></tr></table></figure>
+
+<p>源码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">init_thread_ctx</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> thread *thread, <span class="hljs-type">vaddr_t</span> <span class="hljs-built_in">stack</span>, <span class="hljs-type">vaddr_t</span> func,</span><br><span class="hljs-params">                     u32 prio, u32 type, s32 aff)</span><br>&#123;<br>        <span class="hljs-comment">/* Fill the context of the thread */</span><br>        thread-&gt;thread_ctx-&gt;ec.reg[SP_EL0] = <span class="hljs-built_in">stack</span>;<br>        thread-&gt;thread_ctx-&gt;ec.reg[ELR_EL1] = func;<br>        thread-&gt;thread_ctx-&gt;ec.reg[SPSR_EL1] = SPSR_EL1_EL0t;<br><br>        <span class="hljs-comment">/* Set the state of the thread */</span><br>        thread-&gt;thread_ctx-&gt;state = TS_INIT;<br><br>        <span class="hljs-comment">/* Set thread type */</span><br>        thread-&gt;thread_ctx-&gt;type = type;<br><br>        <span class="hljs-comment">/* Set the cpuid and affinity */</span><br>        thread-&gt;thread_ctx-&gt;affinity = aff;<br><br>        <span class="hljs-comment">/* Set the budget and priority of the thread */</span><br>        <span class="hljs-keyword">if</span> (thread-&gt;thread_ctx-&gt;sc != <span class="hljs-literal">NULL</span>) &#123;<br>                thread-&gt;thread_ctx-&gt;sc-&gt;prio = prio;<br>                thread-&gt;thread_ctx-&gt;sc-&gt;budget = DEFAULT_BUDGET;<br>        &#125;<br><br>        thread-&gt;thread_ctx-&gt;kernel_stack_state = KS_FREE;<br>        <span class="hljs-comment">/* Set exiting state */</span><br>        thread-&gt;thread_ctx-&gt;thread_exit_state = TE_RUNNING;<br>        thread-&gt;thread_ctx-&gt;is_suspended = <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>实际上就是设置寄存器、线程状态、调度相关设置以及状态标志</p>
+<h3 id="相关数据结构"><a href="#相关数据结构" class="headerlink" title="相关数据结构"></a>相关数据结构</h3><p>线程上下文的数据结构如下所示，结构体成员的作用都写在注释里了，可以直接参考注释食用～</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* 线程上下文：包含线程运行所需的所有上下文信息 */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread_ctx</span> &#123;</span><br>        <span class="hljs-comment">/* ====== 架构相关部分 ====== */</span><br><br>        <span class="hljs-comment">/* 执行上下文：包含CPU寄存器状态</span><br><span class="hljs-comment">         * 在ARM64中包括：</span><br><span class="hljs-comment">         * - 通用寄存器 (X0-X30)</span><br><span class="hljs-comment">         * - 程序计数器 (PC)</span><br><span class="hljs-comment">         * - 栈指针 (SP)</span><br><span class="hljs-comment">         * - 处理器状态寄存器 (PSTATE)</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">arch_exec_ctx_t</span> ec;<br><br>        <span class="hljs-comment">/* 浮点运算单元（FPU）状态</span><br><span class="hljs-comment">         * 存储浮点寄存器和SIMD寄存器的内容</span><br><span class="hljs-comment">         * 仅在线程使用FPU时才会被保存和恢复</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">void</span> *fpu_state;<br><br>        <span class="hljs-comment">/* 线程局部存储（TLS）相关寄存器</span><br><span class="hljs-comment">         * 用于支持线程局部存储</span><br><span class="hljs-comment">         * 在ARM64中通常使用TPIDR_EL0寄存器</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> tls_base_reg[TLS_REG_NUM];<br><br>        <span class="hljs-comment">/* ====== 架构无关部分 ====== */</span><br><br>        <span class="hljs-comment">/* FPU所有权标识</span><br><span class="hljs-comment">         * -1: 不拥有FPU</span><br><span class="hljs-comment">         * &gt;=0: 表示拥有FPU的CPU ID</span><br><span class="hljs-comment">         * 用于延迟FPU上下文的保存和恢复</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> is_fpu_owner;<br><br>        <span class="hljs-comment">/* 调度上下文</span><br><span class="hljs-comment">         * 包含调度器需要的信息：</span><br><span class="hljs-comment">         * - 优先级</span><br><span class="hljs-comment">         * - 时间片</span><br><span class="hljs-comment">         * - 调度策略相关数据</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">sched_ctx_t</span> *sc;<br><br>        <span class="hljs-comment">/* 线程类型</span><br><span class="hljs-comment">         * 可能的值：</span><br><span class="hljs-comment">         * - TYPE_USER: 用户线程</span><br><span class="hljs-comment">         * - TYPE_KERNEL: 内核线程</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> type;<br><br>        <span class="hljs-comment">/* 线程状态（不能被其他核心修改）</span><br><span class="hljs-comment">         * 可能的值：</span><br><span class="hljs-comment">         * - TS_INIT: 初始化</span><br><span class="hljs-comment">         * - TS_READY: 就绪</span><br><span class="hljs-comment">         * - TS_RUNNING: 运行中</span><br><span class="hljs-comment">         * - TS_WAITING: 等待中</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> state;<br><br>        <span class="hljs-comment">/* 线程挂起标志</span><br><span class="hljs-comment">         * true: 线程被挂起</span><br><span class="hljs-comment">         * false: 线程正常运行</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">bool</span> is_suspended;<br><br>        <span class="hljs-comment">/* SMP亲和性</span><br><span class="hljs-comment">         * -1: 可在任何CPU上运行</span><br><span class="hljs-comment">         * &gt;=0: 指定运行的CPU ID</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> affinity;<br><br>        <span class="hljs-comment">/* 当前分配的CPU</span><br><span class="hljs-comment">         * 记录线程当前或最后运行的CPU ID</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> cpuid;<br><br>        <span class="hljs-comment">/* 内核栈状态</span><br><span class="hljs-comment">         * volatile: 可能被中断处理修改</span><br><span class="hljs-comment">         * 可能的值：</span><br><span class="hljs-comment">         * - KS_FREE: 空闲</span><br><span class="hljs-comment">         * - KS_LOCKED: 被锁定</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">volatile</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> kernel_stack_state;<br><br>        <span class="hljs-comment">/* 线程退出状态</span><br><span class="hljs-comment">         * volatile: 可能被其他上下文修改</span><br><span class="hljs-comment">         * 可能的值：</span><br><span class="hljs-comment">         * - TE_RUNNING: 运行中</span><br><span class="hljs-comment">         * - TE_EXITING: 正在退出</span><br><span class="hljs-comment">         * - TE_EXITED: 已退出</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">volatile</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> thread_exit_state;<br><br>&#125; <span class="hljs-comment">/* 按照缓存行大小对齐，避免伪共享 */</span><br>  __attribute__((aligned(CACHELINE_SZ)));<br></code></pre></td></tr></table></figure>
+
+<p>至此，线程管理相关的源码解析到此结束</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E8%BF%9B%E7%A8%8B%C2%B7%E7%BA%BF%E7%A8%8B%C2%B7%E5%BC%82%E5%B8%B8/" class="category-chain-item">进程·线程·异常</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>进程/线程管理</div>
+      <div>http://example.com/2025/02/20/threadManage/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/22/irqManage/" title="异常管理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">异常管理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/19/pgfault/" title="缺页管理">
+                        <span class="hidden-mobile">缺页管理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

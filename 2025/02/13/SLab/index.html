@@ -1,0 +1,920 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之SLab分配器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SLab分配器">
+<meta property="og:url" content="http://example.com/2025/02/13/SLab/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之SLab分配器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-13T08:42:05.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:46:27.552Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>SLab分配器 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="SLab分配器"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-13 16:42" pubdate>
+          2025年2月13日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">SLab分配器</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="SLab-分配器"><a href="#SLab-分配器" class="headerlink" title="SLab 分配器"></a>SLab 分配器</h1><p>Buddy System 负责分配连续的物理内存页，但是如果系统遇到了小内存分配的需求，比如仅仅数十个字节的结构体等，这时候若继续使用伙伴系统，由于其最少只能分配 4KB 的内存，便会造成严重的内部碎片问题。而 SLab 分配器（SLub）便是专用于小内存分配的，它和 Buddy System 一起构成了 Chcore 的物理内存管理系统</p>
+<p>本节内容承接上文，为大家介绍 Chcore 中 SLab 分配器的设计与具体实现，主要还是包括三个部分：</p>
+<ul>
+<li>回顾 SLab 分配器的基础知识与设计理念</li>
+<li>分析 Chcore 源码对 SLab 的代码实现与架构</li>
+<li>解析 Chcore 源码对 SLab 操作相关函数的具体实现</li>
+</ul>
+<h1 id="回顾：SLab-分配器的设计理念"><a href="#回顾：SLab-分配器的设计理念" class="headerlink" title="回顾：SLab 分配器的设计理念"></a>回顾：SLab 分配器的设计理念</h1><p>SLab 专用于小内存的分配。和伙伴系统不同，SLab 本身不涉及对内存块的合并与分裂，而是通过一个个不同的 SLab 池，来分配不同固定大小的内存块，并且在 SLab 池内部使用链表结构串起一个个 SLab，SLab 内部又使用空闲链表的结构，便可以对所有的空闲内存块进行管理和分配</p>
+<h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><ul>
+<li>SLab 是一个内存分配器，主要用于分配小块内存（32 字节到 2048 字节之间）</li>
+<li>整个系统维护了多个不同大小的 <code>slab_pool</code> ，每个池对应特定大小的内存块</li>
+<li>内存大小按 2 的幂次方划分：32, 64, 128, 256, 512, 1024, 2048 字节（从 2^5 到 2^11）</li>
+</ul>
+<h3 id="SLab-的内部组织"><a href="#SLab-的内部组织" class="headerlink" title="SLab 的内部组织"></a>SLab 的内部组织</h3><p>每个 <code>slab_pool</code> 由多个 slab 组成，每个 slab 又具有以下特点：</p>
+<ul>
+<li>固定大小为 128KB（<code>SIZE_OF_ONE_SLAB</code>）</li>
+<li>包含一个 <code>slab_header</code>（位于 slab 开始处）</li>
+<li>剩余空间被划分为大小相等的对象槽（<code>slots</code>）</li>
+<li>使用空闲链表（<code>free_list</code>）管理未分配的对象槽</li>
+<li>每个 <code>slab_pool</code> 有 current 和 partial 指针，分别指向当前 slab 以及总的 slab 链表组</li>
+</ul>
+<h3 id="SLab-的工作流程"><a href="#SLab-的工作流程" class="headerlink" title="SLab 的工作流程"></a><strong>SLab 的工作流程</strong></h3><ul>
+<li>当请求分配内存时，SLAB 分配器会首先从<strong>部分使用 Slab 链表</strong>中查找是否有可用的对象</li>
+<li>如果没有，它会从<strong>空闲 Slab 链表</strong>中取出一个 slot，并将其移动到<strong>部分使用 Slab 链表</strong></li>
+<li>如果空闲链表也为空（即 partial 为空），则会从内存中（即伙伴系统）分配一个新的 slab，然后进行上一步操作</li>
+<li>当释放内存块时，如果一个 slab 中的所有 slots 都被释放，则该 slab 会被移动到<strong>空闲 Slab 链表</strong></li>
+</ul>
+<p>有如下示意图以供参考</p>
+
+<pre>
+<code class="mermaid" >
+graph TD
+A[SLAB 分配器] --> B[Slab Pool]
+B --> C[Slab 1]
+B --> D[Slab 2]
+B --> E[Slab N]
+C --> F[对象 1]
+C --> G[对象 2]
+C --> H[对象 M]
+D --> I[对象 1]
+D --> J[对象 2]
+D --> K[对象 M]
+E --> L[对象 1]
+E --> M[对象 2]
+E --> N[对象 M]
+B --> O[空闲 Slab 链表]
+B --> P[部分使用 Slab 链表]
+B --> Q[满 Slab 链表]
+O --> C
+P --> D
+Q --> E
+
+    classDef slabCache fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef slab fill:#ccf,stroke:#333,stroke-width:2px;
+    classDef object fill:#cfc,stroke:#333,stroke-width:2px;
+    classDef list fill:#fcf,stroke:#333,stroke-width:2px;
+
+    class B slabCache;
+    class C,D,E slab;
+    class F,G,H,I,J,K,L,M,N object;
+    class O,P,Q list;
+
+</code>
+</pre>
+
+<p>这里的对象即为内存块，在 Chcore 实现中用 slot 表示，下面会提到。实际的 SLab 分配器的设计可能用到 full_slab 链表也可能不会，具体根据其实现确定</p>
+<p>查看本机 Slab 示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs nasm">sudo cat /proc/slabinfo<br><br>kmalloc-4k           569    584   4096    8    8 : tunables    0    0    0 : slabdata     73     73      0<br>kmalloc-2k           752    752   2048   16    8 : tunables    0    0    0 : slabdata     47     47      0<br>kmalloc-1k           704    704   1024   32    8 : tunables    0    0    0 : slabdata     22     22      0<br>kmalloc-512         2112   2112    512   32    4 : tunables    0    0    0 : slabdata     66     66      0<br>kmalloc-256          768    768    256   32    2 : tunables    0    0    0 : slabdata     24     24      0<br>kmalloc-192         1050   1050    192   42    2 : tunables    0    0    0 : slabdata     25     25      0<br>kmalloc-128         1376   1376    128   32    1 : tunables    0    0    0 : slabdata     43     43      0<br>kmalloc-96          1134   1134     96   42    1 : tunables    0    0    0 : slabdata     27     27      0<br>kmalloc-64          3072   3072     64   64    1 : tunables    0    0    0 : slabdata     48     48      0<br>kmalloc-32          3072   3072     32  128    1 : tunables    0    0    0 : slabdata     24     24      0<br>kmalloc-16          6144   6144     16  256    1 : tunables    0    0    0 : slabdata     24     24      0<br>kmalloc-8          12288  12288      8  512    1 : tunables    0    0    0 : slabdata     24     24      0<br></code></pre></td></tr></table></figure>
+
+<h1 id="Chcore-中-SLab-分配器的设计"><a href="#Chcore-中-SLab-分配器的设计" class="headerlink" title="Chcore 中 SLab 分配器的设计"></a>Chcore 中 SLab 分配器的设计</h1><p>同伙伴系统一样，这部分主要介绍 Chcore 中 SLab 分配器实现的核心数据结构和函数接口</p>
+<h2 id="核心数据结构"><a href="#核心数据结构" class="headerlink" title="核心数据结构"></a>核心数据结构</h2><p>先上代码，看看有哪些数据结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * order range: [SLAB_MIN_ORDER, SLAB_MAX_ORDER]</span><br><span class="hljs-comment"> * ChCore prepares the slab for each order in the range.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> SLAB_MIN_ORDER (5)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> SLAB_MAX_ORDER (11)</span><br><br><span class="hljs-comment">/* The size of one slab is 128K. */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> SIZE_OF_ONE_SLAB (128*1024)</span><br><br><span class="hljs-comment">/* slab_header resides in the beginning of each slab (i.e., occupies the first slot). */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_header</span> &#123;</span><br>        <span class="hljs-comment">/* The list of free slots, which can be converted to struct slab_slot_list. */</span><br>        <span class="hljs-type">void</span> *free_list_head;<br>        <span class="hljs-comment">/* Partial slab list. */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">node</span>;</span><br><br>        <span class="hljs-type">int</span> order;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> total_free_cnt; <span class="hljs-comment">/* MAX: 65536 */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> current_free_cnt;<br>&#125;;<br><br><span class="hljs-comment">/* Each free slot in one slab is regarded as slab_slot_list. */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_slot_list</span> &#123;</span><br>        <span class="hljs-type">void</span> *next_free;<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_pointer</span> &#123;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_header</span> *<span class="hljs-title">current_slab</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">partial_slab_list</span>;</span><br>&#125;;<br><br><span class="hljs-comment">/* slab_pool is also static. We do not add the static modifier due to unit test.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_pointer</span> <span class="hljs-title">slab_pool</span>[<span class="hljs-title">SLAB_MAX_ORDER</span> + 1];</span><br><span class="hljs-type">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> <span class="hljs-title">slabs_locks</span>[<span class="hljs-title">SLAB_MAX_ORDER</span> + 1];</span><br><br></code></pre></td></tr></table></figure>
+
+<p>Chcore 中的 SLab 分配器设定大体服从书上的安排，以内存池为单元，先看宏定义：</p>
+<ul>
+<li><code>SLAB_MIN_ORDER &amp; SLAB_MIN_ORDER</code> ：表示 SLab 分配器可以操作的内存块大小，从 2^5 到 2^11 字节</li>
+<li><code>SIZE_OF_ONE_SLAB</code> ：表示每个 slab 的大小，在 Chcore 中是 128KB</li>
+</ul>
+<p>接下来我们再分析其核心数据结构的实现：</p>
+<h3 id="slab-pointer"><a href="#slab-pointer" class="headerlink" title="slab_pointer"></a>slab_pointer</h3><p>即 Chcore 中表示 slab 池的数据结构，这个也可以在下面对 <code>slab_pool</code> 的定义中看见。其数据成员即我们之前介绍的 current 和 partial 指针，在这里以 <code>slab_header</code> 和 <code>list_head</code> 的形式出现</p>
+<h3 id="slab-header"><a href="#slab-header" class="headerlink" title="slab_header"></a>slab_header</h3><p>是 Chcore 中代表一个个具体的 slab 的对象，其成员包含：</p>
+<ul>
+<li><code>void *free_list_head</code> ：内部空闲 slot 的链表</li>
+<li><code>struct list_head node</code> ：partial 中表示自身的节点</li>
+</ul>
+<p>如何由节点反过来得到其处于的 slab？</p>
+<p>在 chcore 之中采用的是内存对齐+元数据的方式，具体而言，元数据为：</p>
+<ul>
+<li>在每一个 slab 块的开头，维护一个其中内存槽 slot 的 free list head</li>
+<li>在每一个内存槽 slot 之中，存一个 next_free 的指针</li>
+<li>slab 由 buddy sys 分配，保证 slab header 地址按 page 对齐</li>
+</ul>
+<p>这样，当我想要 free addr 时, 可以找到对应的 page, 进而找到 slab header, 进而得到 free_list，最后在 free_list 之中插入这个 slot, 然后由这个 slab 的空闲 slot 个数判断是否是 full → partial, partial→free, 从而进行插入 partial list 或者把 slab 空间归还给 buddy sys 的操作</p>
+<ul>
+<li><code>int order</code> ：该 slab 的阶数</li>
+<li><code>total_free_cnt &amp; current_free_cnt</code> ：总的空闲块数 &amp; 当前空闲块数</li>
+</ul>
+<p>最后是 slot 自身</p>
+<h3 id="slab-slot-list"><a href="#slab-slot-list" class="headerlink" title="slab_slot_list"></a>slab_slot_list</h3><p>仅包含一个 <code>void *next_free</code> 指针，它们串起来得到每个 slab 内部的空闲块链表</p>
+<h2 id="核心函数接口"><a href="#核心函数接口" class="headerlink" title="核心函数接口"></a>核心函数接口</h2><p>Chcore 的 SLab 分配器的实现包含了较多的辅助函数，这里只介绍重要的几个接口：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">init_slab</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span>;<br><span class="hljs-type">void</span> *<span class="hljs-title function_">alloc_in_slab</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>, <span class="hljs-type">size_t</span> *)</span>;<br><span class="hljs-type">void</span> <span class="hljs-title function_">free_in_slab</span><span class="hljs-params">(<span class="hljs-type">void</span> *addr)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>从上到下函数接口的功能依次为：</p>
+<ul>
+<li><code>init_slab</code> ：初始化 SLab 分配器</li>
+<li><code>alloc_in_slab</code> ：在 slab 中申请分配内存</li>
+<li><code>free_in_slab</code> ：释放相应的内存</li>
+</ul>
+<h1 id="Chcore-源码对-SLab-功能的具体实现"><a href="#Chcore-源码对-SLab-功能的具体实现" class="headerlink" title="Chcore 源码对 SLab 功能的具体实现"></a>Chcore 源码对 SLab 功能的具体实现</h1><p>同伙伴系统一样，这部分解析 Chcore 源码对 SLab 功能函数的具体实现，主要内容即为上面部分提到的三个函数，其中又会涉及到其他辅助函数，根据重要程度串起来讲解</p>
+<h2 id="init-slab"><a href="#init-slab" class="headerlink" title="init_slab"></a>init_slab</h2><h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">init_slab</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-type">int</span> order;<br><br>        <span class="hljs-comment">/* slab obj size: 32, 64, 128, 256, 512, 1024, 2048 */</span><br>        <span class="hljs-keyword">for</span> (order = SLAB_MIN_ORDER; order &lt;= SLAB_MAX_ORDER; order++) &#123;<br>                lock_init(&amp;slabs_locks[order]);<br>                slab_pool[order].current_slab = <span class="hljs-literal">NULL</span>;<br>                init_list_head(&amp;(slab_pool[order].partial_slab_list));<br>        &#125;<br>        kdebug(<span class="hljs-string">&quot;mm: finish initing slab allocators\n&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>初始化函数和伙伴系统比起来简单了许多，直接用一个 for 循环去过一遍所有 slab 池即可：</p>
+<ul>
+<li>初始化 32~ 2048 字节为 slot 的各个 slab, 每一个 slab 为 <code>SIZE_OF_ONE_SLAB=128K</code> 大小</li>
+<li>初始化对应的锁</li>
+<li>对全局变量的 slab array 的 <code>current_slab</code> <code>partial_slab_list</code> 初始化</li>
+</ul>
+<h2 id="alloc-in-slab"><a href="#alloc-in-slab" class="headerlink" title="alloc_in_slab"></a>alloc_in_slab</h2><h3 id="源码-1"><a href="#源码-1" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> *<span class="hljs-title function_">alloc_in_slab</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> size, <span class="hljs-type">size_t</span> *real_size)</span><br>&#123;<br>        <span class="hljs-type">int</span> order;<br><br>        BUG_ON(size &gt; order_to_size(SLAB_MAX_ORDER));<br><br>        order = (<span class="hljs-type">int</span>)size_to_order(size);<br>        <span class="hljs-keyword">if</span> (order &lt; SLAB_MIN_ORDER)<br>                order = SLAB_MIN_ORDER;<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> ENABLE_MEMORY_USAGE_COLLECTING == ON</span><br>        <span class="hljs-keyword">if</span> (real_size)<br>                *real_size = <span class="hljs-number">1</span> &lt;&lt; order;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>        <span class="hljs-keyword">return</span> alloc_in_slab_impl(order);<br>&#125;<br><br><span class="hljs-type">static</span> <span class="hljs-type">void</span> *<span class="hljs-title function_">alloc_in_slab_impl</span><span class="hljs-params">(<span class="hljs-type">int</span> order)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_header</span> *<span class="hljs-title">current_slab</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_slot_list</span> *<span class="hljs-title">free_list</span>;</span><br>        <span class="hljs-type">void</span> *next_slot;<br><br>        lock(&amp;slabs_locks[order]);<br><br>        current_slab = slab_pool[order].current_slab;<br>        <span class="hljs-comment">/* When serving the first allocation request. */</span><br>        <span class="hljs-keyword">if</span> (unlikely(current_slab == <span class="hljs-literal">NULL</span>)) &#123;<br>                current_slab = init_slab_cache(order, SIZE_OF_ONE_SLAB);<br>                <span class="hljs-keyword">if</span> (current_slab == <span class="hljs-literal">NULL</span>) &#123;<br>                        unlock(&amp;slabs_locks[order]);<br>                        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>                &#125;<br>                slab_pool[order].current_slab = current_slab;<br>        &#125;<br><br>        free_list = (<span class="hljs-keyword">struct</span> slab_slot_list *)current_slab-&gt;free_list_head;<br>        BUG_ON(free_list == <span class="hljs-literal">NULL</span>);<br><br>        next_slot = free_list-&gt;next_free;<br>        current_slab-&gt;free_list_head = next_slot;<br><br>        current_slab-&gt;current_free_cnt -= <span class="hljs-number">1</span>;<br>        <span class="hljs-comment">/* When current_slab is full, choose a new slab as the current one. */</span><br>        <span class="hljs-keyword">if</span> (unlikely(current_slab-&gt;current_free_cnt == <span class="hljs-number">0</span>))<br>                choose_new_current_slab(&amp;slab_pool[order], order);<br><br>        unlock(&amp;slabs_locks[order]);<br><br>        <span class="hljs-keyword">return</span> (<span class="hljs-type">void</span> *)free_list;<br>&#125;<br><br><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">choose_new_current_slab</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> slab_pointer *pool, <span class="hljs-type">int</span> order)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> *<span class="hljs-title">list</span>;</span><br><br>        <span class="hljs-built_in">list</span> = &amp;(pool-&gt;partial_slab_list);<br>        <span class="hljs-keyword">if</span> (list_empty(<span class="hljs-built_in">list</span>)) &#123;<br>                pool-&gt;current_slab = <span class="hljs-literal">NULL</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-keyword">struct</span> slab_header *slab;<br><br>                slab = (<span class="hljs-keyword">struct</span> slab_header *)list_entry(<br>                        <span class="hljs-built_in">list</span>-&gt;next, <span class="hljs-keyword">struct</span> slab_header, node);<br>                pool-&gt;current_slab = slab;<br>                list_del(<span class="hljs-built_in">list</span>-&gt;next);<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h3><p>注意到源码将参数检查和核心实现分为了两部分，其中核心实现单独用了一个辅助函数，对外的接口则为 <code>alloc_in_slab</code> 本身</p>
+<p>二者视作一起看，其核心逻辑如下：</p>
+<ul>
+<li>参数检查，确保 order 符合范围，太大则报错，太小则向上补到最小值</li>
+<li>加锁，确保并发安全性</li>
+<li>若 current 为空，则为首次分配，需要先 init 一下（注意这里是直接使用的内部接口，保持了外界的无感知，也简化了这里的代码逻辑）</li>
+<li>随后直接从 current 的 slab 的空闲链表中取出一块 slot 作为返回值，同时处理相应字段，如空闲块数量减一，修改 list_head 等</li>
+<li>若当前 slab 已满，则换新的 slab，通过 choose_new_current_slab 进行操作，方式依然是通过定义好的 list 操作宏直接操作相应的链表</li>
+<li>解锁，完成分配</li>
+</ul>
+<p>逻辑图可以作如下参考，便于理解阅读：</p>
+
+<pre>
+<code class="mermaid" >
+graph TD
+A[alloc_in_slab] --> B[计算 order]
+B --> C[alloc_in_slab_impl]
+C --> D{获取锁}
+D --> E{检查 current_slab}
+E -->|为空| F[init_slab_cache]
+F -->|失败| G[解锁返回 NULL]
+F -->|成功| H[设置 current_slab]
+E -->|非空| I[获取 free_list]
+H --> I
+I --> J[更新 free_list_head]
+J --> K[减少 free_cnt]
+K --> L{是否已满?}
+L -->|是| M[choose_new_current_slab]
+L -->|否| N[解锁]
+M --> N
+N --> O[返回分配的内存]
+</code>
+</pre>
+
+<h2 id="free-in-slab"><a href="#free-in-slab" class="headerlink" title="free_in_slab"></a>free_in_slab</h2><p>最后是 free 的操作，为 slab 拼上最后一块拼图</p>
+<h3 id="源码-2"><a href="#源码-2" class="headerlink" title="源码"></a>源码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">free_in_slab</span><span class="hljs-params">(<span class="hljs-type">void</span> *addr)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">page</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_header</span> *<span class="hljs-title">slab</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">slab_slot_list</span> *<span class="hljs-title">slot</span>;</span><br>        <span class="hljs-type">int</span> order;<br><br>        slot = (<span class="hljs-keyword">struct</span> slab_slot_list *)addr;<br>        page = virt_to_page(addr);<br>        <span class="hljs-keyword">if</span> (!page) &#123;<br>                kdebug(<span class="hljs-string">&quot;invalid page in %s&quot;</span>, __func__);<br>                <span class="hljs-keyword">return</span>;<br>        &#125;<br><br>        slab = page-&gt;slab;<br>        order = slab-&gt;order;<br>        lock(&amp;slabs_locks[order]);<br><br>        try_insert_full_slab_to_partial(slab);<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> ENABLE_DETECTING_DOUBLE_FREE_IN_SLAB == ON</span><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * SLAB double free detection: check whether the slot to free is</span><br><span class="hljs-comment">         * already in the free list.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">if</span> (check_slot_is_free(slab, slot) == <span class="hljs-number">1</span>) &#123;<br>                kinfo(<span class="hljs-string">&quot;SLAB: double free detected. Address is %p\n&quot;</span>,<br>                      (<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>)slot);<br>                BUG_ON(<span class="hljs-number">1</span>);<br>        &#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>        slot-&gt;next_free = slab-&gt;free_list_head;<br>        slab-&gt;free_list_head = slot;<br>        slab-&gt;current_free_cnt += <span class="hljs-number">1</span>;<br><br>        try_return_slab_to_buddy(slab, order);<br><br>        unlock(&amp;slabs_locks[order]);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h3><p>整体上还是走的“获取信息——转到相应 object——根据情况分类讨论作对应操作”</p>
+<p>梳理一下 <code>free_in_slab</code> 的实现逻辑：</p>
+<ul>
+<li>处理参数，通过地址转换拿到 slot、page、slab 等对象</li>
+<li>上锁</li>
+<li>检查现在的 slab 是否是 full 的，如果是，那么在 free 前还得把它放回 partial</li>
+<li>进行 free 操作，即把链表头插回来、设置 slab 空闲链表、以及空闲数加一</li>
+<li>检查现在的 slab 是否是空的，如果是，那么物归原主——还给 buddy 大人</li>
+<li>解锁，完成 free 全部操作</li>
+</ul>
+<p>至此，SLab 分配器源码解析结束</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">内存管理</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">物理内存管理</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>SLab分配器</div>
+      <div>http://example.com/2025/02/13/SLab/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/15/kmalloc-kfree/" title="kmalloc &amp; kfree">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kmalloc &amp; kfree</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/11/BuddySys/" title="Buddy System">
+                        <span class="hidden-mobile">Buddy System</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

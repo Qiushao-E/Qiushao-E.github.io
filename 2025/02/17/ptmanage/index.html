@@ -1,0 +1,838 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之页表管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="页表管理">
+<meta property="og:url" content="http://example.com/2025/02/17/ptmanage/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之页表管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-17T08:48:18.000Z">
+<meta property="article:modified_time" content="2025-03-11T08:51:25.531Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>页表管理 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="页表管理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-17 16:48" pubdate>
+          2025年2月17日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">页表管理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="页表管理"><a href="#页表管理" class="headerlink" title="页表管理"></a>页表管理</h1><p>本节内容讲解 Chcore 页表管理部分的源码（不包括缺页管理，缺页管理单独讲解），我们将从 Chcore 页表管理的核心数据结构讲起，并进一步解析其页表管理的函数实际实现</p>
+<h1 id="核心数据结构"><a href="#核心数据结构" class="headerlink" title="核心数据结构"></a>核心数据结构</h1><p>Chcore 中表示页表的核心数据结构如下方源码所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* page_table_entry type */</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> &#123;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>                u64 is_valid        : <span class="hljs-number">1</span>,<br>                    is_table        : <span class="hljs-number">1</span>,<br>                    ignored1        : <span class="hljs-number">10</span>,<br>                    next_table_addr : <span class="hljs-number">36</span>,<br>                    reserved        : <span class="hljs-number">4</span>,<br>                    ignored2        : <span class="hljs-number">7</span>,<br>                    PXNTable        : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Privileged Execute-never for next level</span><br>                    XNTable         : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Execute-never for next level</span><br>                    APTable         : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Access permissions for next level</span><br>                    NSTable         : <span class="hljs-number">1</span>;<br>        &#125; table;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>                u64 is_valid        : <span class="hljs-number">1</span>,<br>                    is_table        : <span class="hljs-number">1</span>,<br>                    attr_index      : <span class="hljs-number">3</span>,   <span class="hljs-comment">// Memory attributes index</span><br>                    NS              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Non-secure</span><br>                    AP              : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Data access permissions</span><br>                    SH              : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Shareability</span><br>                    AF              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Accesss flag</span><br>                    nG              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Not global bit</span><br>                    reserved1       : <span class="hljs-number">4</span>,<br>                    nT              : <span class="hljs-number">1</span>,<br>                    reserved2       : <span class="hljs-number">13</span>,<br>                    pfn             : <span class="hljs-number">18</span>,<br>                    reserved3       : <span class="hljs-number">2</span>,<br>                    GP              : <span class="hljs-number">1</span>,<br>                    reserved4       : <span class="hljs-number">1</span>,<br>                    DBM             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Dirty bit modifier</span><br>                    Contiguous      : <span class="hljs-number">1</span>,<br>                    PXN             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Privileged execute-never</span><br>                    UXN             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Execute never</span><br>                    soft_reserved   : <span class="hljs-number">4</span>,<br>                    PBHA            : <span class="hljs-number">4</span>;   <span class="hljs-comment">// Page based hardware attributes</span><br>        &#125; l1_block;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>                u64 is_valid        : <span class="hljs-number">1</span>,<br>                    is_table        : <span class="hljs-number">1</span>,<br>                    attr_index      : <span class="hljs-number">3</span>,   <span class="hljs-comment">// Memory attributes index</span><br>                    NS              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Non-secure</span><br>                    AP              : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Data access permissions</span><br>                    SH              : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Shareability</span><br>                    AF              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Accesss flag</span><br>                    nG              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Not global bit</span><br>                    reserved1       : <span class="hljs-number">4</span>,<br>                    nT              : <span class="hljs-number">1</span>,<br>                    reserved2       : <span class="hljs-number">4</span>,<br>                    pfn             : <span class="hljs-number">27</span>,<br>                    reserved3       : <span class="hljs-number">2</span>,<br>                    GP              : <span class="hljs-number">1</span>,<br>                    reserved4       : <span class="hljs-number">1</span>,<br>                    DBM             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Dirty bit modifier</span><br>                    Contiguous      : <span class="hljs-number">1</span>,<br>                    PXN             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Privileged execute-never</span><br>                    UXN             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Execute never</span><br>                    soft_reserved   : <span class="hljs-number">4</span>,<br>                    PBHA            : <span class="hljs-number">4</span>;   <span class="hljs-comment">// Page based hardware attributes</span><br>        &#125; l2_block;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>                u64 is_valid        : <span class="hljs-number">1</span>,<br>                    is_page         : <span class="hljs-number">1</span>,<br>                    attr_index      : <span class="hljs-number">3</span>,   <span class="hljs-comment">// Memory attributes index</span><br>                    NS              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Non-secure</span><br>                    AP              : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Data access permissions</span><br>                    SH              : <span class="hljs-number">2</span>,   <span class="hljs-comment">// Shareability</span><br>                    AF              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Accesss flag</span><br>                    nG              : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Not global bit</span><br>                    pfn             : <span class="hljs-number">36</span>,<br>                    reserved        : <span class="hljs-number">3</span>,<br>                    DBM             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Dirty bit modifier</span><br>                    Contiguous      : <span class="hljs-number">1</span>,<br>                    PXN             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Privileged execute-never</span><br>                    UXN             : <span class="hljs-number">1</span>,   <span class="hljs-comment">// Execute never</span><br>                    soft_reserved   : <span class="hljs-number">4</span>,<br>                    PBHA            : <span class="hljs-number">4</span>,   <span class="hljs-comment">// Page based hardware attributes</span><br>                    ignored         : <span class="hljs-number">1</span>;<br>        &#125; l3_page;<br>        u64 pte;<br>&#125; <span class="hljs-type">pte_t</span>;<br><br><span class="hljs-comment">/* page_table_page type */</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>	<span class="hljs-type">pte_t</span> ent[PTP_ENTRIES];<br>&#125; <span class="hljs-type">ptp_t</span>;<br></code></pre></td></tr></table></figure>
+
+<p>共有两种数据结构，分别是：</p>
+<ul>
+<li><code>pte_t</code> ：即页表项，表示一个具体的页表</li>
+<li><code>ptp_t</code> ：即页表页，我们可以看见它是由一个 <code>pte_t</code> 的数组构成的结构体</li>
+</ul>
+<p>我们这里重点看一下 <code>pte_t</code> 的定义——它采用了 bit-fields 和 union 的语法</p>
+<p>所谓 bit-fields，即</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada"><span class="hljs-keyword">type</span> <span class="hljs-type">member_name </span>: bit_width<br></code></pre></td></tr></table></figure>
+
+<p>每个字段后面的数字表示该字段占用的位数，编译器会自动将这些字段打包到一个 u64 中，字段的总位数不能超过基础类型（这里是 u64）的大小，由此我们可以总结该数据结构的特点：</p>
+<ul>
+<li>使用 union 来表示不同类型的页表项</li>
+<li>支持 4 种格式：<code>table</code>（指向下级页表）、<code>l1_block</code>、<code>l2_block</code>（大页）和<code>l3_page</code>（4KB 页）</li>
+<li>通过 bit-field 精确控制每个控制位的位置</li>
+<li>允许以不同方式解释同一块内存，可以直接访问原始值或者结构化的字段</li>
+</ul>
+<p>这时候还有一个问题，不同架构所用到的页表项是不一样的，所以我们需要一个通用页表项来处理：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief Architecture-independent PTE structure, containing some useful</span><br><span class="hljs-comment"> * information which is shared by all architectures.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * This struct can be used to write architecture-independent code to parse</span><br><span class="hljs-comment"> * or manipulate PTEs.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">common_pte_t</span> &#123;</span><br>        <span class="hljs-comment">/** Physical Page Number */</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> ppn;<br>        <span class="hljs-comment">/** ChCore VMR permission, architecture-independent */</span><br>        <span class="hljs-type">vmr_prop_t</span> perm;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span><br>                <span class="hljs-comment">/** This PTE is valid or not */</span><br>                valid : <span class="hljs-number">1</span>,<br>                <span class="hljs-comment">/** This PTE is accessed by hardware or not */</span><br>                access : <span class="hljs-number">1</span>,<br>                <span class="hljs-comment">/** This PTE is written by hardware or not */</span><br>                dirty : <span class="hljs-number">1</span>, _unused : <span class="hljs-number">4</span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>它是一个架构无关的页表项抽象，主要作用是提供一个统一的接口来处理不同架构的页表项</p>
+<p>在函数实现中，我们会有相应的辅助函数来提供将页表项和通用页表项之间转换的功能，如下例所示</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 从架构相关的PTE转换为通用PTE</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">parse_pte_to_common</span><span class="hljs-params">(<span class="hljs-type">pte_t</span> *pte, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> level, <span class="hljs-keyword">struct</span> <span class="hljs-type">common_pte_t</span> *ret)</span><br>&#123;<br>    <span class="hljs-keyword">switch</span> (level) &#123;<br>    <span class="hljs-keyword">case</span> L3:<br>        ret-&gt;ppn = pte-&gt;l3_page.pfn;           <span class="hljs-comment">// 提取物理页号</span><br>        ret-&gt;perm = <span class="hljs-number">0</span>;<br>        ret-&gt;perm |= (pte-&gt;l3_page.UXN ? <span class="hljs-number">0</span> : VMR_EXEC);    <span class="hljs-comment">// 转换执行权限</span><br>        ret-&gt;perm |= __ap_to_vmr_prot(pte-&gt;l3_page.AP);    <span class="hljs-comment">// 转换访问权限</span><br>        ret-&gt;perm |= (pte-&gt;l3_page.attr_index == DEVICE_MEMORY ?<br>                     VMR_DEVICE : <span class="hljs-number">0</span>);           <span class="hljs-comment">// 转换内存属性</span><br>        ret-&gt;access = pte-&gt;l3_page.AF;         <span class="hljs-comment">// 转换访问标志</span><br>        ret-&gt;dirty = pte-&gt;l3_page.DBM;         <span class="hljs-comment">// 转换脏页标志</span><br>        ret-&gt;valid = pte-&gt;l3_page.is_valid;    <span class="hljs-comment">// 转换有效位</span><br>        <span class="hljs-keyword">break</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 从通用PTE更新到架构相关PTE，不过这里目前还只支持L3级别的更新</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">update_pte</span><span class="hljs-params">(<span class="hljs-type">pte_t</span> *dest, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> level, <span class="hljs-keyword">struct</span> <span class="hljs-type">common_pte_t</span> *src)</span><br>&#123;<br>    <span class="hljs-keyword">switch</span> (level) &#123;<br>    <span class="hljs-keyword">case</span> L3:<br>        dest-&gt;l3_page.pfn = src-&gt;ppn;          <span class="hljs-comment">// 更新物理页号</span><br>        dest-&gt;l3_page.AP = __vmr_prot_to_ap(src-&gt;perm);    <span class="hljs-comment">// 更新访问权限</span><br>        dest-&gt;l3_page.UXN = ((src-&gt;perm &amp; VMR_EXEC) ?      <span class="hljs-comment">// 更新执行权限</span><br>                          AARCH64_MMU_ATTR_PAGE_UX :<br>                          AARCH64_MMU_ATTR_PAGE_UXN);<br>        dest-&gt;l3_page.is_valid = src-&gt;valid;   <span class="hljs-comment">// 更新有效位</span><br>        dest-&gt;l3_page.AF = src-&gt;access;        <span class="hljs-comment">// 更新访问标志</span><br>        dest-&gt;l3_page.DBM = src-&gt;dirty;        <span class="hljs-comment">// 更新脏页标志</span><br>        <span class="hljs-keyword">break</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="函数功能实现"><a href="#函数功能实现" class="headerlink" title="函数功能实现"></a>函数功能实现</h1><p>正如我们的 Lab 文档所提到的，内核启动阶段所做的事情只是配置了一个粗粒度的页表系统。而实际操作系统所需要的页表管理则远不止于此。我们需要一个更细粒度的页表实现，提供映射、取消映射、查询等功能。而这些功能在源码中则以各种接口（接口在 <code>mmu.h</code> 中）呈现，并在 <code>page_table.c</code> 中实现</p>
+<p>还是先看看接口是怎么定义的，再来看实现</p>
+<h2 id="接口定义"><a href="#接口定义" class="headerlink" title="接口定义"></a>接口定义</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl_kernel</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> pa,</span><br><span class="hljs-params">		       <span class="hljs-type">size_t</span> len, <span class="hljs-type">vmr_prop_t</span> flags)</span>;<br><span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> pa,</span><br><span class="hljs-params">		       <span class="hljs-type">size_t</span> len, <span class="hljs-type">vmr_prop_t</span> flags, <span class="hljs-type">long</span> *rss)</span>;<br><span class="hljs-type">int</span> <span class="hljs-title function_">unmap_range_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">size_t</span> len, <span class="hljs-type">long</span> *rss)</span>;<br><span class="hljs-type">int</span> <span class="hljs-title function_">query_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> *pa, <span class="hljs-type">pte_t</span> **entry)</span>;<br><span class="hljs-type">int</span> <span class="hljs-title function_">mprotect_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">size_t</span> len, <span class="hljs-type">vmr_prop_t</span> prop)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>从上到下介绍一遍；</p>
+<ul>
+<li><code>map_range_in_pgtbl</code> ：页表映射函数，又分为内核态与用户态，但是实现逻辑基本是一样的，因此在源码中会用一个 common 辅助函数来实现</li>
+<li><code>unmap_range_in_pgtbl</code> ：取消页表映射函数</li>
+<li><code>query_in_pgtbl</code> ：页表查询函数</li>
+<li><code>mprotect_in_pgtbl</code> ：页表权限修改函数</li>
+</ul>
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><h3 id="map-range-in-pgtbl"><a href="#map-range-in-pgtbl" class="headerlink" title="map_range_in_pgtbl"></a>map_range_in_pgtbl</h3><p>我们先对比一下两个函数的接口以及源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl_kernel</span><span class="hljs-params">(</span><br><span class="hljs-params">    <span class="hljs-type">void</span> *pgtbl,        <span class="hljs-comment">// 页表基地址</span></span><br><span class="hljs-params">    <span class="hljs-type">vaddr_t</span> va,         <span class="hljs-comment">// 要映射的虚拟地址起始位置</span></span><br><span class="hljs-params">    <span class="hljs-type">paddr_t</span> pa,         <span class="hljs-comment">// 要映射的物理地址起始位置</span></span><br><span class="hljs-params">    <span class="hljs-type">size_t</span> len,         <span class="hljs-comment">// 映射长度</span></span><br><span class="hljs-params">    <span class="hljs-type">vmr_prop_t</span> flags    <span class="hljs-comment">// 映射属性（读/写/执行权限等）</span></span><br><span class="hljs-params">)</span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl</span><span class="hljs-params">(</span><br><span class="hljs-params">    <span class="hljs-type">void</span> *pgtbl,        <span class="hljs-comment">// 页表基地址</span></span><br><span class="hljs-params">    <span class="hljs-type">vaddr_t</span> va,         <span class="hljs-comment">// 虚拟地址起始位置</span></span><br><span class="hljs-params">    <span class="hljs-type">paddr_t</span> pa,         <span class="hljs-comment">// 物理地址起始位置</span></span><br><span class="hljs-params">    <span class="hljs-type">size_t</span> len,         <span class="hljs-comment">// 映射长度</span></span><br><span class="hljs-params">    <span class="hljs-type">vmr_prop_t</span> flags,   <span class="hljs-comment">// 映射属性</span></span><br><span class="hljs-params">    <span class="hljs-type">long</span> *rss           <span class="hljs-comment">// 常驻集大小计数器</span></span><br><span class="hljs-params">)</span><br></code></pre></td></tr></table></figure>
+
+<p>可以看到，非内核的页表映射函数还多了一个 rss 计数器，它的作用是跟踪用户进程的内存使用情况</p>
+<p>再来看其实现，会发现都用到了一个 common 函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Map vm range in kernel */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl_kernel</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> pa,</span><br><span class="hljs-params">		       <span class="hljs-type">size_t</span> len, <span class="hljs-type">vmr_prop_t</span> flags)</span><br>&#123;<br>	<span class="hljs-keyword">return</span> map_range_in_pgtbl_common(pgtbl, va, pa, len, flags,<br>                                         KERNEL_PTE, <span class="hljs-literal">NULL</span>);<br>&#125;<br><br><span class="hljs-comment">/* Map vm range in user */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> pa,</span><br><span class="hljs-params">		       <span class="hljs-type">size_t</span> len, <span class="hljs-type">vmr_prop_t</span> flags, <span class="hljs-type">long</span> *rss)</span><br>&#123;<br>	<span class="hljs-keyword">return</span> map_range_in_pgtbl_common(pgtbl, va, pa, len, flags,<br>                                         USER_PTE, rss);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>那么关键就在这个 <code>map_range_in_pgtbl_common</code> 函数，我们学习学习它的源码实现</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">map_range_in_pgtbl_common</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> pa, <span class="hljs-type">size_t</span> len,</span><br><span class="hljs-params">                       <span class="hljs-type">vmr_prop_t</span> flags, <span class="hljs-type">int</span> kind, <span class="hljs-type">long</span> *rss)</span><br>&#123;<br>        s64 total_page_cnt;<br>        <span class="hljs-type">ptp_t</span> *l0_ptp, *l1_ptp, *l2_ptp, *l3_ptp;<br>        <span class="hljs-type">pte_t</span> *pte;<br>        <span class="hljs-type">int</span> ret;<br>        <span class="hljs-type">int</span> pte_index; <span class="hljs-comment">// the index of pte in the last level page table</span><br>        <span class="hljs-type">int</span> i;<br><br>        BUG_ON(pgtbl == <span class="hljs-literal">NULL</span>); <span class="hljs-comment">// alloc the root page table page at first</span><br>        BUG_ON(va % PAGE_SIZE);<br>        total_page_cnt = len / PAGE_SIZE + (((len % PAGE_SIZE) &gt; <span class="hljs-number">0</span>) ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);<br><br>        l0_ptp = (<span class="hljs-type">ptp_t</span> *)pgtbl;<br><br>        l1_ptp = <span class="hljs-literal">NULL</span>;<br>        l2_ptp = <span class="hljs-literal">NULL</span>;<br>        l3_ptp = <span class="hljs-literal">NULL</span>;<br><br>        <span class="hljs-keyword">while</span> (total_page_cnt &gt; <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// l0</span><br>                ret = get_next_ptp(l0_ptp, L0, va, &amp;l1_ptp, &amp;pte, <span class="hljs-literal">true</span>, rss);<br>                BUG_ON(ret != <span class="hljs-number">0</span>);<br><br>                <span class="hljs-comment">// l1</span><br>                ret = get_next_ptp(l1_ptp, L1, va, &amp;l2_ptp, &amp;pte, <span class="hljs-literal">true</span>, rss);<br>                BUG_ON(ret != <span class="hljs-number">0</span>);<br><br>                <span class="hljs-comment">// l2</span><br>                ret = get_next_ptp(l2_ptp, L2, va, &amp;l3_ptp, &amp;pte, <span class="hljs-literal">true</span>, rss);<br>                BUG_ON(ret != <span class="hljs-number">0</span>);<br><br>                <span class="hljs-comment">// l3</span><br>                <span class="hljs-comment">// step-1: get the index of pte</span><br>                pte_index = GET_L3_INDEX(va);<br>                <span class="hljs-keyword">for</span> (i = pte_index; i &lt; PTP_ENTRIES; ++i) &#123;<br>                        <span class="hljs-type">pte_t</span> new_pte_val;<br><br>                        new_pte_val.pte = <span class="hljs-number">0</span>;<br>                        new_pte_val.l3_page.is_valid = <span class="hljs-number">1</span>;<br>                        new_pte_val.l3_page.is_page = <span class="hljs-number">1</span>;<br>                        new_pte_val.l3_page.pfn = pa &gt;&gt; PAGE_SHIFT;<br>                        set_pte_flags(&amp;new_pte_val, flags, kind);<br>                        l3_ptp-&gt;ent[i].pte = new_pte_val.pte;<br><br>                        va += PAGE_SIZE;<br>                        pa += PAGE_SIZE;<br>                        <span class="hljs-keyword">if</span> (rss)<br>                                *rss += PAGE_SIZE;<br>                        total_page_cnt -= <span class="hljs-number">1</span>;<br>                        <span class="hljs-keyword">if</span> (total_page_cnt == <span class="hljs-number">0</span>)<br>                                <span class="hljs-keyword">break</span>;<br>                &#125;<br>        &#125;<br><br>        dsb(ishst);<br>        isb();<br><br>        <span class="hljs-comment">/* Since we are adding new mappings, there is no need to flush TLBs. */</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>总体上就是参数检查——计算需要映射的总页数——开 while 循环开始映射</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 一次循环可以映射的最大页数</span><br>最大映射数 = PTP_ENTRIES - pte_index<br>           = <span class="hljs-number">512</span> - (va &gt;&gt; <span class="hljs-number">12</span> &amp; <span class="hljs-number">0x1FF</span>)<br></code></pre></td></tr></table></figure>
+
+<p>数据结构关系如下：</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs coq">L0页表 -&gt; L1页表 -&gt; L2页表 -&gt; L3页表 -&gt; 物理页面<br>   |        <span class="hljs-type">|         |         |</span><br><span class="hljs-type"> 512</span>项    <span class="hljs-number">512</span>项     <span class="hljs-number">512</span>项     <span class="hljs-number">512</span>项<br></code></pre></td></tr></table></figure>
+
+<p>下面是详细的函数执行逻辑：</p>
+<ul>
+<li>参数检查，并计算需要映射的总页数，这里的方式是向上取整</li>
+<li>初始化页表指针，为后面的大循环做准备</li>
+<li>进入 while 循环，依次获取四级页表的页表页，其本质就是位运算，可以回顾一下机器启动部分关于页表映射的讲解</li>
+<li>获取到 L3 页表的索引，并尽可能多的去映射，映射时需要设置其页表项字段以及更新 rss 和页表页数组</li>
+<li>重复 while 循环直到映射完毕，并建立数据和指令同步屏障</li>
+</ul>
+<p>这里再来明晰一下 while 循环的作用：因为每个 L3 级别的页表页只能映射 2^9&#x3D;512 个页表项，因此当映射需求较大的时候就需要多轮循环才能映射完毕</p>
+<p>我们假设某次映射需求有 2000 个页表项需要被映射，那么会发生如下事情：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 假设要映射2000个页面（约8MB）</span><br>初始：total_page_cnt = <span class="hljs-number">2000</span><br><br>第一次外层循环：<br>  - 找到第一个L3页表<br>  - 从pte_index开始映射<br>  - 假设pte_index = <span class="hljs-number">100</span><br>  - 可以映射<span class="hljs-number">412</span>个页面(<span class="hljs-number">512</span><span class="hljs-number">-100</span>)<br>  - total_page_cnt = <span class="hljs-number">1588</span><br><br>第二次外层循环：<br>  - 找到/创建下一个L3页表<br>  - 从索引<span class="hljs-number">0</span>开始映射<br>  - 可以映射<span class="hljs-number">512</span>个页面<br>  - total_page_cnt = <span class="hljs-number">1076</span><br><br>... 循环继续 ...<br></code></pre></td></tr></table></figure>
+
+<p>循环会一直执行，直到完成所有映射需求或者遇到错误（如内存不足）</p>
+<h3 id="unmap-in-range-pgtbl"><a href="#unmap-in-range-pgtbl" class="headerlink" title="unmap_in_range_pgtbl"></a>unmap_in_range_pgtbl</h3><p>还是先上源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">unmap_range_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">size_t</span> len, <span class="hljs-type">long</span> *rss)</span><br>&#123;<br>        s64 total_page_cnt; <span class="hljs-comment">// must be signed</span><br>        s64 left_page_cnt_in_current_level;<br>        <span class="hljs-type">ptp_t</span> *l0_ptp, *l1_ptp, *l2_ptp, *l3_ptp;<br>        <span class="hljs-type">pte_t</span> *pte;<br>        <span class="hljs-type">vaddr_t</span> old_va;<br><br>        <span class="hljs-type">int</span> ret;<br>        <span class="hljs-type">int</span> pte_index; <span class="hljs-comment">// the index of pte in the last level page table</span><br>        <span class="hljs-type">int</span> i;<br><br>        BUG_ON(pgtbl == <span class="hljs-literal">NULL</span>);<br><br>        l0_ptp = (<span class="hljs-type">ptp_t</span> *)pgtbl;<br><br>        total_page_cnt = len / PAGE_SIZE + (((len % PAGE_SIZE) &gt; <span class="hljs-number">0</span>) ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);<br>        <span class="hljs-keyword">while</span> (total_page_cnt &gt; <span class="hljs-number">0</span>) &#123;<br>                old_va = va;<br>                <span class="hljs-comment">// l0</span><br>                ret = get_next_ptp(l0_ptp, L0, va, &amp;l1_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>                <span class="hljs-keyword">if</span> (ret == -ENOMAPPING) &#123;<br>                        left_page_cnt_in_current_level =<br>                                (L0_PER_ENTRY_PAGES<br>                                 - GET_L1_INDEX(va) * L1_PER_ENTRY_PAGES);<br>                        total_page_cnt -=<br>                                (left_page_cnt_in_current_level<br>                                                 &gt; total_page_cnt ?<br>                                         total_page_cnt :<br>                                         left_page_cnt_in_current_level);<br>                        va += left_page_cnt_in_current_level * PAGE_SIZE;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                <span class="hljs-comment">// l1</span><br>                ret = get_next_ptp(l1_ptp, L1, va, &amp;l2_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>                <span class="hljs-keyword">if</span> (ret == -ENOMAPPING) &#123;<br>                        left_page_cnt_in_current_level =<br>                                (L1_PER_ENTRY_PAGES<br>                                 - GET_L2_INDEX(va) * L2_PER_ENTRY_PAGES);<br>                        total_page_cnt -=<br>                                (left_page_cnt_in_current_level<br>                                                 &gt; total_page_cnt ?<br>                                         total_page_cnt :<br>                                         left_page_cnt_in_current_level);<br>                        va += left_page_cnt_in_current_level * PAGE_SIZE;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                <span class="hljs-comment">// l2</span><br>                ret = get_next_ptp(l2_ptp, L2, va, &amp;l3_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>                <span class="hljs-keyword">if</span> (ret == -ENOMAPPING) &#123;<br>                        left_page_cnt_in_current_level =<br>                                (L2_PER_ENTRY_PAGES<br>                                 - GET_L3_INDEX(va) * L3_PER_ENTRY_PAGES);<br>                        total_page_cnt -=<br>                                (left_page_cnt_in_current_level<br>                                                 &gt; total_page_cnt ?<br>                                         total_page_cnt :<br>                                         left_page_cnt_in_current_level);<br>                        va += left_page_cnt_in_current_level * PAGE_SIZE;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                <span class="hljs-comment">// l3</span><br>                <span class="hljs-comment">// step-1: get the index of pte</span><br>                pte_index = GET_L3_INDEX(va);<br>                <span class="hljs-keyword">for</span> (i = pte_index; i &lt; PTP_ENTRIES; ++i) &#123;<br>                        <span class="hljs-keyword">if</span> (l3_ptp-&gt;ent[i].l3_page.is_valid &amp;&amp; rss)<br>                                *rss -= PAGE_SIZE;<br><br>                        l3_ptp-&gt;ent[i].pte = PTE_DESCRIPTOR_INVALID;<br>                        va += PAGE_SIZE;<br>                        total_page_cnt -= <span class="hljs-number">1</span>;<br>                        <span class="hljs-keyword">if</span> (total_page_cnt == <span class="hljs-number">0</span>)<br>                                <span class="hljs-keyword">break</span>;<br>                &#125;<br>                recycle_pgtable_entry(l0_ptp, l1_ptp, l2_ptp, l3_ptp, old_va, rss);<br>        &#125;<br><br>        dsb(ishst);<br>        isb();<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>整体逻辑和 map 时候的逻辑相似，只是在 while 大循环里，多了一个“跳过未映射区域”的操作，这样可以避免不必要的页表遍历，减少 unmap 的用时和资源开销</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 举例：如果L2级别未映射</span><br><span class="hljs-comment">// L2_PER_ENTRY_PAGES = 512 * 512 = 262144</span><br><span class="hljs-comment">// 可以一次跳过大量未映射页面</span><br>left_page_cnt_in_current_level = L1_PER_ENTRY_PAGES - ...<br></code></pre></td></tr></table></figure>
+
+<p>而在 L3 部分真正解除映射的代码，又会涉及到如下操作：</p>
+<ul>
+<li>判断页面是否有效，有效则更新为无效，并更新 rss 计数器</li>
+<li>回收掉无效的页表项，即 <code>recycle_pagtable_entry</code> 函数，其实现即用到了之前提到的 kfree 等</li>
+</ul>
+<p>同样的，假设我们有解除映射的页表需求，可能的工作流程示例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 假设要解除映射1000000个页面</span><br>初始：total_page_cnt = <span class="hljs-number">1000000</span><br><br><span class="hljs-comment">// 情况1：遇到未映射区域</span><br><span class="hljs-keyword">if</span> (L2未映射) &#123;<br>    跳过整个L2范围<br>    更新total_page_cnt<br>    继续下一个区域<br>&#125;<br><br><span class="hljs-comment">// 情况2：找到映射区域</span><br>在L3页表中：<br>    解除映射<br>    更新RSS<br>    尝试回收页表页<br></code></pre></td></tr></table></figure>
+
+<h3 id="query-in-pgtbl"><a href="#query-in-pgtbl" class="headerlink" title="query_in_pgtbl"></a>query_in_pgtbl</h3><p>和上面两个函数一样，查询函数的实现逻辑是换汤不换药的，但是需要添加相应的特色内容，以满足查询本身的需求</p>
+<p>注意后两个参数是输出</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">query_in_pgtbl</span><span class="hljs-params">(</span><br><span class="hljs-params">    <span class="hljs-type">void</span> *pgtbl,        <span class="hljs-comment">// 页表基地址</span></span><br><span class="hljs-params">    <span class="hljs-type">vaddr_t</span> va,         <span class="hljs-comment">// 要查询的虚拟地址</span></span><br><span class="hljs-params">    <span class="hljs-type">paddr_t</span> *pa,        <span class="hljs-comment">// 输出：对应的物理地址</span></span><br><span class="hljs-params">    <span class="hljs-type">pte_t</span> **entry       <span class="hljs-comment">// 输出：对应的页表项（可选）</span></span><br><span class="hljs-params">)</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Translate a va to pa, and get its pte for the flags</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">query_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">paddr_t</span> *pa, <span class="hljs-type">pte_t</span> **entry)</span><br>&#123;<br>        <span class="hljs-comment">/* On aarch64, l0 is the highest level page table */</span><br>        <span class="hljs-type">ptp_t</span> *l0_ptp, *l1_ptp, *l2_ptp, *l3_ptp;<br>        <span class="hljs-type">ptp_t</span> *phys_page;<br>        <span class="hljs-type">pte_t</span> *pte;<br>        <span class="hljs-type">int</span> ret;<br><br>        <span class="hljs-comment">// L0 page table</span><br>        l0_ptp = (<span class="hljs-type">ptp_t</span> *)pgtbl;<br>        ret = get_next_ptp(l0_ptp, L0, va, &amp;l1_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>        <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>)<br>                <span class="hljs-keyword">return</span> ret;<br><br>        <span class="hljs-comment">// L1 page table</span><br>        ret = get_next_ptp(l1_ptp, L1, va, &amp;l2_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>        <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>)<br>                <span class="hljs-keyword">return</span> ret;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ret == BLOCK_PTP) &#123;<br>                *pa = virt_to_phys((<span class="hljs-type">vaddr_t</span>)l2_ptp) + GET_VA_OFFSET_L1(va);<br>                <span class="hljs-keyword">if</span> (entry)<br>                        *entry = pte;<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br><br>        <span class="hljs-comment">// L2 page table</span><br>        ret = get_next_ptp(l2_ptp, L2, va, &amp;l3_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>        <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>)<br>                <span class="hljs-keyword">return</span> ret;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ret == BLOCK_PTP) &#123;<br>                *pa = virt_to_phys((<span class="hljs-type">vaddr_t</span>)l3_ptp) + GET_VA_OFFSET_L2(va);<br>                <span class="hljs-keyword">if</span> (entry)<br>                        *entry = pte;<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br><br>        <span class="hljs-comment">// L3 page table</span><br>        ret = get_next_ptp(l3_ptp, L3, va, &amp;phys_page, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>        <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>)<br>                <span class="hljs-keyword">return</span> ret;<br><br>        *pa = virt_to_phys((<span class="hljs-type">vaddr_t</span>)phys_page) + GET_VA_OFFSET_L3(va);<br>        <span class="hljs-keyword">if</span> (entry)<br>                *entry = pte;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>整体上除了一级一级页表往下查询+错误处理之外，还添加了一个额外的步骤——支持大页映射查询，如果发现相应的高级页表页是一个大页，那么则直接通过大页基地址+页内偏移得到最终返回值</p>
+<p>同样的，如果一路成功到了 L3 页表页，那么说明我们要查询的就是个基本的 4KB 小页，直接同样操作获取物理地址就行。相当于该函数一共支持三种页面大小：</p>
+<ul>
+<li>1GB (L1 block)</li>
+<li>2MB (L2 block)</li>
+<li>4KB (L3 page)</li>
+</ul>
+<h3 id="mprotect-in-pgtbl"><a href="#mprotect-in-pgtbl" class="headerlink" title="mprotect_in_pgtbl"></a>mprotect_in_pgtbl</h3><p>最后我们再来看看修改页表权限的操作是如何实现的，上源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">mprotect_in_pgtbl</span><span class="hljs-params">(<span class="hljs-type">void</span> *pgtbl, <span class="hljs-type">vaddr_t</span> va, <span class="hljs-type">size_t</span> len, <span class="hljs-type">vmr_prop_t</span> flags)</span><br>&#123;<br>        s64 total_page_cnt; <span class="hljs-comment">// must be signed</span><br>        <span class="hljs-type">ptp_t</span> *l0_ptp, *l1_ptp, *l2_ptp, *l3_ptp;<br>        <span class="hljs-type">pte_t</span> *pte;<br>        <span class="hljs-type">int</span> ret;<br>        <span class="hljs-type">int</span> pte_index; <span class="hljs-comment">// the index of pte in the last level page table</span><br>        <span class="hljs-type">int</span> i;<br><br>        BUG_ON(pgtbl == <span class="hljs-literal">NULL</span>);<br>        BUG_ON(va % PAGE_SIZE);<br><br>        l0_ptp = (<span class="hljs-type">ptp_t</span> *)pgtbl;<br><br>        total_page_cnt = len / PAGE_SIZE + (((len % PAGE_SIZE) &gt; <span class="hljs-number">0</span>) ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);<br>        <span class="hljs-keyword">while</span> (total_page_cnt &gt; <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// l0</span><br>                ret = get_next_ptp(l0_ptp, L0, va, &amp;l1_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>                <span class="hljs-keyword">if</span> (ret == -ENOMAPPING) &#123;<br>                        total_page_cnt -= L0_PER_ENTRY_PAGES;<br>                        va += L0_PER_ENTRY_PAGES * PAGE_SIZE;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                <span class="hljs-comment">// l1</span><br>                ret = get_next_ptp(l1_ptp, L1, va, &amp;l2_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>                <span class="hljs-keyword">if</span> (ret == -ENOMAPPING) &#123;<br>                        total_page_cnt -= L1_PER_ENTRY_PAGES;<br>                        va += L1_PER_ENTRY_PAGES * PAGE_SIZE;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                <span class="hljs-comment">// l2</span><br>                ret = get_next_ptp(l2_ptp, L2, va, &amp;l3_ptp, &amp;pte, <span class="hljs-literal">false</span>, <span class="hljs-literal">NULL</span>);<br>                <span class="hljs-keyword">if</span> (ret == -ENOMAPPING) &#123;<br>                        total_page_cnt -= L2_PER_ENTRY_PAGES;<br>                        va += L2_PER_ENTRY_PAGES * PAGE_SIZE;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                <span class="hljs-comment">// l3</span><br>                <span class="hljs-comment">// step-1: get the index of pte</span><br>                pte_index = GET_L3_INDEX(va);<br>                <span class="hljs-keyword">for</span> (i = pte_index; i &lt; PTP_ENTRIES; ++i) &#123;<br>                        <span class="hljs-comment">/* Modify the permission in the pte if it exists */</span><br>                        <span class="hljs-keyword">if</span> (!IS_PTE_INVALID(l3_ptp-&gt;ent[i].pte))<br>                                set_pte_flags(<br>                                        &amp;(l3_ptp-&gt;ent[i]), flags, USER_PTE);<br><br>                        va += PAGE_SIZE;<br>                        total_page_cnt -= <span class="hljs-number">1</span>;<br>                        <span class="hljs-keyword">if</span> (total_page_cnt == <span class="hljs-number">0</span>)<br>                                <span class="hljs-keyword">break</span>;<br>                &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>看过了上面的源码后，这部分源码就显得很亲切了，和 unmap 如出一辙的跳过未映射区域的操作</p>
+<p>最后唯一更改的地方仅仅是 L3 的循环，将之前的 unmap 操作换成了调用 <code>set_pte_flag</code> 函数，即完成了对页表权限的修改</p>
+<p>这里的 <code>set_pte_flag</code> 函数已经出镜很多次了，其实就是一个负责设置页表项的各种标志位的一个辅助函数。它把那些繁琐的内容封装在了自己体内，对外仅保留一个简单的接口供其他函数调用。如果感兴趣的同学也可以研究研究其内部实现，这里就不过多赘述了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">内存管理</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="category-chain-item">虚拟内存管理</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>页表管理</div>
+      <div>http://example.com/2025/02/17/ptmanage/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/19/pgfault/" title="缺页管理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">缺页管理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/15/kmalloc-kfree/" title="kmalloc &amp; kfree">
+                        <span class="hidden-mobile">kmalloc &amp; kfree</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,862 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之多核调度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多核调度">
+<meta property="og:url" content="http://example.com/2025/02/26/mulkersche/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之多核调度">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-26T14:23:46.000Z">
+<meta property="article:modified_time" content="2025-03-11T14:24:06.331Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>多核调度 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="多核调度"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-26 22:23" pubdate>
+          2025年2月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          39 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">多核调度</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="多核调度"><a href="#多核调度" class="headerlink" title="多核调度"></a>多核调度</h1><p>上一部分已经讲解了 ChCore 对多核支持的实现与多核的启动具体方式逻辑，本部分则来具体讲解 ChCore 对多核调度的实现——这是我们在 ICS 中也学过的内容，现在让我们把知识与 ChCore 的具体实现结合起来看看吧！</p>
+<h1 id="调度-API"><a href="#调度-API" class="headerlink" title="调度 API"></a>调度 API</h1><h2 id="调度器数据结构"><a href="#调度器数据结构" class="headerlink" title="调度器数据结构"></a>调度器数据结构</h2><p>类比我们在 <code>printf</code> 的系统调用链中提到的 <code>fd_ops</code> 结构体，与调度相关的操作我们也有特定的数据结构 <code>sched_ops</code> 来表示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// /kernel/include/sched.h</span><br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_ops</span> &#123;</span><br>        <span class="hljs-comment">/* 调度器初始化函数</span><br><span class="hljs-comment">         * 在系统启动时调用，用于：</span><br><span class="hljs-comment">         * - 初始化调度器数据结构</span><br><span class="hljs-comment">         * - 设置初始调度参数</span><br><span class="hljs-comment">         * - 准备调度器运行环境</span><br><span class="hljs-comment">         * 返回值：成功返回0，失败返回错误码</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> (*sched_init)(<span class="hljs-type">void</span>);<br><br>        <span class="hljs-comment">/* 核心调度函数</span><br><span class="hljs-comment">         * 选择下一个要运行的线程，在以下情况下调用：</span><br><span class="hljs-comment">         * - 当前线程主动放弃CPU</span><br><span class="hljs-comment">         * - 时间片用完</span><br><span class="hljs-comment">         * - 系统调用后</span><br><span class="hljs-comment">         * 返回值：成功返回0，失败返回错误码</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> (*sched)(<span class="hljs-type">void</span>);<br><br>        <span class="hljs-comment">/* 周期性调度函数</span><br><span class="hljs-comment">         * 在每个时钟中断时被调用，用于：</span><br><span class="hljs-comment">         * - 更新线程时间片</span><br><span class="hljs-comment">         * - 检查是否需要重新调度</span><br><span class="hljs-comment">         * - 维护调度统计信息</span><br><span class="hljs-comment">         * 返回值：如果需要重新调度返回1，否则返回0</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> (*sched_periodic)(<span class="hljs-type">void</span>);<br><br>        <span class="hljs-comment">/* 将线程加入调度队列</span><br><span class="hljs-comment">         * @param thread: 要加入队列的线程</span><br><span class="hljs-comment">         * 使用场景：</span><br><span class="hljs-comment">         * - 线程创建时</span><br><span class="hljs-comment">         * - 线程从阻塞状态恢复</span><br><span class="hljs-comment">         * - 线程被唤醒时</span><br><span class="hljs-comment">         * 返回值：成功返回0，失败返回错误码</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> (*sched_enqueue)(<span class="hljs-keyword">struct</span> thread *thread);<br><br>        <span class="hljs-comment">/* 将线程从调度队列中移除</span><br><span class="hljs-comment">         * @param thread: 要移除的线程</span><br><span class="hljs-comment">         * 使用场景：</span><br><span class="hljs-comment">         * - 线程退出时</span><br><span class="hljs-comment">         * - 线程进入阻塞状态</span><br><span class="hljs-comment">         * - 线程被挂起时</span><br><span class="hljs-comment">         * 返回值：成功返回0，失败返回错误码</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">int</span> (*sched_dequeue)(<span class="hljs-keyword">struct</span> thread *thread);<br><br>        <span class="hljs-comment">/* 调试工具：显示调度器状态</span><br><span class="hljs-comment">         * 用于调试和监控：</span><br><span class="hljs-comment">         * - 打印当前调度队列状态</span><br><span class="hljs-comment">         * - 显示线程运行统计信息</span><br><span class="hljs-comment">         * - 输出调度器性能指标</span><br><span class="hljs-comment">         * 无返回值</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-type">void</span> (*sched_top)(<span class="hljs-type">void</span>);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>它本质上是一个函数指针的集合，里面囊括了我们实现一个调度器所需要的基本函数操作:</p>
+<ul>
+<li><code>sched_init</code> ：初始化调度器</li>
+<li><code>sched</code> ：进行一次调度。即将正在运行的线程放回就绪队列，然后在就绪队列中选择下一个需要执行的线程返回</li>
+<li><code>sched_enqueue</code> ：将新线程添加到调度器的就绪队列中</li>
+<li><code>sched_dequeue</code> ：从调度器的就绪队列中取出一个线程</li>
+<li><code>sched_top</code> ：用于 debug,打印当前所有核心上的运行线程以及等待线程的函数</li>
+</ul>
+<p>那么不同的调度策略又是如何实现呢？只需要在编译 ChCore 的时候指定相应的 config 即可，这会在初始化该结构体的时候体现出来</p>
+<h2 id="调度器-API-实现——以-RR-为例"><a href="#调度器-API-实现——以-RR-为例" class="headerlink" title="调度器 API 实现——以 RR 为例"></a>调度器 API 实现——以 RR 为例</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>我们首先会在内核初始化的 <code>main</code> 函数中调用一个统一的 <code>sched_init</code> 函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">paddr_t</span> boot_flag, <span class="hljs-type">void</span> *info)</span><br>&#123;<br><br>	<span class="hljs-comment">// ...</span><br><br>	<span class="hljs-comment">/* Init scheduler with specified policy */</span><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> defined(CHCORE_KERNEL_SCHED_PBFIFO)</span><br>	sched_init(&amp;pbfifo);<br><span class="hljs-meta">#<span class="hljs-keyword">elif</span> defined(CHCORE_KERNEL_RT) || defined(CHCORE_OPENTRUSTEE)</span><br>	sched_init(&amp;pbrr);<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>	sched_init(&amp;rr);<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>	kinfo(<span class="hljs-string">&quot;[ChCore] sched init finished\n&quot;</span>);<br><br>	<span class="hljs-comment">// ...</span><br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>这里传入的调度策略即为一个个 <code>sched_ops</code> 结构体的实例，我们将在这里的 <code>sched_init</code> （不是结构体里的）将全局变量 <code>cur_sched_ops</code> 设置为传入的引用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Provided Scheduling Policies */</span><br><span class="hljs-keyword">extern</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_ops</span> <span class="hljs-title">pbrr</span>;</span> <span class="hljs-comment">/* Priority Based Round Robin */</span><br><span class="hljs-keyword">extern</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_ops</span> <span class="hljs-title">pbfifo</span>;</span> <span class="hljs-comment">/* Priority Based FIFO */</span><br><span class="hljs-keyword">extern</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_ops</span> <span class="hljs-title">rr</span>;</span> <span class="hljs-comment">/* Simple Round Robin */</span><br><br><span class="hljs-comment">/* Chosen Scheduling Policies */</span><br><span class="hljs-keyword">extern</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_ops</span> *<span class="hljs-title">cur_sched_ops</span>;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// /kernel/sched/sched.c</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">sched_init</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> sched_ops *sched_ops)</span><br>&#123;<br>        BUG_ON(sched_ops == <span class="hljs-literal">NULL</span>);<br><br>        init_idle_threads();<br>        init_current_threads();<br>        init_resched_bitmaps();<br><br>        cur_sched_ops = sched_ops;<br>        cur_sched_ops-&gt;sched_init();<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-comment">// /kernel/sched/policy_rr.c</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_ops</span> <span class="hljs-title">rr</span> =</span> &#123;.sched_init = rr_sched_init,<br>                       .sched = rr_sched,<br>                       .sched_periodic = rr_sched,<br>                       .sched_enqueue = rr_sched_enqueue,<br>                       .sched_dequeue = rr_sched_dequeue,<br>                       .sched_top = rr_top&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>所以真正初始化的地方是依据具体的策略而定的，我们这里以 rr 为例，来到 <code>rr_sched_init</code> ：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">rr_sched_init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;<br><br>        <span class="hljs-comment">/* Initialize global variables */</span><br>        <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; PLAT_CPU_NUM; i++) &#123;<br>				        <span class="hljs-comment">// 初始化队列链表头</span><br>                init_list_head(&amp;(rr_ready_queue_meta[i].queue_head));<br>                <span class="hljs-comment">// 初始化锁</span><br>                lock_init(&amp;(rr_ready_queue_meta[i].queue_lock));<br>                <span class="hljs-comment">// 初始化队列长度为0</span><br>                rr_ready_queue_meta[i].queue_len = <span class="hljs-number">0</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>整体很简单，就是为每个核心初始化其相应的调度队列和锁，其中又涉及到 <code>queue_meta</code> 数据结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* 就绪队列元数据结构 */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">queue_meta</span> &#123;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">queue_head</span>;</span>    <span class="hljs-comment">// 就绪队列链表头</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> queue_len;         <span class="hljs-comment">// 队列长度</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> <span class="hljs-title">queue_lock</span>;</span>         <span class="hljs-comment">// 队列锁</span><br>        <span class="hljs-type">char</span> pad[pad_to_cache_line(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>)<br>                                   + <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">struct</span> list_head)<br>                                   + <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">struct</span> lock))];  <span class="hljs-comment">// 缓存行对齐填充</span><br>&#125;;<br><br><span class="hljs-comment">/* 每个CPU的就绪队列数组 */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">queue_meta</span> <span class="hljs-title">rr_ready_queue_meta</span>[<span class="hljs-title">PLAT_CPU_NUM</span>];</span><br></code></pre></td></tr></table></figure>
+
+<p>队列依旧使用双向链表实现，初始化之后还需要把队列长度 <code>queue_len</code> 设置为 0，结束初始化</p>
+<h3 id="入队操作"><a href="#入队操作" class="headerlink" title="入队操作"></a>入队操作</h3><p>我们同样来看 rr 策略下对入队操作的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Sched_enqueue</span><br><span class="hljs-comment"> * Put `thread` at the end of ready queue of assigned `affinity` and `prio`.</span><br><span class="hljs-comment"> * If affinity = NO_AFF, assign the core to the current cpu.</span><br><span class="hljs-comment"> * If the thread is IDEL thread, do nothing!</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">rr_sched_enqueue</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> thread *thread)</span><br>&#123;<br>        BUG_ON(!thread);<br>        BUG_ON(!thread-&gt;thread_ctx);<br>        <span class="hljs-keyword">if</span> (thread-&gt;thread_ctx-&gt;type == TYPE_IDLE)<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>        <span class="hljs-type">int</span> cpubind = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> cpuid = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> ret = <span class="hljs-number">0</span>;<br><br>        cpubind = get_cpubind(thread);<br>        cpuid = cpubind == NO_AFF ? rr_sched_choose_cpu() : cpubind;<br><br>        <span class="hljs-keyword">if</span> (unlikely(thread-&gt;thread_ctx-&gt;sc-&gt;prio &gt; MAX_PRIO))<br>                <span class="hljs-keyword">return</span> -EINVAL;<br><br>        <span class="hljs-keyword">if</span> (unlikely(cpuid &gt;= PLAT_CPU_NUM)) &#123;<br>                <span class="hljs-keyword">return</span> -EINVAL;<br>        &#125;<br><br>        lock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>        ret = __rr_sched_enqueue(thread, cpuid);<br>        unlock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>        <span class="hljs-keyword">return</span> ret;<br>&#125;<br><br><span class="hljs-type">int</span> __rr_sched_enqueue(<span class="hljs-keyword">struct</span> thread *thread, <span class="hljs-type">int</span> cpuid)<br>&#123;<br>        <span class="hljs-keyword">if</span> (thread-&gt;thread_ctx-&gt;type == TYPE_IDLE) &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br><br>        <span class="hljs-comment">/* Already in the ready queue */</span><br>        <span class="hljs-keyword">if</span> (thread_is_ts_ready(thread)) &#123;<br>                <span class="hljs-keyword">return</span> -EINVAL;<br>        &#125;<br><br>        thread-&gt;thread_ctx-&gt;cpuid = cpuid;<br>        thread_set_ts_ready(thread);<br>        obj_ref(thread);<br>        list_append(&amp;(thread-&gt;ready_queue_node),<br>                    &amp;(rr_ready_queue_meta[cpuid].queue_head));<br>        rr_ready_queue_meta[cpuid].queue_len++;<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>发现这两个函数其实只是一个框架，包括的是各种 corner case 以及参数检查等。考虑到 ChCore 的多核特性，选择入队的核心才是关键所在，不过在这里我们并没有采用很复杂的算法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* A simple load balance when enqueue threads */</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">rr_sched_choose_cpu</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> i, cpuid, min_rr_len, local_cpuid, queue_len;<br><br>        local_cpuid = smp_get_cpu_id();<br>        min_rr_len = rr_ready_queue_meta[local_cpuid].queue_len;<br><br>        <span class="hljs-keyword">if</span> (min_rr_len &lt;= LOADBALANCE_THRESHOLD) &#123;<br>                <span class="hljs-keyword">return</span> local_cpuid;<br>        &#125;<br><br>        <span class="hljs-comment">/* Find the cpu with the shortest ready queue */</span><br>        cpuid = local_cpuid;<br>        <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; PLAT_CPU_NUM; i++) &#123;<br>                <span class="hljs-keyword">if</span> (i == local_cpuid) &#123;<br>                        <span class="hljs-keyword">continue</span>;<br>                &#125;<br><br>                queue_len =<br>                        rr_ready_queue_meta[i].queue_len + MIGRATE_THRESHOLD;<br>                <span class="hljs-keyword">if</span> (queue_len &lt; min_rr_len) &#123;<br>                        min_rr_len = queue_len;<br>                        cpuid = i;<br>                &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> cpuid;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里用的选择算法是简单负载均衡，也即：</p>
+<ul>
+<li>若当前 CPU 队列长度低于负载阈值，则选择当前 CPU，可提高缓存亲和性</li>
+<li>否则选择最短队列的 CPU，这里还要加上迁移开销，具体数量参考宏定义</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* The config can be tuned. */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> LOADBALANCE_THRESHOLD 5</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MIGRATE_THRESHOLD     5</span><br></code></pre></td></tr></table></figure>
+
+<p>加锁方面也是简单粗暴地直接加大锁，暂时没有什么优化</p>
+<h3 id="出队操作"><a href="#出队操作" class="headerlink" title="出队操作"></a>出队操作</h3><p>出队不需要选择 CPU，所以直接出就行：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * remove @thread from its current residual ready queue</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">rr_sched_dequeue</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> thread *thread)</span><br>&#123;<br>        BUG_ON(!thread);<br>        BUG_ON(!thread-&gt;thread_ctx);<br>        <span class="hljs-comment">/* IDLE thread will **not** be in any ready queue */</span><br>        BUG_ON(thread-&gt;thread_ctx-&gt;type == TYPE_IDLE);<br><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> cpuid = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> ret = <span class="hljs-number">0</span>;<br><br>        cpuid = thread-&gt;thread_ctx-&gt;cpuid;<br>        lock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>        ret = __rr_sched_dequeue(thread);<br>        unlock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>        <span class="hljs-keyword">return</span> ret;<br>&#125;<br><br><span class="hljs-comment">/* dequeue w/o lock */</span><br><span class="hljs-type">int</span> __rr_sched_dequeue(<span class="hljs-keyword">struct</span> thread *thread)<br>&#123;<br>        <span class="hljs-comment">/* IDLE thread will **not** be in any ready queue */</span><br>        BUG_ON(thread-&gt;thread_ctx-&gt;type == TYPE_IDLE);<br><br>        <span class="hljs-keyword">if</span> (!thread_is_ts_ready(thread)) &#123;<br>                kwarn(<span class="hljs-string">&quot;%s: thread state is %d\n&quot;</span>,<br>                      __func__,<br>                      thread-&gt;thread_ctx-&gt;state);<br>                <span class="hljs-keyword">return</span> -EINVAL;<br>        &#125;<br><br>        list_del(&amp;(thread-&gt;ready_queue_node));<br>        rr_ready_queue_meta[thread-&gt;thread_ctx-&gt;cpuid].queue_len--;<br>        obj_put(thread);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意各种 corner case 的判断，参数检查，以及更新对象计数等必须操作</p>
+<h3 id="rr-策略实现"><a href="#rr-策略实现" class="headerlink" title="rr 策略实现"></a>rr 策略实现</h3><p>上面所述皆为对调度队列的基本操作，现在我们再来看看对 Round Robin 轮转策略具体实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Schedule a thread to execute.</span><br><span class="hljs-comment"> * current_thread can be NULL, or the state is TS_RUNNING or</span><br><span class="hljs-comment"> * TS_WAITING/TS_BLOCKING. This function will suspend current running thread, if</span><br><span class="hljs-comment"> * any, and schedule another thread from</span><br><span class="hljs-comment"> * `(rr_ready_queue_meta[cpuid].queue_head)`.</span><br><span class="hljs-comment"> * ***the following text might be outdated***</span><br><span class="hljs-comment"> * 1. Choose an appropriate thread through calling *chooseThread* (Simple</span><br><span class="hljs-comment"> * Priority-Based Policy)</span><br><span class="hljs-comment"> * 2. Update current running thread and left the caller to restore the executing</span><br><span class="hljs-comment"> * context</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">rr_sched</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-comment">/* WITH IRQ Disabled */</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">old</span> =</span> current_thread;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">new</span> =</span> <span class="hljs-number">0</span>;<br><br>        <span class="hljs-keyword">if</span> (old) &#123;<br>                BUG_ON(!old-&gt;thread_ctx);<br><br>                <span class="hljs-comment">/* old thread may pass its scheduling context to others. */</span><br>                <span class="hljs-keyword">if</span> (old-&gt;thread_ctx-&gt;type != TYPE_SHADOW<br>                    &amp;&amp; old-&gt;thread_ctx-&gt;type != TYPE_REGISTER) &#123;<br>                        BUG_ON(!old-&gt;thread_ctx-&gt;sc);<br>                &#125;<br><br>                <span class="hljs-comment">/* Set TE_EXITING after check won&#x27;t cause any trouble, the</span><br><span class="hljs-comment">                 * thread will be recycle afterwards. Just a fast path. */</span><br>                <span class="hljs-comment">/* Check whether the thread is going to exit */</span><br>                <span class="hljs-keyword">if</span> (thread_is_exiting(old)) &#123;<br>                        <span class="hljs-comment">/* Set the state to TE_EXITED */</span><br>                        thread_set_exited(old);<br>                &#125;<br><br>                <span class="hljs-comment">/* check old state */</span><br>                <span class="hljs-keyword">if</span> (!thread_is_exited(old)) &#123;<br>                        <span class="hljs-keyword">if</span> (thread_is_ts_running(old)) &#123;<br>                                <span class="hljs-comment">/* A thread without SC should not be TS_RUNNING.</span><br><span class="hljs-comment">                                 */</span><br>                                BUG_ON(!old-&gt;thread_ctx-&gt;sc);<br>                                <span class="hljs-keyword">if</span> (old-&gt;thread_ctx-&gt;sc-&gt;budget != <span class="hljs-number">0</span><br>                                    &amp;&amp; !thread_is_suspend(old)) &#123;<br>                                        switch_to_thread(old);<br>                                        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; <span class="hljs-comment">/* no schedule needed */</span><br>                                &#125;<br>                                rr_sched_refill_budget(old, DEFAULT_BUDGET);<br>                                BUG_ON(rr_sched_enqueue(old) != <span class="hljs-number">0</span>);<br>                        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!thread_is_ts_blocking(old)<br>                                   &amp;&amp; !thread_is_ts_waiting(old)) &#123;<br>                                kinfo(<span class="hljs-string">&quot;thread state: %d\n&quot;</span>,<br>                                      old-&gt;thread_ctx-&gt;state);<br>                                BUG_ON(<span class="hljs-number">1</span>);<br>                        &#125;<br>                &#125;<br>        &#125;<br><br>        BUG_ON(!(new = rr_sched_choose_thread()));<br>        switch_to_thread(new);<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>整体上是根据当前线程是否存在做的判断：</p>
+<ul>
+<li>若当前线程不存在，则直接快进到 choose 一个新的</li>
+<li>若当前线程存在，则继续做进一步检查与操作：<ul>
+<li>调度上下文检查：除了影子线程和寄存器线程外都必须有调度上下文</li>
+<li>若当前线程状态是 exited，则给它收尸（<code>thread_set_exited</code>）</li>
+<li>否则进入时间片（<code>sc-&gt;budget</code>）检查（运行状态的线程）：<ul>
+<li>若时间片没用尽，线程也未被挂起，则继续运行</li>
+<li>若时间片已经用尽，则重新设置其时间片，并再次入队</li>
+</ul>
+</li>
+<li>对非运行状态的线程作异常处理</li>
+</ul>
+</li>
+<li>最后的 <code>switch_to_thread</code> 是内核态的切换线程函数，它只负责 current_thread 等变量，并没有设置完整的上下文切换，所以需要搭配其他函数来完成(返回用户态的实例在 <code>sched_to_thread</code> ， 内部比较复杂，可能跨核调度，此时需要通过 ipi（体系结构特定的处理器间中断）来等待目标 cpu 核处理好当前的中断等事件释放内核栈， 再进行体系结构特定的上下文切换（寄存器的 save&#x2F;load）和用户态返回)</li>
+</ul>
+<p>其中调度上下文是如下数据结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sched_context</span> &#123;</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> budget; <span class="hljs-comment">// 时间片预算</span><br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> prio; <span class="hljs-comment">// 线程优先级</span><br>&#125; <span class="hljs-type">sched_ctx_t</span>;<br></code></pre></td></tr></table></figure>
+
+<p>最后再来看看 rr 策略是如何选择新的可执行的线程吧，这个函数比较长，所以添加了相关的注释：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">struct</span> thread *<span class="hljs-title function_">rr_sched_choose_thread</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> cpuid = smp_get_cpu_id();<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">thread</span> =</span> <span class="hljs-literal">NULL</span>;<br><br>        <span class="hljs-comment">/* 检查当前CPU的就绪队列是否为空 */</span><br>        <span class="hljs-keyword">if</span> (!list_empty(&amp;(rr_ready_queue_meta[cpuid].queue_head))) &#123;<br>                <span class="hljs-comment">/* 获取队列锁，保护并发访问 */</span><br>                lock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br><br>        again:  <span class="hljs-comment">/* 重试标签：处理无效线程的情况 */</span><br>                <span class="hljs-comment">/* 双重检查队列是否为空（可能在获取锁的过程中被清空） */</span><br>                <span class="hljs-keyword">if</span> (list_empty(&amp;(rr_ready_queue_meta[cpuid].queue_head))) &#123;<br>                        unlock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>                        <span class="hljs-keyword">goto</span> out;  <span class="hljs-comment">// 队列为空，返回空闲线程</span><br>                &#125;<br><br>                <span class="hljs-comment">/* 尝试找到一个可运行的线程</span><br><span class="hljs-comment">                 * 处理内核栈被其他核心使用的情况</span><br><span class="hljs-comment">                 */</span><br>                <span class="hljs-keyword">if</span> (!(thread = find_runnable_thread(<br>                              &amp;(rr_ready_queue_meta[cpuid].queue_head)))) &#123;<br>                        unlock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>                        <span class="hljs-keyword">goto</span> out;  <span class="hljs-comment">// 没有可运行线程，返回空闲线程</span><br>                &#125;<br><br>                <span class="hljs-comment">/* 从就绪队列中移除选中的线程 */</span><br>                BUG_ON(__rr_sched_dequeue(thread));<br><br>                <span class="hljs-comment">/* 处理退出状态的线程 */</span><br>                <span class="hljs-keyword">if</span> (thread_is_exiting(thread) || thread_is_exited(thread)) &#123;<br>                        thread_set_exited(thread);<br>                        <span class="hljs-keyword">goto</span> again;  <span class="hljs-comment">// 重新选择线程</span><br>                &#125;<br><br>                unlock(&amp;(rr_ready_queue_meta[cpuid].queue_lock));<br>                <span class="hljs-keyword">return</span> thread;  <span class="hljs-comment">// 返回选中的线程</span><br>        &#125;<br><br>out:    <span class="hljs-comment">/* 就绪队列为空，返回对应CPU的空闲线程 */</span><br>        <span class="hljs-keyword">return</span> &amp;idle_threads[cpuid];<br>&#125;<br><br><span class="hljs-keyword">struct</span> thread *<span class="hljs-title function_">find_runnable_thread</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> list_head *thread_list)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">thread</span>;</span><br><br>        <span class="hljs-comment">/* 遍历就绪队列中的所有线程 */</span><br>        for_each_in_list (<br>                thread, <span class="hljs-keyword">struct</span> thread, ready_queue_node, thread_list) &#123;<br>                <span class="hljs-comment">/* 检查线程是否满足运行条件：</span><br><span class="hljs-comment">                 * 1. 未被挂起 (!thread_is_suspend)</span><br><span class="hljs-comment">                 * 2. 内核栈可用 (KS_FREE)</span><br><span class="hljs-comment">                 *    或者是当前线程 (current_thread)</span><br><span class="hljs-comment">                 */</span><br>                <span class="hljs-keyword">if</span> (!thread_is_suspend(thread)<br>                    &amp;&amp; (thread-&gt;thread_ctx-&gt;kernel_stack_state == KS_FREE<br>                        || thread == current_thread)) &#123;<br>                        <span class="hljs-keyword">return</span> thread;<br>                &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;  <span class="hljs-comment">// 没有找到合适的线程</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意一共有两次判空，第一次判空后才拿的锁，以减少轻工作状态下的锁竞争</p>
+<p>拿锁后遍历自己核心上的可执行队列，找一个当前状态为 free 的或者就是当前的 thread，如果没找到则返回 idle 空闲线程</p>
+<h1 id="协作式调度"><a href="#协作式调度" class="headerlink" title="协作式调度"></a>协作式调度</h1><p>协作式调度，即需要用户态程序主动配合“让出 CPU”，反映到系统调用上即为 <code>sys_yield</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* SYSCALL functions */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">sys_yield</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        current_thread-&gt;thread_ctx-&gt;sc-&gt;budget = <span class="hljs-number">0</span>;<br>        sched();<br>        eret_to_thread(switch_context());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里的 sched 即为 rr 策略下的调度函数，是用结构体模拟的重载：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">int</span> <span class="hljs-title function_">sched</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-keyword">return</span> cur_sched_ops-&gt;sched();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意 <code>sched</code> 里的切换线程是不完整的，因此还需要切换上下文并 <code>eret</code> ，我们来看源码：</p>
+<p>看函数开头前的注释也可以明白其用法</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * This function is used after current_thread is set (a new thread needs to be</span><br><span class="hljs-comment"> * scheduled).</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * Switch context between current_thread and current_thread-&gt;prev_thread:</span><br><span class="hljs-comment"> * including: vmspace, fpu, tls, ...</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * Return the context pointer which should be set to stack pointer register.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">vaddr_t</span> <span class="hljs-title function_">switch_context</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">target_thread</span>;</span>    <span class="hljs-comment">// 目标线程</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread_ctx</span> *<span class="hljs-title">target_ctx</span>;</span>   <span class="hljs-comment">// 目标线程上下文</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">prev_thread</span>;</span>      <span class="hljs-comment">// 前一个线程</span><br><br>        <span class="hljs-comment">/* 1. 基本检查 */</span><br>        target_thread = current_thread;<br>        <span class="hljs-keyword">if</span> (!target_thread || !target_thread-&gt;thread_ctx) &#123;<br>                kwarn(<span class="hljs-string">&quot;%s no thread_ctx&quot;</span>, __func__);<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br><br>        target_ctx = target_thread-&gt;thread_ctx;<br>        prev_thread = target_thread-&gt;prev_thread;<br><br>        <span class="hljs-comment">/* 2. 特殊情况：切换到自己 */</span><br>        <span class="hljs-keyword">if</span> (prev_thread == THREAD_ITSELF)<br>                <span class="hljs-keyword">return</span> (<span class="hljs-type">vaddr_t</span>)target_ctx;<br><br>        <span class="hljs-comment">/* 3. FPU状态处理 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> FPU_SAVING_MODE == EAGER_FPU_MODE</span><br>        <span class="hljs-comment">/* 积极模式：立即保存和恢复FPU状态 */</span><br>        save_fpu_state(prev_thread);<br>        restore_fpu_state(target_thread);<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        <span class="hljs-comment">/* 懒惰模式：仅在必要时处理FPU */</span><br>        <span class="hljs-keyword">if</span> (target_thread-&gt;thread_ctx-&gt;type &gt; TYPE_KERNEL)<br>                disable_fpu_usage();<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>        <span class="hljs-comment">/* 4. 切换线程本地存储(TLS) */</span><br>        switch_tls_info(prev_thread, target_thread);<br><br>        <span class="hljs-comment">/* 5. 虚拟内存空间切换 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> CHCORE_KERNEL_TEST</span><br>        <span class="hljs-comment">/* 正常情况下的虚拟内存处理 */</span><br>        BUG_ON(!target_thread-&gt;vmspace);<br>        <span class="hljs-comment">/* 记录线程运行的CPU：用于TLB维护 */</span><br>        record_history_cpu(target_thread-&gt;vmspace, smp_get_cpu_id());<br>        <span class="hljs-comment">/* 如果需要，切换虚拟内存空间 */</span><br>        <span class="hljs-keyword">if</span> ((!prev_thread) || (prev_thread-&gt;vmspace != target_thread-&gt;vmspace))<br>                switch_thread_vmspace_to(target_thread);<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        <span class="hljs-comment">/* 测试模式下的特殊处理 */</span><br>        <span class="hljs-keyword">if</span> (target_thread-&gt;thread_ctx-&gt;type != TYPE_TESTS) &#123;<br>                BUG_ON(!target_thread-&gt;vmspace);<br>                record_history_cpu(target_thread-&gt;vmspace, smp_get_cpu_id());<br>                switch_thread_vmspace_to(target_thread);<br>        &#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>        <span class="hljs-comment">/* 6. 架构相关的上下文切换 */</span><br>        arch_switch_context(target_thread);<br><br>        <span class="hljs-comment">/* 7. 返回目标上下文地址 */</span><br>        <span class="hljs-keyword">return</span> (<span class="hljs-type">vaddr_t</span>)target_ctx;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">arch_switch_context</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> thread *target)</span><br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">per_cpu_info</span> *<span class="hljs-title">info</span>;</span><br><br>	info = get_per_cpu_info();<br><br>	info-&gt;cur_exec_ctx = (u64)target-&gt;thread_ctx; <span class="hljs-comment">// 设置当前CPU信息</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>整体来看需要切换的东西还是很多的：</p>
+<ul>
+<li><code>vmspace</code> ：这个结构在 thread 里面(还记得这的核心数据机构是一个 rbtree 的 root 吗， 回看内存管理)，但是需要切换页表（页表的地址也在 vmspace 之中维护）</li>
+<li><code>tls</code> ：(thread local storage， 在 arm 架构的典型实现之中是 TPIDR_EL0 寄存器，它存着一个线程特定的标识符)<ul>
+<li>OS 其实不知道这里面存的是什么东西，他只是把这个寄存器当成线程特定的标识符，并在自己的线程实现之中维护而已。至于语言层面的 tls 如何实现，那是编译器开发者或者库开发者的事情，例如存一个特定的空间的指针（例如小的在栈上，大的在堆上）</li>
+<li>arm compiler 的支持文档 <a target="_blank" rel="noopener" href="https://developer.arm.com/documentation/dui0205/g/arm-compiler-reference/compiler-specific-features/thread-local-storage">https://developer.arm.com/documentation/dui0205/g/arm-compiler-reference/compiler-specific-features/thread-local-storage</a></li>
+<li>对 tls 的一些讨论 <a target="_blank" rel="noopener" href="https://forum.osdev.org/viewtopic.php?t=36597">https://forum.osdev.org/viewtopic.php?t=36597</a></li>
+</ul>
+</li>
+<li><code>fpu</code> 相关</li>
+<li>其他想要添加的机制，例如保存和清理 TLB 的一些数据（history）等</li>
+<li>把切换的线程相关的寄存器设置到 cpu 上，见 <code>arch_switch_context</code></li>
+</ul>
+<h1 id="抢占式调度"><a href="#抢占式调度" class="headerlink" title="抢占式调度"></a>抢占式调度</h1><p>协作式调度需要用户态程序自己“体面地”让出 CPU，那它要是不体面怎么办？我们就来帮它体面，这便是抢占式调度，典型应用场景即如 Lab 文档所述：</p>
+<blockquote>
+<p>ChCore 启动的第一个用户态线程（执行<code>user/system-services/system-servers/procmgr/procmgr.c</code>的<code>main</code>函数）将创建一个“自旋线程”，该线程在获得 CPU 核心的控制权后便会执行无限循环，进而导致无论是该程序的主线程还是 ChCore 内核都无法重新获得 CPU 核心的控制权。就保护系统免受用户程序中的错误或恶意代码影响而言，这一情况显然并不理想，任何用户应用线程均可以如该“自旋线程”一样，通过进入无限循环来永久“霸占”整个 CPU 核心</p>
+</blockquote>
+<p>而抢占式首先要支持的就是时钟中断。时钟中断的支持实际上和其他外设也没什么区别，抽象起来就是对寄存器的读和写，以及配置真正连接 cpu 引脚的发信号时间等硬件相关的操作</p>
+<h2 id="物理时钟初始化"><a href="#物理时钟初始化" class="headerlink" title="物理时钟初始化"></a>物理时钟初始化</h2><p>回归主线，Lab 文档也说了相关寄存器的信息：</p>
+<blockquote>
+<p>我们需要处理的系统寄存器如下(<a target="_blank" rel="noopener" href="https://developer.arm.com/documentation/102379/0101/The-processor-timers">Refer</a>):</p>
+<ul>
+<li>CNTPCT_EL0: 它的值代表了当前的 system count。</li>
+<li>CNTFRQ_EL0: 它的值代表了物理时钟运行的频率，即每秒钟 system count 会增加多少。</li>
+<li>CNTP_CVAL_EL0: 是一个 64 位寄存器，操作系统可以向该寄存器写入一个值，当 system count 达到或超过该值时，物理时钟会触发中断。</li>
+<li>CNTP_TVAL_EL0: 是一个 32 位寄存器，操作系统可以写入 TVAL，处理器会在内部读取当前的系统计数，加上写入的值，然后填充 CVAL。</li>
+<li>CNTP_CTL_EL0: 物理时钟的控制寄存器，第 0 位 ENABLE 控制时钟是否开启，1 代表 enble，0 代表 disable；第 1 位 IMASK 代表是否屏蔽时钟中断，0 代表不屏蔽，1 代表屏蔽。</li>
+</ul>
+</blockquote>
+<p>那么其初始化函数便好理解了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">plat_timer_init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        u64 count_down = <span class="hljs-number">0</span>;<br>        u64 timer_ctl = <span class="hljs-number">0</span>;<br>        u32 cpuid = smp_get_cpu_id();<br><br>        <span class="hljs-comment">/* 1. 读取系统计数器和频率*/</span><br>        <span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span> <span class="hljs-params">(<span class="hljs-string">&quot;mrs %0, cntpct_el0&quot;</span>:<span class="hljs-string">&quot;=r&quot;</span> (cntp_init))</span>;    <span class="hljs-comment">// 获取当前计数值</span><br>        kdebug(<span class="hljs-string">&quot;timer init cntpct_el0 = %lu\n&quot;</span>, cntp_init);<br>        <span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span> <span class="hljs-params">(<span class="hljs-string">&quot;mrs %0, cntfrq_el0&quot;</span>:<span class="hljs-string">&quot;=r&quot;</span> (cntp_freq))</span>;    <span class="hljs-comment">// 获取计数器频率</span><br>        kdebug(<span class="hljs-string">&quot;timer init cntfrq_el0 = %lu\n&quot;</span>, cntp_freq);<br><br>        <span class="hljs-comment">/* 2. 计算定时器值*/</span><br>        cntp_tval = (cntp_freq * TICK_MS / <span class="hljs-number">1000</span>);      <span class="hljs-comment">// 计算多少个计数对应一个时钟滴答</span><br>        tick_per_us = cntp_freq / <span class="hljs-number">1000</span> / <span class="hljs-number">1000</span>;         <span class="hljs-comment">// 计算每微秒的计数值</span><br>        kinfo(<span class="hljs-string">&quot;CPU freq %lu, set timer %lu\n&quot;</span>, cntp_freq, cntp_tval);<br><br>        <span class="hljs-comment">/* 3. 设置定时器计数值*/</span><br>        <span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span> <span class="hljs-params">(<span class="hljs-string">&quot;msr cntp_tval_el0, %0&quot;</span>::<span class="hljs-string">&quot;r&quot;</span> (cntp_tval))</span>;  <span class="hljs-comment">// 设置计数值</span><br>        <span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span> <span class="hljs-params">(<span class="hljs-string">&quot;mrs %0, cntp_tval_el0&quot;</span>:<span class="hljs-string">&quot;=r&quot;</span> (count_down))</span>;  <span class="hljs-comment">// 读回验证</span><br>        kdebug(<span class="hljs-string">&quot;timer init cntp_tval_el0 = %lu\n&quot;</span>, count_down);<br><br>        <span class="hljs-comment">/* 4. 启用定时器中断</span><br><span class="hljs-comment">         * CNTPNSIRQ: Physical Non-secure timer interrupt</span><br><span class="hljs-comment">         * CNTVIRQ: Virtual timer interrupt</span><br><span class="hljs-comment">         */</span><br>        put32(core_timer_irqcntl[cpuid],               <span class="hljs-comment">// 每个CPU核心独立的中断控制</span><br>              INT_SRC_TIMER1 | INT_SRC_TIMER3);        <span class="hljs-comment">// 使能物理定时器和虚拟定时器中断</span><br><br>        <span class="hljs-comment">/* 5. 配置控制寄存器</span><br><span class="hljs-comment">         * IMASK = 0: 不屏蔽中断</span><br><span class="hljs-comment">         * ENABLE = 1: 使能定时器</span><br><span class="hljs-comment">         * cntp_ctl_el0: Counter-timer Physical Timer Control register</span><br><span class="hljs-comment">         */</span><br>        timer_ctl = <span class="hljs-number">0</span> &lt;&lt; <span class="hljs-number">1</span> | <span class="hljs-number">1</span>;	<span class="hljs-comment">/* IMASK = 0 ENABLE = 1 */</span><br>        <span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span> <span class="hljs-params">(<span class="hljs-string">&quot;msr cntp_ctl_el0, %0&quot;</span>::<span class="hljs-string">&quot;r&quot;</span> (timer_ctl))</span>;   <span class="hljs-comment">// 设置控制寄存器</span><br>        <span class="hljs-keyword">asm</span> <span class="hljs-title function_">volatile</span> <span class="hljs-params">(<span class="hljs-string">&quot;mrs %0, cntp_ctl_el0&quot;</span>:<span class="hljs-string">&quot;=r&quot;</span> (timer_ctl))</span>;   <span class="hljs-comment">// 读回验证</span><br>        kdebug(<span class="hljs-string">&quot;timer init cntp_ctl_el0 = %lu\n&quot;</span>, timer_ctl);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="物理时钟中断与抢占"><a href="#物理时钟中断与抢占" class="headerlink" title="物理时钟中断与抢占"></a>物理时钟中断与抢占</h2><p>如何实现中断物理时钟后对 CPU 的“抢占”？核心便是<strong>在处理时钟中断时递减当前运行线程的时间片，并在当前运行线程的时间片耗尽时进行调度，选取新的线程运行</strong></p>
+<p>来到中断处理的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Interrupt handler for interrupts happening when in EL0. */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">handle_irq</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	plat_handle_irq();<br>	sched_periodic(); <span class="hljs-comment">// 在rr策略下即为调度函数，但其他策略下不一样，需要注意</span><br>	eret_to_thread(switch_context());<span class="hljs-comment">// 这个操作即为调度后返回用户态的标配</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>继续前进，直接来看处理物理时钟中断的部分：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">plat_handle_irq</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-comment">// ...</span><br>	<span class="hljs-keyword">switch</span> (irq) &#123;<br>	<span class="hljs-keyword">case</span> INT_SRC_TIMER1:<br>		<span class="hljs-comment">/* CNTPNSIRQ (Physical Non-Secure timer IRQ) */</span><br>		handle_timer_irq();<br>	<span class="hljs-comment">// ...</span><br>	<span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">handle_timer_irq</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>        u64 current_tick, tick_delta;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">time_state</span> *<span class="hljs-title">local_time_state</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> *<span class="hljs-title">local_sleep_list</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock</span> *<span class="hljs-title">local_sleep_list_lock</span>;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sleep_state</span> *<span class="hljs-title">iter</span> =</span> <span class="hljs-literal">NULL</span>, *tmp = <span class="hljs-literal">NULL</span>;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">thread</span> *<span class="hljs-title">wakeup_thread</span>;</span><br><br>        <span class="hljs-comment">/* 获取当前CPU的睡眠队列信息 */</span><br>        current_tick = plat_get_current_tick();         <span class="hljs-comment">// 获取当前时钟计数</span><br>        local_time_state = &amp;time_states[smp_get_cpu_id()];<br>        local_sleep_list = &amp;local_time_state-&gt;sleep_list;<br>        local_sleep_list_lock = &amp;local_time_state-&gt;sleep_list_lock;<br><br>        <span class="hljs-comment">/* 遍历并唤醒到期的线程 */</span><br>        lock(local_sleep_list_lock);  <span class="hljs-comment">// 加锁保护睡眠队列</span><br>        for_each_in_list_safe (iter, tmp, sleep_node, local_sleep_list) &#123;<br>                <span class="hljs-keyword">if</span> (iter-&gt;wakeup_tick &gt; current_tick) &#123;<br>                        <span class="hljs-keyword">break</span>;  <span class="hljs-comment">// 未到唤醒时间，退出循环</span><br>                &#125;<br>                wakeup_thread = container_of(iter, <span class="hljs-keyword">struct</span> thread, sleep_state);<br>                lock(&amp;wakeup_thread-&gt;sleep_state.queue_lock);<br>                list_del(&amp;iter-&gt;sleep_node);<br>                BUG_ON(wakeup_thread-&gt;sleep_state.cb == sleep_timer_cb<br>                       &amp;&amp; !thread_is_ts_blocking(wakeup_thread));<br>                kdebug(<span class="hljs-string">&quot;wake up t:%p at:%ld\n&quot;</span>, wakeup_thread, current_tick);<br>                BUG_ON(wakeup_thread-&gt;sleep_state.cb == <span class="hljs-literal">NULL</span>);<br>                wakeup_thread-&gt;sleep_state.cb(wakeup_thread);<br>                wakeup_thread-&gt;sleep_state.cb = <span class="hljs-literal">NULL</span>;<br>                unlock(&amp;wakeup_thread-&gt;sleep_state.queue_lock);<br>        &#125;<br><br>        <span class="hljs-comment">/* 设置下一次定时器中断 */</span><br>        tick_delta = get_next_tick_delta();  <span class="hljs-comment">// 计算下一次中断间隔</span><br>        unlock(local_sleep_list_lock);<br><br>        <span class="hljs-comment">/* 更新下次过期时间并配置硬件定时器 */</span><br>        time_states[smp_get_cpu_id()].next_expire = current_tick + tick_delta;<br>        plat_handle_timer_irq(tick_delta);<br><br>        <span class="hljs-comment">/* 递减当前线程的时间片 */</span><br>        <span class="hljs-keyword">if</span> (current_thread) &#123;<br>                BUG_ON(!current_thread-&gt;thread_ctx-&gt;sc);<br>                BUG_ON(current_thread-&gt;thread_ctx-&gt;sc-&gt;budget == <span class="hljs-number">0</span>);<br>                current_thread-&gt;thread_ctx-&gt;sc-&gt;budget--;  <span class="hljs-comment">// 减少时间片</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>                kdebug(<span class="hljs-string">&quot;Timer: system not runnig!\n&quot;</span>);<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>为什么两次中断之间的间隔不是固定值而是需要通过计算得到？</p>
+<ul>
+<li>时钟不只干定时硬中断的活</li>
+<li>一些其他线程的等待、睡眠之类会导致下一次时钟 irq 的提前</li>
+</ul>
+<p>支持了抢占式调度之后，我们的用户态程序就能打破初始进程 procmgr 的循环真正运行了</p>
+<p>至此，多核调度部分的源码解析结束</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E5%A4%9A%E6%A0%B8%E4%B8%8EIPC/" class="category-chain-item">多核与IPC</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>多核调度</div>
+      <div>http://example.com/2025/02/26/mulkersche/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/28/IPC/" title="进程间通信 (IPC)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">进程间通信 (IPC)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/26/mulkersup/" title="多核支持">
+                        <span class="hidden-mobile">多核支持</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

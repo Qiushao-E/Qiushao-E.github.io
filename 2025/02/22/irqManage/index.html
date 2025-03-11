@@ -1,0 +1,808 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/head.jpg">
+  <link rel="icon" href="/img/head.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="思源南路世一劈">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ChCore 源码解析之异常管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异常管理">
+<meta property="og:url" content="http://example.com/2025/02/22/irqManage/index.html">
+<meta property="og:site_name" content="Home">
+<meta property="og:description" content="ChCore 源码解析之异常管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-22T14:08:37.000Z">
+<meta property="article:modified_time" content="2025-03-11T14:09:27.143Z">
+<meta property="article:author" content="思源南路世一劈">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="ChCore">
+<meta property="article:tag" content="源码解析">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>异常管理 - Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3e384ac8b80247a65b488b6040c23850","google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3e384ac8b80247a65b488b6040c23850";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>41P&#39;s Corner</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/ayaka.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="异常管理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-22 22:08" pubdate>
+          2025年2月22日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">异常管理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="异常管理"><a href="#异常管理" class="headerlink" title="异常管理"></a>异常管理</h1><p>本部分内容讲解 ChCore 异常管理的部分</p>
+<h1 id="回顾：ARM-异常-ARM-ABI"><a href="#回顾：ARM-异常-ARM-ABI" class="headerlink" title="回顾：ARM 异常 ARM ABI"></a>回顾：ARM 异常 ARM ABI</h1><h2 id="ARM-异常分类"><a href="#ARM-异常分类" class="headerlink" title="ARM 异常分类"></a>ARM 异常分类</h2><p>这部分内容在缺页管理中首次提到</p>
+<p>ARM 将异常分为同步异常和异步异常两大类。同步异常是由指令执行直接引发的，例如系统调用、页面错误或非法指令等，这类异常具有<strong>确定性</strong>，每次执行到特定指令时都会触发。而异步异常包括硬件中断（IRQ）、快速中断（FIQ）和错误（ERROR），它们与当前指令无关，通常由<strong>外部事件或硬件故障</strong>引起</p>
+<ul>
+<li><strong>sync</strong>: 同步异常，如系统调用或页面错误。</li>
+<li><strong>irq</strong>: 硬件中断请求（IRQ），由外部设备生成的中断。</li>
+<li><strong>fiq</strong>: 快速中断请求（FIQ），用于更高优先级的中断处理。</li>
+<li><strong>error</strong>: 处理其他类型的错误，如未定义指令或故障。</li>
+</ul>
+<h2 id="ARM-C-ABI"><a href="#ARM-C-ABI" class="headerlink" title="ARM C ABI"></a>ARM C ABI</h2><h3 id="参数传递规则"><a href="#参数传递规则" class="headerlink" title="参数传递规则"></a><strong>参数传递规则</strong></h3><ul>
+<li><strong>寄存器传递</strong><br>前六个整型或指针参数（32&#x2F;64 位）依次通过寄存器 x0-x5 传递。例如：<ul>
+<li>第 1 个参数 → x0</li>
+<li>第 2 个参数 → x1</li>
+<li>…</li>
+<li>第 6 个参数 → x5</li>
+</ul>
+</li>
+<li><strong>栈传递</strong><br>若参数超过六个，剩余参数按声明顺序从右向左压入栈空间，由调用者分配和释放。</li>
+</ul>
+<h3 id="返回值传递规则"><a href="#返回值传递规则" class="headerlink" title="返回值传递规则"></a><strong>返回值传递规则</strong></h3><ul>
+<li><strong>小型返回值（≤8 字节）</strong><br>单个整型、指针或小结构体（≤64 位）直接通过 x0 寄存器返回。</li>
+<li><strong>中型结构体（≤16 字节）</strong><br>通过 x0 寄存器返回指向该结构体的内存指针，内存由调用者预分配（例如在栈上）。</li>
+<li><strong>大型结构体（&gt;16 字节）</strong><br>调用者需提前在栈中分配内存，并将该内存地址写入 x8 寄存器。被调用函数通过 x8 找到目标地址，直接将结构体内容写入此内存区域，同时 x0 也会返回该地址。</li>
+</ul>
+<h1 id="ChCore-异常处理"><a href="#ChCore-异常处理" class="headerlink" title="ChCore 异常处理"></a>ChCore 异常处理</h1><p>现在我们再来看 ChCore 对异常处理的实际实现</p>
+<p>Lab 文档提到：</p>
+<blockquote>
+<p>在 AArch64 中，存储于内存之中的异常处理程序代码被叫做异常向量（exception vector），而所有的异常向量被存储在一张异常向量表（exception vector table）中。</p>
+<p>AArch64 中的每个异常级别都有其自己独立的异常向量表，其虚拟地址由该异常级别下的异常向量基地址寄存器（<code>VBAR_EL3</code>，<code>VBAR_EL2</code>  和  <code>VBAR_EL1</code>）决定。每个异常向量表中包含 16 个条目，每个条目里存储着发生对应异常时所需执行的异常处理程序代码。</p>
+</blockquote>
+<p>由于 ChCore 仅使用了 EL0 和 EL1 两个异常级别，故异常向量表也只有 EL1 这一张</p>
+<p>我们还是先看看源码的实现，再逐步分析</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p>重复或者不重要的部分已省略</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br></pre></td><td class="code"><pre><code class="hljs nasm">// ......<br>.macro	exception_entry	label<br>	/* Each entry of the exeception table should be 0x80 aligned */<br>	.align	7<br>	b	\label<br>.endm<br><br>/* See more details about the bias in registers.h */<br>.macro	exception_enter<br>	sub	sp, sp, #ARCH_EXEC_CONT_SIZE<br>	stp	x0, x1, [sp, #16 * 0]<br>	stp	x2, x3, [sp, #16 * 1]<br>	stp	x4, x5, [sp, #16 * 2]<br>	stp	x6, x7, [sp, #16 * 3]<br>	stp	x8, x9, [sp, #16 * 4]<br>	stp	x10, x11, [sp, #16 * 5]<br>	stp	x12, x13, [sp, #16 * 6]<br>	stp	x14, x15, [sp, #16 * 7]<br>  // ...<br>.endm<br><br>.macro	exception_exit<br>	ldp	x22, x23, [sp, #16 * 16]<br>	ldp	x30, x21, [sp, #16 * 15]<br>	msr	sp_el0, x21<br>	msr	elr_el1, x22<br>	msr	spsr_el1, x23<br>	ldp	x0, x1, [sp, #16 * 0]<br>	ldp	x2, x3, [sp, #16 * 1]<br>	ldp	x4, x5, [sp, #16 * 2]<br>	ldp	x6, x7, [sp, #16 * 3]<br>	ldp	x8, x9, [sp, #16 * 4]<br>  // ...<br>	add	sp, sp, #ARCH_EXEC_CONT_SIZE<br>	eret<br>.endm<br><br>.macro switch_to_cpu_stack<br>	mrs     x24, TPIDR_EL1<br>	add	x24, x24, #OFFSET_LOCAL_CPU_STACK<br>	ldr	x24, [x24]<br>	mov	sp, x24<br>.endm<br><br>.macro switch_to_thread_ctx<br>	mrs     x24, TPIDR_EL1<br>	add	x24, x24, #OFFSET_CURRENT_EXEC_CTX<br>	ldr	x24, [x24]<br>	mov	sp, x24<br>.endm<br><br>/* el1_vector should be set in VBAR_EL1. The last 11 bits of VBAR_EL1 are reserved. */<br>.align	11<br>EXPORT(el1_vector)<br>	exception_entry	sync_el1t		// Synchronous EL1t<br>	exception_entry	irq_el1t		// IRQ EL1t<br>	exception_entry	fiq_el1t		// FIQ EL1t<br>	exception_entry	error_el1t		// Error EL1t<br><br>	exception_entry	sync_el1h		// Synchronous EL1h<br>	exception_entry	irq_el1h		// IRQ EL1h<br>	exception_entry	fiq_el1h		// FIQ EL1h<br>	exception_entry	error_el1h		// Error EL1h<br><br>	exception_entry	sync_el0_64		// Synchronous 64-bit EL0<br>	exception_entry	irq_el0_64		// IRQ 64-bit EL0<br>	exception_entry	fiq_el0_64		// FIQ 64-bit EL0<br>	exception_entry	error_el0_64		// Error 64-bit EL0<br><br>	exception_entry	sync_el0_32		// Synchronous 32-bit EL0<br>	exception_entry	irq_el0_32		// IRQ 32-bit EL0<br>	exception_entry	fiq_el0_32		// FIQ 32-bit EL0<br>	exception_entry	error_el0_32		// Error 32-bit EL0<br><br>/*<br> * The selected stack pointer can be indicated by a suffix to the Exception Level:<br> *  - t: SP_EL0 is used<br> *  - h: SP_ELx is used<br> *<br> * ChCore does not enable or handle irq_el1t, fiq_xxx, and error_xxx.<br> * The SPSR_EL1 of idle threads is set to 0b0101, which means interrupt<br> * are enabled during the their execution and SP_EL1 is selected (h).<br> * Thus, irq_el1h is enabled and handled.<br> *<br> * Similarly, sync_el1t is also not enabled while we simply reuse the handler for<br> * sync_el0 to handle sync_el1h (e.g., page fault during copy_to_user and fpu).<br> */<br><br>irq_el1h:<br>        /* Simply reusing exception_enter/exit is OK. */<br>	exception_enter<br>#ifndef CHCORE_KERNEL_RT<br>	switch_to_cpu_stack<br>#endif<br>	bl	handle_irq_el1<br>	/* should never reach here */<br>	b .<br><br>irq_el1t:<br>fiq_el1t:<br>fiq_el1h:<br>error_el1t:<br>error_el1h:<br>sync_el1t:<br>	bl unexpected_handler<br><br>sync_el1h:<br>	exception_enter<br>	mov	x0, #SYNC_EL1h<br>	mrs	x1, esr_el1<br>	mrs	x2, elr_el1<br>	bl	handle_entry_c<br>	str     x0, [sp, #16 * 16] /* store the return value as the ELR_EL1 */<br>	exception_exit<br><br>sync_el0_64:<br>	exception_enter<br>#ifndef CHCORE_KERNEL_RT<br>	switch_to_cpu_stack<br>#endif<br>	mrs	x25, esr_el1<br>	lsr	x24, x25, #ESR_EL1_EC_SHIFT<br>	cmp	x24, #ESR_EL1_EC_SVC_64<br>	b.eq	el0_syscall<br>	mov	x0, SYNC_EL0_64<br>	mrs	x1, esr_el1<br>	mrs	x2, elr_el1<br>	bl	handle_entry_c<br>#ifdef CHCORE_KERNEL_RT<br>	bl	do_pending_resched<br>#else<br>	switch_to_thread_ctx<br>#endif<br>	exception_exit<br><br>el0_syscall:<br><br>/* hooking syscall: ease tracing or debugging */<br>#if ENABLE_HOOKING_SYSCALL == ON<br>	sub	sp, sp, #16 * 8<br>	stp	x0, x1, [sp, #16 * 0]<br>	stp	x2, x3, [sp, #16 * 1]<br>	stp	x4, x5, [sp, #16 * 2]<br>	stp	x6, x7, [sp, #16 * 3]<br>	stp	x8, x9, [sp, #16 * 4]<br>	stp	x10, x11, [sp, #16 * 5]<br>	stp	x12, x13, [sp, #16 * 6]<br>	stp	x14, x15, [sp, #16 * 7]<br><br>	mov x0, x8<br>	bl hook_syscall<br><br>	ldp	x0, x1, [sp, #16 * 0]<br>	ldp	x2, x3, [sp, #16 * 1]<br>	ldp	x4, x5, [sp, #16 * 2]<br>	ldp	x6, x7, [sp, #16 * 3]<br>	ldp	x8, x9, [sp, #16 * 4]<br>	ldp	x10, x11, [sp, #16 * 5]<br>	ldp	x12, x13, [sp, #16 * 6]<br>	ldp	x14, x15, [sp, #16 * 7]<br>	add	sp, sp, #16 * 8<br>#endif<br><br>	adr	x27, syscall_table		// syscall table in x27<br>	uxtw	x16, w8				// syscall number in x16<br>	ldr	x16, [x27, x16, lsl #3]		// find the syscall entry<br>	blr	x16<br><br>	/* Ret from syscall */<br>	// bl	disable_irq<br>#ifdef CHCORE_KERNEL_RT<br>	str	x0, [sp]<br>	bl	do_pending_resched<br>#else<br>	switch_to_thread_ctx<br>	str	x0, [sp]<br>#endif<br>	exception_exit<br><br>irq_el0_64:<br>	exception_enter<br>#ifndef CHCORE_KERNEL_RT<br>	switch_to_cpu_stack<br>#endif<br>	bl	handle_irq<br>	/* should never reach here */<br>	b .<br><br>error_el0_64:<br>sync_el0_32:<br>irq_el0_32:<br>fiq_el0_32:<br>error_el0_32:<br>	bl unexpected_handler<br><br>fiq_el0_64:<br>	exception_enter<br>#ifndef CHCORE_KERNEL_RT<br>	switch_to_cpu_stack<br>#endif<br>	bl handle_fiq<br>	/* should never reach here */<br>	b .<br><br>// 实现线程切换功能，通过异常返回机制切换到目标线程<br>/* void eret_to_thread(u64 sp) */<br>BEGIN_FUNC(__eret_to_thread)<br>	mov	sp, x0<br>	dmb ish /* smp_mb() */<br>#ifdef CHCORE_KERNEL_RT<br>	bl finish_switch<br>#endif<br>	exception_exit<br>END_FUNC(__eret_to_thread)<br></code></pre></td></tr></table></figure>
+
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><h3 id="异常向量表"><a href="#异常向量表" class="headerlink" title="异常向量表"></a>异常向量表</h3><p>向量表内容本身即和文档中图片所示结构一致，注意一下它是内存对齐的，通过宏定义实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c">.macro	exception_entry	label<br>	<span class="hljs-comment">/* Each entry of the exeception table should be 0x80 aligned */</span><br>	.align	<span class="hljs-number">7</span><br>	b	\label<br>.endm<br></code></pre></td></tr></table></figure>
+
+<p>这里的 <code>.align 7</code> 便把内存对齐到了 <code>0x80</code> 字节</p>
+<h3 id="关键宏定义"><a href="#关键宏定义" class="headerlink" title="关键宏定义"></a>关键宏定义</h3><ul>
+<li><code>exception_enter</code> : 保存 CPU 上下文，包括通用寄存器和系统寄存器</li>
+<li><code>exception_exit</code> : 恢复 CPU 上下文并返回</li>
+<li><code>switch_to_cpu_stack</code> : 切换到 CPU 栈</li>
+<li><code>switch_to_thread_ctx</code> : 切换到线程上下文</li>
+</ul>
+<p>注意保存 CPU 上下文的这两个宏，它们采用的方式是直接把寄存器的值保存在了内核栈上。如果你看过 xv6 的代码，就会发现这不同于 xv6 的 trampoline 在内核页表上规定了一个特殊的位置（trampoline page）用于保存寄存器</p>
+<p>两种设计的权衡（选读）：</p>
+<blockquote>
+<p>trampoline page 实现起来较易，但如果要支持多线程和抢占式调度，则相对麻烦</p>
+<p>早期 Unix 选择 trampoline page 主要是因为当时的硬件限制，而现代 ARM OS 选择内核栈是因为现代硬件的进步和对系统安全性和性能的更高要求。两种方法各有优劣，选择哪种方法需要根据具体的硬件架构和操作系统设计目标进行权衡。</p>
+<p>一些早期的操作系统，例如 xv6-riscv，仍然使用 trampoline page 来处理用户态到内核态的转换。<a target="_blank" rel="noopener" href="https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/trampoline.S">2</a> Linux 内核中也使用了 trampoline 的概念，但其作用和实现方式与早期 Unix 中的 trampoline page 不同。Linux 中的 trampoline 主要用于处理内核地址空间布局随机化 (KASLR) 等安全特性。<a target="_blank" rel="noopener" href="https://mxatone.medium.com/kernel-memory-randomization-and-trampoline-page-tables-9f73827270ab">1</a></p>
+<p>总而言之，选择 trampoline page 还是内核栈是一个 trade-off 的过程。Trampoline page 实现简单，节省内存，但安全性较低，难以支持多处理器和抢占式调度。内核栈实现复杂，占用内存较多，但安全性更高，更易于支持多处理器和抢占式调度。现代操作系统大多选择内核栈，是因为现代硬件的性能提升使得内核栈的开销可以接受，并且内核栈带来的安全性提升和功能扩展更加重要。</p>
+</blockquote>
+<h3 id="异常处理流程（C-ABI-兼容）"><a href="#异常处理流程（C-ABI-兼容）" class="headerlink" title="异常处理流程（C ABI 兼容）"></a>异常处理流程（C ABI 兼容）</h3><p>这部分又分为两大类：系统调用和普通异常处理</p>
+<ul>
+<li>系统调用：</li>
+</ul>
+<p>在 AArch64 中，系统调用由 <code>svc</code> 指令执行，这时触发 <code>sync_el0_64</code> 异常，进入向量表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs nasm">sync_el0_64:<br>    exception_enter                      // 保存上下文<br>#ifndef CHCORE_KERNEL_RT<br>    switch_to_cpu_stack                 // 非RT模式下切换到CPU栈<br>#endif<br>    mrs x25, esr_el1                   // 读取异常综合寄存器(ESR)<br>    lsr x24, x25, #ESR_EL1_EC_SHIFT    // 获取异常类别<br>    cmp x24, #ESR_EL1_EC_SVC_64        // 判断是否为系统调用<br>    b.eq el0_syscall                    // 如果是系统调用，跳转处理<br></code></pre></td></tr></table></figure>
+
+<p>随后进入系统调用的核心逻辑（这里的钩子是用来调试+监控的）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs nasm">el0_syscall:<br>    // 如果启用了系统调用钩子<br>#if ENABLE_HOOKING_SYSCALL == ON<br>    // 保存寄存器x0-x15<br>    sub sp, sp, #16 * 8<br>    stp x0, x1, [sp, #16 * 0]<br>    // ... 保存其他寄存器 ...<br><br>    mov x0, x8           // 系统调用号作为参数<br>    bl hook_syscall      // 调用钩子函数<br><br>    // 恢复寄存器<br>    ldp x0, x1, [sp, #16 * 0]<br>    // ... 恢复其他寄存器 ...<br>    add sp, sp, #16 * 8<br>#endif<br>    // 系统调用处理核心逻辑<br>    adr x27, syscall_table              // 获取系统调用表地址<br>    uxtw x16, w8                        // 系统调用号（保存在x8中）<br>    ldr x16, [x27, x16, lsl #3]         // 查找系统调用处理函数<br>    blr x16                             // 调用对应的处理函数<br></code></pre></td></tr></table></figure>
+
+<p>从系统调用表返回后，进行返回处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs nasm">    // 系统调用返回值处理<br>#ifdef CHCORE_KERNEL_RT<br>    str x0, [sp]                        // 保存返回值<br>    bl do_pending_resched               // RT模式下检查是否需要重新调度<br>#else<br>    switch_to_thread_ctx                // 切换回线程上下文<br>    str x0, [sp]                        // 保存返回值<br>#endif<br>    exception_exit                      // 恢复上下文并返回用户态<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>普通异常处理：以 <code>sync_el1h</code> 为例</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs nasm">sync_el1h:<br>	exception_enter<br>	mov	x0, #SYNC_EL1h<br>	mrs	x1, esr_el1<br>	mrs	x2, elr_el1<br>	bl	handle_entry_c<br>	str     x0, [sp, #16 * 16] /* store the return value as the ELR_EL1 */<br>	exception_exit<br></code></pre></td></tr></table></figure>
+
+<p>大体上即为保存上下文——调用函数——恢复上下文的流程</p>
+<p>注意这里的 C ABI 的体现，<code>x0, x1, x2</code> 就是 c 函数的 args, 返回值置于 <code>x0</code></p>
+<p>而对于其他异常&#x2F;还没有实现的异常，则直接调用 <code>unexpected_handler</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs nasm">error_el0_64:<br>sync_el0_32:<br>irq_el0_32:<br>fiq_el0_32:<br>error_el0_32:<br>	bl unexpected_handler<br></code></pre></td></tr></table></figure>
+
+<p>至此，异常管理部分源码解析结束</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ChCore/" class="category-chain-item">ChCore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/ChCore/%E8%BF%9B%E7%A8%8B%C2%B7%E7%BA%BF%E7%A8%8B%C2%B7%E5%BC%82%E5%B8%B8/" class="category-chain-item">进程·线程·异常</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
+      
+        <a href="/tags/ChCore/" class="print-no-link">#ChCore</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="print-no-link">#源码解析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>异常管理</div>
+      <div>http://example.com/2025/02/22/irqManage/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>思源南路世一劈</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/24/syscall/" title="系统调用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">系统调用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/20/threadManage/" title="进程/线程管理">
+                        <span class="hidden-mobile">进程/线程管理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'Qiushao-E/Qiushao-E.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
